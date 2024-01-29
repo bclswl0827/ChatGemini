@@ -6,12 +6,13 @@ import toast from "react-hot-toast";
 
 interface InputAreaProps {
     readonly disabled: boolean;
+    readonly minHeight: number;
     readonly maxHeight: number;
     readonly onSubmit?: (prompt: string) => void;
 }
 
 export const InputArea = (props: InputAreaProps) => {
-    const { disabled, maxHeight, onSubmit } = props;
+    const { disabled, minHeight, maxHeight, onSubmit } = props;
 
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [inputPlaceholder, setInputPlaceholder] =
@@ -26,9 +27,12 @@ export const InputArea = (props: InputAreaProps) => {
         current!.style.height = "0px";
         current!.style.height =
             current!.scrollHeight < maxHeight
-                ? `${current!.scrollHeight}px`
+                ? `${
+                      current!.scrollHeight > minHeight
+                          ? current!.scrollHeight
+                          : minHeight
+                  }px`
                 : `${maxHeight}px`;
-        current!.style.height = `${current!.scrollHeight}px`;
     };
 
     const handleSubmit = () => {
@@ -50,8 +54,8 @@ export const InputArea = (props: InputAreaProps) => {
     return (
         <div className="sticky bottom-0 flex flex-col p-4 bg-white space-y-2 max-h-48">
             <div className="flex justify-center items-center gap-2">
-                <div className="relative w-full">
-                    <div className="absolute inset-y-0 flex items-center pl-2">
+                <div className="relative w-full items-center justify-center flex">
+                    <div className="absolute left-0 flex items-center pl-2">
                         <button
                             className="hover:bg-gray-200 rounded-lg size-7 flex items-center justify-center"
                             onClick={() => {
@@ -69,7 +73,7 @@ export const InputArea = (props: InputAreaProps) => {
                         placeholder={
                             disabled ? "等待回应..." : inputPlaceholder
                         }
-                        className="py-[0.4rem] pl-10 border-2 border-gray-300 rounded-lg overflow-y-scroll scrollbar-hide resize-none w-[calc(100%)] text-sm lg:text-base"
+                        className={`pl-10 p-2.5 border-2 border-gray-300 rounded-lg overflow-y-scroll scrollbar-hide resize-none h-[${minHeight}px] w-[calc(100%)] text-sm lg:text-base`}
                         onInput={({ currentTarget }) =>
                             setTextAreaHeight(currentTarget)
                         }
@@ -83,7 +87,7 @@ export const InputArea = (props: InputAreaProps) => {
                     />
                 </div>
                 <button
-                    className="bg-sky-100 hover:bg-sky-200 rounded-lg p-2 disabled:cursor-not-allowed"
+                    className="bg-sky-100 hover:bg-sky-200 rounded-lg p-3 disabled:cursor-not-allowed"
                     onClick={() => !disabled && handleSubmit()}
                     disabled={disabled}
                 >

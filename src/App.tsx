@@ -179,6 +179,7 @@ const App = () => {
                 />
                 <RouterView routes={routes} suspense={<Skeleton />} />
                 <InputArea
+                    minHeight={45}
                     maxHeight={120}
                     disabled={ai.busy}
                     onSubmit={handleSubmit}
