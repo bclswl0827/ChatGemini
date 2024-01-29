@@ -12,8 +12,16 @@ export const getChats = async (
     onChatMessage: OnChatMessage
 ) => {
     try {
+        const payload = history.map((item) => {
+            const { timestamp, ...rest } = item;
+            return rest;
+        });
+
         if (stream) {
-            const chat = await model.startChat({ history, ...options });
+            const chat = model.startChat({
+                ...options,
+                history: payload,
+            });
             const result = await chat.sendMessageStream(prompts);
             for await (const chunk of result.stream) {
                 const chunkText = chunk.text();
@@ -21,7 +29,10 @@ export const getChats = async (
             }
             onChatMessage("", true);
         } else {
-            const chat = await model.startChat({ history, ...options });
+            const chat = model.startChat({
+                ...options,
+                history: payload,
+            });
             const result = await chat.sendMessage(prompts);
             const response = result.response;
             const text = response.text();

@@ -38,9 +38,13 @@ export const Sidebar = (props: SidebarProps) => {
         filter: (value: number, index: number, array: number[]) => boolean
     ) =>
         Object.keys(sessions)
+            .sort((a, b) => {
+                const a_ts = sessions[a][sessions[a].length - 1].timestamp;
+                const b_ts = sessions[b][sessions[b].length - 1].timestamp;
+                return b_ts - a_ts;
+            })
             .map((key) => parseInt(key))
             .filter(filter)
-            .sort((a, b) => b - a)
             .map((key) => {
                 return { [key.toString()]: sessions[key] };
             })

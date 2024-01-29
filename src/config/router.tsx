@@ -5,8 +5,7 @@ const Chat = lazy(() => import("../views/Chat"));
 const NotFound = lazy(() => import("../views/NotFound"));
 
 export const routerConfig = {
-    basename: "/",
-    mode: "history",
+    mode: "hash",
     routes: {
         index: { prefix: "/", uri: "", suffix: "", element: <Home /> },
         chat: { prefix: "/chat", uri: "/:id", suffix: "", element: <Chat /> },

@@ -1,15 +1,20 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAiObj } from "../helpers/createAiObj";
 import { globalConfig } from "../config/global";
+import { getAiModel } from "../helpers/getAiModel";
 
 export interface AI {
     readonly busy: boolean;
     readonly obj: GoogleGenerativeAI;
+    readonly model: GenerativeModel;
 }
 
-const ai = createAiObj(globalConfig.key);
-export const initialAI: AI = { busy: false, obj: ai };
+const { key, api } = globalConfig;
+const obj = createAiObj(key ?? "", api);
+const model = getAiModel(obj);
+
+export const initialAI: AI = { busy: false, obj, model };
 
 const slice = createSlice({
     name: "ai",

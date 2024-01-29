@@ -15,7 +15,7 @@ export const Markdown = (props: MarkdownProps) => {
     const { className, children } = props;
     return (
         <ReactMarkdown
-            className={`prose text-sm lg:prose-base max-w-[100%] ${
+            className={`prose text-sm lg:prose-base max-w-[100%] break-words ${
                 className ?? ""
             }`}
             children={children}
@@ -26,7 +26,7 @@ export const Markdown = (props: MarkdownProps) => {
                     </a>
                 ),
                 pre: ({ node, ...props }) => (
-                    <pre className="bg-transparent p-0" {...props} />
+                    <pre className="bg-transparent p-2" {...props} />
                 ),
                 code: ({ className, children }) => {
                     const match = /language-(\w+)/.exec(className || "");
@@ -44,9 +44,14 @@ export const Markdown = (props: MarkdownProps) => {
                             children={String(children).replace(/\n$/, "")}
                         />
                     ) : (
-                        <code className={className}>{children}</code>
+                        <code className="text-gray-700">{children}</code>
                     );
                 },
+                table: ({ node, ...props }) => (
+                    <div className="overflow-x-auto">
+                        <table {...props} />
+                    </div>
+                ),
             }}
             rehypePlugins={[rehypeKatex]}
             remarkPlugins={[remarkGfm, remarkMath]}

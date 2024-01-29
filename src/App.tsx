@@ -13,7 +13,6 @@ import { onUpdate as updateAI } from "./store/ai";
 import toast from "react-hot-toast";
 import { matchPath, useNavigate } from "react-router-dom";
 import { getTextFile } from "./helpers/getTextFile";
-import { getAiModel } from "./helpers/getAiModel";
 import { getChats } from "./helpers/getChats";
 import { modelConfig } from "./config/model";
 import { initialSessions, onUpdate as updateSessions } from "./store/sessions";
@@ -74,7 +73,7 @@ const App = () => {
         let { id } = (matchPath(
             { path: `${prefix}${uri}${suffix}` },
             hash.replace("#", "") || pathname
-        )?.params as { id: string }) || { id: Date.now().toString() };
+        )?.params as { id: string }) ?? { id: Date.now().toString() };
 
         if (isNaN(new Date(parseInt(id)).getTime())) {
             toast.error("无法识别的对话 ID");
@@ -82,21 +81,38 @@ const App = () => {
         }
 
         const currentSessionHistory = id in sessions ? sessions[id] : [];
+        const currentTimestamp = Date.now();
         let _sessions =
             id in sessions
                 ? {
                       ...sessions,
                       [id]: [
                           ...sessions[id],
-                          { role: "user", parts: prompt },
-                          { role: "model", parts: ModelPlaceholder },
+                          {
+                              role: "user",
+                              parts: prompt,
+                              timestamp: currentTimestamp,
+                          },
+                          {
+                              role: "model",
+                              parts: ModelPlaceholder,
+                              timestamp: currentTimestamp,
+                          },
                       ],
                   }
                 : {
                       ...sessions,
                       [id]: [
-                          { role: "user", parts: prompt },
-                          { role: "model", parts: ModelPlaceholder },
+                          {
+                              role: "user",
+                              parts: prompt,
+                              timestamp: currentTimestamp,
+                          },
+                          {
+                              role: "model",
+                              parts: ModelPlaceholder,
+                              timestamp: currentTimestamp,
+                          },
                       ],
                   };
         dispatch(updateAI({ ...ai, busy: true }));
@@ -107,6 +123,7 @@ const App = () => {
             if (end) {
                 dispatch(updateAI({ ...ai, busy: false }));
             }
+            const updatedTimestamp = Date.now();
             const prevParts =
                 _sessions[id][_sessions[id].length - 1].parts !==
                 ModelPlaceholder
@@ -116,13 +133,17 @@ const App = () => {
                 ..._sessions,
                 [id]: [
                     ..._sessions[id].slice(0, -1),
-                    { role: "model", parts: `${prevParts}${message}` },
+                    {
+                        role: "model",
+                        parts: `${prevParts}${message}`,
+                        timestamp: updatedTimestamp,
+                    },
                 ],
             };
             dispatch(updateSessions(_sessions));
         };
         await getChats(
-            getAiModel(ai.obj, "gemini-pro", modelConfig),
+            ai.model,
             currentSessionHistory,
             prompt,
             sse,

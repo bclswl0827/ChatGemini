@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface SessionHistory {
     readonly role: string;
     readonly parts: string;
+    readonly timestamp: number;
 }
 export type Sessions = Record<string, SessionHistory[]>;
 export const initialSessions: Sessions = {};

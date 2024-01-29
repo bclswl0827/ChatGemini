@@ -8,7 +8,6 @@ import { ReduxStoreProps } from "../config/store";
 import { onUpdate as updateAI } from "../store/ai";
 import { onUpdate as updateSessions } from "../store/sessions";
 import { getChats } from "../helpers/getChats";
-import { getAiModel } from "../helpers/getAiModel";
 import { modelConfig } from "../config/model";
 import { globalConfig } from "../config/global";
 
@@ -33,7 +32,11 @@ const Chat = () => {
                 ...sessions,
                 [id]: [
                     ...sessions[id].slice(0, index),
-                    { role: "model", parts: RefreshPlaceholder },
+                    {
+                        role: "model",
+                        parts: RefreshPlaceholder,
+                        timestamp: Date.now(),
+                    },
                 ],
             };
             dispatch(updateAI({ ...ai, busy: true }));
@@ -47,18 +50,23 @@ const Chat = () => {
                     _sessions[id][index].parts !== RefreshPlaceholder
                         ? _sessions[id][index].parts
                         : "";
+                const updatedTimestamp = Date.now();
                 _sessions = {
                     ..._sessions,
                     [id]: [
                         ..._sessions[id].slice(0, index),
-                        { role: "model", parts: `${prevParts}${message}` },
+                        {
+                            role: "model",
+                            parts: `${prevParts}${message}`,
+                            timestamp: updatedTimestamp,
+                        },
                     ],
                 };
                 setChat(_sessions[id]);
                 dispatch(updateSessions(_sessions));
             };
             await getChats(
-                getAiModel(ai.obj, "gemini-pro", modelConfig),
+                ai.model,
                 chat.slice(0, index - 1),
                 chat[index - 1].parts,
                 globalConfig.sse,
@@ -77,10 +85,12 @@ const Chat = () => {
     useEffect(() => {
         if (id && id in sessions) {
             setChat(sessions[id]);
+            scrollToBottom();
         } else {
-            setChat([{ role: "model", parts: FallbackIfIdInvalid }]);
+            setChat([
+                { role: "model", parts: FallbackIfIdInvalid, timestamp: 0 },
+            ]);
         }
-        scrollToBottom();
         const { current } = sessionRef;
         current?.addEventListener("DOMNodeInserted", scrollToBottom);
         return () =>
