@@ -78,7 +78,7 @@ export const saveMdToHtml = (data: string, name: string) => {
         </script>
         <link
             rel="stylesheet"
-            href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/a11y-light.min.css"
+            href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/a11y-dark.min.css"
         />
         <style>
             .app {
@@ -122,6 +122,10 @@ export const saveMdToHtml = (data: string, name: string) => {
 
             .app main a:hover {
                 text-decoration: underline;
+            }
+
+            .app main code {
+                border-radius: 5px;
             }
 
             .app main pre {
