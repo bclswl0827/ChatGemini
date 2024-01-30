@@ -82,39 +82,22 @@ const App = () => {
 
         const currentSessionHistory = id in sessions ? sessions[id] : [];
         const currentTimestamp = Date.now();
-        let _sessions =
-            id in sessions
-                ? {
-                      ...sessions,
-                      [id]: [
-                          ...sessions[id],
-                          {
-                              role: "user",
-                              parts: prompt,
-                              timestamp: currentTimestamp,
-                          },
-                          {
-                              role: "model",
-                              parts: ModelPlaceholder,
-                              timestamp: currentTimestamp,
-                          },
-                      ],
-                  }
-                : {
-                      ...sessions,
-                      [id]: [
-                          {
-                              role: "user",
-                              parts: prompt,
-                              timestamp: currentTimestamp,
-                          },
-                          {
-                              role: "model",
-                              parts: ModelPlaceholder,
-                              timestamp: currentTimestamp,
-                          },
-                      ],
-                  };
+        let _sessions = {
+            ...sessions,
+            [id]: [
+                ...(sessions[id] || []),
+                {
+                    role: "user",
+                    parts: prompt,
+                    timestamp: currentTimestamp,
+                },
+                {
+                    role: "model",
+                    parts: ModelPlaceholder,
+                    timestamp: currentTimestamp,
+                },
+            ],
+        };
         dispatch(updateAI({ ...ai, busy: true }));
         dispatch(updateSessions(_sessions));
         navigate(`${prefix}/${id}${suffix}`);
