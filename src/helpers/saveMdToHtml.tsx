@@ -133,6 +133,32 @@ export const saveMdToHtml = (data: string, name: string) => {
                 overflow-x: auto;
                 background-color: #f3f4f6;
             }
+
+            .app main table {
+                border-collapse: collapse;
+                border: 0px;
+                white-space: nowrap;
+                word-break: keep-all;
+            }
+
+            .app main th {
+                background-color: #f2f2f2;
+                text-align: center;
+            }
+
+            .app main th,
+            td {
+                width: 100px;
+                border: 1px solid #ddd;
+                padding: 5px;
+            }
+
+            @media (max-width: 768px) {
+                .app main table {
+                    display: block;
+                    overflow-x: auto;
+                }
+            }
         </style>
     </head>
     <body>

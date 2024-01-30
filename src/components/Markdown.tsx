@@ -48,9 +48,7 @@ export const Markdown = (props: MarkdownProps) => {
                     );
                 },
                 table: ({ node, ...props }) => (
-                    <div className="overflow-x-auto">
-                        <table {...props} />
-                    </div>
+                    <table className="overflow-x-auto block whitespace-nowrap" {...props} />
                 ),
             }}
             rehypePlugins={[rehypeKatex]}
