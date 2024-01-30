@@ -26,6 +26,12 @@ export const saveMdToHtml = (data: string, name: string) => {
             const PDF_OPTIONS = {
                 filename: "${name}.pdf",
                 margin: 1,
+                html2canvas: {
+                    scale: 2,
+                    scrollX: 0,
+                    scrollY: 0,
+                    logging: false,
+                },
                 image: {
                     type: "jpeg",
                     quality: 1,
@@ -143,7 +149,6 @@ export const saveMdToHtml = (data: string, name: string) => {
 
             .app main th {
                 background-color: #f2f2f2;
-                text-align: center;
             }
 
             .app main th,
