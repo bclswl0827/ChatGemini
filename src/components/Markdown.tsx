@@ -2,6 +2,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
+import rehypeRaw from "rehype-raw";
 import "katex/dist/katex.min.css";
 import { Prism } from "react-syntax-highlighter";
 import { a11yDark as style } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -21,7 +22,12 @@ export const Markdown = (props: MarkdownProps) => {
             children={children}
             components={{
                 a: ({ node, ...props }) => (
-                    <a href={props.href} target="_blank" rel="noreferrer">
+                    <a
+                        href={props.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        {...props}
+                    >
                         {props.children}
                     </a>
                 ),
@@ -48,10 +54,14 @@ export const Markdown = (props: MarkdownProps) => {
                     );
                 },
                 table: ({ node, ...props }) => (
-                    <table className="overflow-x-auto block whitespace-nowrap" {...props} />
+                    <table
+                        className="overflow-x-auto block whitespace-nowrap"
+                        {...props}
+                    />
                 ),
             }}
-            rehypePlugins={[rehypeKatex]}
+            urlTransform={(url) => url}
+            rehypePlugins={[rehypeKatex, rehypeRaw]}
             remarkPlugins={[remarkGfm, remarkMath]}
         />
     );

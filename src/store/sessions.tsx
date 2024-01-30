@@ -1,9 +1,11 @@
+import { GenerativeContentBlob } from "@google/generative-ai";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface SessionHistory {
     readonly role: string;
     readonly parts: string;
     readonly timestamp: number;
+    readonly attachment?: GenerativeContentBlob;
 }
 export type Sessions = Record<string, SessionHistory[]>;
 export const initialSessions: Sessions = {};

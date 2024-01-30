@@ -11,6 +11,10 @@ import { getAiChats } from "../helpers/getAiChats";
 import { modelConfig } from "../config/model";
 import { globalConfig } from "../config/global";
 import { Container } from "../components/Container";
+import { getAiContent } from "../helpers/getAiContent";
+import { GenerativeContentBlob } from "@google/generative-ai";
+import { getBase64BlobUrl } from "../helpers/getBase64BlobUrl";
+import { ImageView } from "../components/ImageView";
 
 const RefreshPlaceholder = "重新生成中...";
 const FallbackIfIdInvalid =
@@ -66,14 +70,24 @@ const Chat = () => {
                 setChat(_sessions[id]);
                 dispatch(updateSessions(_sessions));
             };
-            await getAiChats(
-                ai.model,
-                chat.slice(0, index - 1),
-                chat[index - 1].parts,
-                globalConfig.sse,
-                modelConfig,
-                handler
-            );
+            if (!chat[index - 1].attachment?.data.length) {
+                await getAiChats(
+                    ai.model.pro,
+                    chat.slice(0, index - 1),
+                    chat[index - 1].parts,
+                    globalConfig.sse,
+                    modelConfig,
+                    handler
+                );
+            } else {
+                await getAiContent(
+                    ai.model.vision,
+                    chat[index - 1].parts,
+                    chat[index - 1].attachment as GenerativeContentBlob,
+                    globalConfig.sse,
+                    handler
+                );
+            }
         }
     };
 
@@ -104,16 +118,38 @@ const Chat = () => {
             className="max-w-[calc(100%)] py-5 pl-3 mb-auto mx-1 md:mx-[4rem] lg:mx-[8rem]"
             ref={sessionRef}
         >
-            {chat.map(({ role, parts }, index) => (
-                <Session
-                    key={index}
-                    index={index}
-                    role={role as SessionRole}
-                    onRefresh={handleRefresh}
-                >
-                    <Markdown>{parts}</Markdown>
-                </Session>
-            ))}
+            <ImageView>
+                {chat.map(({ role, parts, attachment }, index) => {
+                    const { mimeType, data } = attachment ?? {
+                        mimeType: "",
+                        data: "",
+                    };
+                    const base64BlobURL = data.length
+                        ? getBase64BlobUrl(`data:${mimeType};base64,${data}`)
+                        : "";
+                    const attachmentHtml = `<div>
+                    <span>点击图片看大图</span>
+                    <a data-image-view="gallery" href="${base64BlobURL}">
+                        <img alt="图片附件" src="${base64BlobURL}" style="max-width: 7rem;" />
+                    </a>
+                </div>`;
+
+                    return (
+                        <Session
+                            key={index}
+                            index={index}
+                            role={role as SessionRole}
+                            onRefresh={handleRefresh}
+                        >
+                            <Markdown>{`${parts}${
+                                data.length
+                                    ? `\n\n---\n\n${attachmentHtml}`
+                                    : ""
+                            }`}</Markdown>
+                        </Session>
+                    );
+                })}
+            </ImageView>
         </Container>
     );
 };

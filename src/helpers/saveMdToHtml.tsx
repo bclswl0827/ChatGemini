@@ -4,7 +4,7 @@ import { linkify } from "remarkable/linkify";
 
 export const saveMdToHtml = (data: string, name: string) => {
     const md = new Remarkable("full", {
-        html: false,
+        html: true,
         breaks: false,
         xhtmlOut: false,
         typographer: true,
@@ -12,7 +12,8 @@ export const saveMdToHtml = (data: string, name: string) => {
         langPrefix: "language-",
     }).use(linkify);
     const result = md.render(data);
-    const html = `<html>
+    const html = `<!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8" />
         <meta
@@ -181,7 +182,7 @@ export const saveMdToHtml = (data: string, name: string) => {
 `;
 
     const blob = new Blob([html], {
-        type: "applicetion/pdf",
+        type: "text/html;charset=utf-8",
     });
     saveAs(blob, `${name}.html`);
 };

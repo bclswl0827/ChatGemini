@@ -16,6 +16,9 @@ import { saveMdToHtml } from "./helpers/saveMdToHtml";
 import { getAiChats } from "./helpers/getAiChats";
 import { modelConfig } from "./config/model";
 import { initialSessions, onUpdate as updateSessions } from "./store/sessions";
+import { getAiContent } from "./helpers/getAiContent";
+import { GenerativeContentBlob } from "@google/generative-ai";
+import { getBase64Img } from "./helpers/getBase64Img";
 
 const ModelPlaceholder = "正在思考中...";
 
@@ -30,6 +33,9 @@ const App = () => {
         (state: ReduxStoreProps) => state.sessions.sessions
     );
     const ai = useSelector((state: ReduxStoreProps) => state.ai.ai);
+
+    const [uploadInlineData, setUploadInlineData] =
+        useState<GenerativeContentBlob>({ data: "", mimeType: "" });
     const [sidebarExpand, setSidebarExpand] = useState(window.innerWidth > 768);
 
     const handleExportSession = (id: string) => {
@@ -40,7 +46,12 @@ const App = () => {
             let exportData = `# ${header}\n\n---\n\n- 用户时区 ${
                 Intl.DateTimeFormat().resolvedOptions().timeZone
             }\n- 对话时间 ${sessionTime}\n- 导出时间 ${exportTime}\n\n---\n\n`;
-            session.forEach(({ role, parts, timestamp }) => {
+            session.forEach(({ role, parts, timestamp, attachment }) => {
+                if (attachment?.data.length) {
+                    const { data, mimeType } = attachment;
+                    const base64ImgData = `data:${mimeType};base64,${data}`;
+                    parts += `\n\n<img alt="图片附件" src="${base64ImgData}" />`;
+                }
                 exportData += `## ${role === "user" ? "用户" : "AI"}@${new Date(
                     timestamp
                 ).toLocaleString()}\n\n${parts}\n\n`;
@@ -64,6 +75,19 @@ const App = () => {
         dispatch(updateSessions(initialSessions));
         dispatch(updateAI({ ...ai, busy: false }));
         toast.success("成功清理全部对话记录", { duration: 1000 });
+    };
+
+    const handleUpload = async (file: File | null) => {
+        if (file) {
+            const base64EncodedData = await getBase64Img(file);
+            const base64EncodedDataParts = base64EncodedData.split(",");
+            setUploadInlineData({
+                data: base64EncodedDataParts[base64EncodedDataParts.length - 1],
+                mimeType: file.type,
+            });
+        } else {
+            setUploadInlineData({ data: "", mimeType: "" });
+        }
     };
 
     const handleSubmit = async (prompt: string) => {
@@ -94,6 +118,7 @@ const App = () => {
                     role: "user",
                     parts: prompt,
                     timestamp: currentTimestamp,
+                    attachment: uploadInlineData,
                 },
                 {
                     role: "model",
@@ -111,11 +136,11 @@ const App = () => {
                 dispatch(updateAI({ ...ai, busy: false }));
             }
             const updatedTimestamp = Date.now();
-            const prevParts =
-                _sessions[id][_sessions[id].length - 1].parts !==
-                ModelPlaceholder
-                    ? _sessions[id][_sessions[id].length - 1].parts
-                    : "";
+            let prevParts = _sessions[id][_sessions[id].length - 1].parts;
+            if (prevParts === ModelPlaceholder) {
+                prevParts = "";
+            }
+
             _sessions = {
                 ..._sessions,
                 [id]: [
@@ -129,14 +154,25 @@ const App = () => {
             };
             dispatch(updateSessions(_sessions));
         };
-        await getAiChats(
-            ai.model,
-            currentSessionHistory,
-            prompt,
-            sse,
-            modelConfig,
-            handler
-        );
+        if (!uploadInlineData.data.length) {
+            await getAiChats(
+                ai.model.pro,
+                currentSessionHistory,
+                prompt,
+                sse,
+                modelConfig,
+                handler
+            );
+        } else {
+            await getAiContent(
+                ai.model.vision,
+                prompt,
+                uploadInlineData,
+                sse,
+                handler
+            );
+        }
+        setUploadInlineData({ data: "", mimeType: "" });
     };
 
     useEffect(() => {
@@ -170,6 +206,7 @@ const App = () => {
                     maxHeight={120}
                     disabled={ai.busy}
                     onSubmit={handleSubmit}
+                    onUpload={handleUpload}
                 />
             </Container>
         </Container>

@@ -1,15 +1,13 @@
 import { BaseParams, GenerativeModel, Part } from "@google/generative-ai";
 import { SessionHistory } from "../store/sessions";
 
-type OnChatMessage = (message: string, end: boolean) => void;
-
 export const getAiChats = async (
     model: GenerativeModel,
     history: SessionHistory[],
     prompts: string | Array<string | Part>,
     stream: boolean,
     options: BaseParams,
-    onChatMessage: OnChatMessage
+    onChatMessage: (message: string, end: boolean) => void
 ) => {
     try {
         const payload = history.map((item) => {
@@ -18,10 +16,7 @@ export const getAiChats = async (
         });
 
         if (stream) {
-            const chat = model.startChat({
-                ...options,
-                history: payload,
-            });
+            const chat = model.startChat({ ...options, history: payload });
             const result = await chat.sendMessageStream(prompts);
             for await (const chunk of result.stream) {
                 const chunkText = chunk.text();

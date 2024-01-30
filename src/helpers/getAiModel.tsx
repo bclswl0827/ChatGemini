@@ -1,5 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export const getAiModel = (ai: GoogleGenerativeAI) => {
-    return ai.getGenerativeModel({ model: "gemini-pro" });
+export type AiType = "pro" | "vision";
+
+export const getAiModel = (ai: GoogleGenerativeAI, type: AiType = "pro") => {
+    return ai.getGenerativeModel({
+        model: type === "pro" ? "gemini-pro" : "gemini-pro-vision",
+    });
 };
