@@ -100,6 +100,7 @@ export const InputArea = (props: InputAreaProps) => {
                         if (hasAttachment) {
                             setHasAttachment(false);
                             onUpload && onUpload(null);
+                            toast.success("已取消上传文件");
                         } else {
                             currentTarget.blur();
                             fileInputRef.current!.click();
