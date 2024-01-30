@@ -95,10 +95,12 @@ export const saveMdToHtml = (data: string, name: string) => {
 
             .app nav {
                 padding: 10px;
+                display: flex;
             }
 
             .app nav button {
                 border: 0;
+                margin: 0 10px;
                 padding: 10px 20px;
                 color: #fff;
                 background-color: #3b82f6;
@@ -170,6 +172,7 @@ export const saveMdToHtml = (data: string, name: string) => {
         <div class="app">
             <nav>
                 <button onclick="savePageToPDF(PDF_OPTIONS)">转存 PDF</button>
+                <noscript> JavaScript 被禁用<br />PDF 转存不再可用 </noscript>
             </nav>
             <main>${result}</main>
         </div>

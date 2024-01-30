@@ -3,9 +3,9 @@
   "name": "ChatGemini is a chatbot that uses Google's Generative AI to generate responses to your messages.",
   "icons": [
     {
-      "src": "favicon.svg",
+      "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/svg+xml"
+      "type": "image/x-icon"
     },
     {
       "src": "logo192.png",
