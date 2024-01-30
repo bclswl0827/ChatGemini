@@ -3,7 +3,7 @@ import { SessionHistory } from "../store/sessions";
 
 type OnChatMessage = (message: string, end: boolean) => void;
 
-export const getChats = async (
+export const getAiChats = async (
     model: GenerativeModel,
     history: SessionHistory[],
     prompts: string | Array<string | Part>,

@@ -12,8 +12,8 @@ import { ReduxStoreProps } from "./config/store";
 import { onUpdate as updateAI } from "./store/ai";
 import toast from "react-hot-toast";
 import { matchPath, useNavigate } from "react-router-dom";
-import { getTextFile } from "./helpers/getTextFile";
-import { getChats } from "./helpers/getChats";
+import { saveMdToHtml } from "./helpers/saveMdToHtml";
+import { getAiChats } from "./helpers/getAiChats";
 import { modelConfig } from "./config/model";
 import { initialSessions, onUpdate as updateSessions } from "./store/sessions";
 
@@ -30,18 +30,22 @@ const App = () => {
         (state: ReduxStoreProps) => state.sessions.sessions
     );
     const ai = useSelector((state: ReduxStoreProps) => state.ai.ai);
-    const [sidebarExpand, setSidebarExpand] = useState(false);
+    const [sidebarExpand, setSidebarExpand] = useState(window.innerWidth > 768);
 
     const handleExportSession = (id: string) => {
         const session = sessions[id];
         if (session) {
             const exportTime = new Date().toLocaleString();
             const sessionTime = new Date(parseInt(id)).toLocaleString();
-            let exportData = `对话时间 ${sessionTime}\n导出时间 ${exportTime}\n\n`;
-            session.forEach(({ role, parts }) => {
-                exportData += `${role === "user" ? "用户" : "Bot"}：${parts}\n`;
+            let exportData = `# ${header}\n\n---\n\n- 用户时区 ${
+                Intl.DateTimeFormat().resolvedOptions().timeZone
+            }\n- 对话时间 ${sessionTime}\n- 导出时间 ${exportTime}\n\n---\n\n`;
+            session.forEach(({ role, parts, timestamp }) => {
+                exportData += `## ${role === "user" ? "用户" : "AI"}@${new Date(
+                    timestamp
+                ).toLocaleString()}\n\n${parts}\n\n`;
             });
-            getTextFile(exportData, `对话导出_${id}.txt`);
+            saveMdToHtml(exportData, `会话导出_${site}_${id}`);
         } else {
             toast.error("无法导出对话记录");
         }
@@ -125,7 +129,7 @@ const App = () => {
             };
             dispatch(updateSessions(_sessions));
         };
-        await getChats(
+        await getAiChats(
             ai.model,
             currentSessionHistory,
             prompt,
@@ -140,7 +144,7 @@ const App = () => {
     }, [site]);
 
     return (
-        <Container>
+        <Container toaster={true}>
             <Sidebar
                 title={header}
                 sessions={sessions}

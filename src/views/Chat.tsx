@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { ReduxStoreProps } from "../config/store";
 import { onUpdate as updateAI } from "../store/ai";
 import { onUpdate as updateSessions } from "../store/sessions";
-import { getChats } from "../helpers/getChats";
+import { getAiChats } from "../helpers/getAiChats";
 import { modelConfig } from "../config/model";
 import { globalConfig } from "../config/global";
+import { Container } from "../components/Container";
 
 const RefreshPlaceholder = "重新生成中...";
 const FallbackIfIdInvalid =
@@ -65,7 +66,7 @@ const Chat = () => {
                 setChat(_sessions[id]);
                 dispatch(updateSessions(_sessions));
             };
-            await getChats(
+            await getAiChats(
                 ai.model,
                 chat.slice(0, index - 1),
                 chat[index - 1].parts,
@@ -76,7 +77,8 @@ const Chat = () => {
         }
     };
 
-    const scrollToBottom = () =>
+    const scrollToBottom = ({ animationName }: AnimationEvent) =>
+        animationName === "nodeInserted" &&
         sessionRef.current?.scrollIntoView({
             behavior: "smooth",
             block: "end",
@@ -85,20 +87,20 @@ const Chat = () => {
     useEffect(() => {
         if (id && id in sessions) {
             setChat(sessions[id]);
-            scrollToBottom();
+            scrollToBottom({ animationName: "nodeInserted" } as AnimationEvent);
         } else {
             setChat([
                 { role: "model", parts: FallbackIfIdInvalid, timestamp: 0 },
             ]);
         }
         const { current } = sessionRef;
-        current?.addEventListener("DOMNodeInserted", scrollToBottom);
+        current?.addEventListener("animationstart", scrollToBottom);
         return () =>
-            current?.removeEventListener("DOMNodeInserted", scrollToBottom);
+            current?.removeEventListener("animationstart", scrollToBottom);
     }, [id, sessions, sessionRef]);
 
     return (
-        <div
+        <Container
             className="max-w-[calc(100%)] py-5 pl-3 mb-auto mx-1 md:mx-[4rem] lg:mx-[8rem]"
             ref={sessionRef}
         >
@@ -112,7 +114,7 @@ const Chat = () => {
                     <Markdown>{parts}</Markdown>
                 </Session>
             ))}
-        </div>
+        </Container>
     );
 };
 
