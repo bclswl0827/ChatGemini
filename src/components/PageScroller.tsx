@@ -40,24 +40,30 @@ export const PageScroller = (props: PageScrollerProps) => {
     const setScrollerVisibility = useCallback(() => {
         const { current } = monitorRef;
         if (current) {
-            if (current.scrollTop !== scrollerState.lastPosition) {
+            const { lastPosition } = scrollerState;
+            const { scrollHeight, clientHeight, scrollTop } = current;
+
+            if (Math.abs(scrollTop - lastPosition) < 50) {
+                return;
+            }
+
+            if (scrollTop !== lastPosition) {
                 setShowScroller(true);
             }
 
             if (
-                current.scrollTop <= 50 ||
-                current.scrollTop + current.clientHeight >=
-                    current.scrollHeight - 50
+                scrollTop < 50 ||
+                scrollTop + clientHeight > scrollHeight - 50
             ) {
                 setShowScroller(false);
             }
 
             setScrollerState({
                 direction:
-                    current.scrollTop < scrollerState.lastPosition
+                    scrollTop < lastPosition
                         ? ScrollerDirection.UP
                         : ScrollerDirection.DOWN,
-                lastPosition: current.scrollTop,
+                lastPosition: scrollTop,
             });
         }
     }, [monitorRef, scrollerState]);
