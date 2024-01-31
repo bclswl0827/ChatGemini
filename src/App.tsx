@@ -67,14 +67,14 @@ const App = () => {
         const _sessions = { ...sessions };
         delete _sessions[id];
         dispatch(updateSessions(_sessions));
-        toast.success("成功删除这条对话记录", { duration: 1000 });
+        toast.success("成功删除这条对话记录");
     };
 
     const handlePurgeSessions = () => {
         navigate(routes.index.prefix);
         dispatch(updateSessions(initialSessions));
         dispatch(updateAI({ ...ai, busy: false }));
-        toast.success("成功清理全部对话记录", { duration: 1000 });
+        toast.success("对话记录已清空");
     };
 
     const handleUpload = async (file: File | null) => {

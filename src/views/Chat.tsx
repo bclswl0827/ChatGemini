@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { Markdown } from "../components/Markdown";
-import { Session, SessionRole } from "../components/Session";
+import { Session, SessionEditState, SessionRole } from "../components/Session";
 import { useEffect, useRef, useState } from "react";
-import { SessionHistory } from "../store/sessions";
+import { SessionHistory, Sessions } from "../store/sessions";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStoreProps } from "../config/store";
 import { onUpdate as updateAI } from "../store/ai";
@@ -29,14 +29,19 @@ const Chat = () => {
     const ai = useSelector((state: ReduxStoreProps) => state.ai.ai);
     const { id } = useParams<{ id: keyof typeof sessions }>();
     const [chat, setChat] = useState<SessionHistory[]>([]);
+    const [editState, setEditState] = useState<{
+        index: number;
+        state: SessionEditState;
+    }>({ index: 0, state: SessionEditState.Cancel });
     const sessionRef = useRef<HTMLDivElement>(null);
 
-    const handleRefresh = async (index: number) => {
-        if (!ai.busy && id && id in sessions) {
+    const handleRefresh = async (index: number, customSessions?: Sessions) => {
+        const finalSessions = customSessions ?? sessions;
+        if (!ai.busy && id && id in finalSessions) {
             let _sessions = {
-                ...sessions,
+                ...finalSessions,
                 [id]: [
-                    ...sessions[id].slice(0, index),
+                    ...finalSessions[id].slice(0, index),
                     {
                         role: "model",
                         parts: RefreshPlaceholder,
@@ -70,11 +75,11 @@ const Chat = () => {
                 setChat(_sessions[id]);
                 dispatch(updateSessions(_sessions));
             };
-            if (!chat[index - 1].attachment?.data.length) {
+            if (!_sessions[id][index - 1].attachment?.data.length) {
                 await getAiChats(
                     ai.model.pro,
-                    chat.slice(0, index - 1),
-                    chat[index - 1].parts,
+                    _sessions[id].slice(0, index - 1),
+                    _sessions[id][index - 1].parts,
                     globalConfig.sse,
                     modelConfig,
                     handler
@@ -82,12 +87,65 @@ const Chat = () => {
             } else {
                 await getAiContent(
                     ai.model.vision,
-                    chat[index - 1].parts,
-                    chat[index - 1].attachment as GenerativeContentBlob,
+                    _sessions[id][index - 1].parts,
+                    _sessions[id][index - 1]
+                        .attachment as GenerativeContentBlob,
                     globalConfig.sse,
                     handler
                 );
             }
+        }
+    };
+
+    const handleEdit = (
+        index: number,
+        state: SessionEditState,
+        prompt: string
+    ) => {
+        if (!ai.busy) {
+            setEditState({
+                index,
+                state,
+            });
+        }
+        if (
+            !ai.busy &&
+            id &&
+            id in sessions &&
+            prompt.length > 0 &&
+            state === SessionEditState.Done
+        ) {
+            const _sessions = {
+                ...sessions,
+                [id]: [
+                    ...sessions[id].slice(0, index),
+                    {
+                        ...sessions[id][index],
+                        parts: prompt,
+                    },
+                    {
+                        role: "model",
+                        parts: RefreshPlaceholder,
+                        timestamp: Date.now(),
+                    },
+                ],
+            };
+            setChat(_sessions[id]);
+            handleRefresh(index + 1, _sessions);
+        }
+    };
+
+    const handleDelete = (index: number) => {
+        if (id && id in sessions) {
+            const _sessions = {
+                ...sessions,
+                [id]: [
+                    ...sessions[id].slice(0, index - 1),
+                    ...sessions[id].slice(index + 1),
+                ],
+            };
+            dispatch(updateSessions(_sessions));
+            setChat(_sessions[id]);
         }
     };
 
@@ -145,8 +203,12 @@ const Chat = () => {
                         <Session
                             key={index}
                             index={index}
+                            prompt={parts}
+                            editState={editState}
                             role={role as SessionRole}
                             onRefresh={handleRefresh}
+                            onDelete={handleDelete}
+                            onEdit={handleEdit}
                         >
                             <Markdown>{`${parts}${
                                 data.length

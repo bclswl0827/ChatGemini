@@ -5,6 +5,7 @@ import attachmentIcon from "../assets/icons/paperclip-solid.svg";
 import disabledIcon from "../assets/icons/comment-dots-regular.svg";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { setTextAreaHeight } from "../helpers/setTextAreaHeight";
 
 interface InputAreaProps {
     readonly disabled: boolean;
@@ -23,24 +24,12 @@ export const InputArea = (props: InputAreaProps) => {
         useState("Ctrl + Enter 快捷发送");
     const [attachmentName, setAttachmentName] = useState("");
 
-    const setTextAreaHeight = (current: HTMLTextAreaElement | null) => {
-        current!.style.height = "0px";
-        current!.style.height =
-            current!.scrollHeight < maxHeight
-                ? `${
-                      current!.scrollHeight > minHeight
-                          ? current!.scrollHeight
-                          : minHeight
-                  }px`
-                : `${maxHeight}px`;
-    };
-
     const handleSubmit = () => {
         if (onSubmit) {
             const { current } = textAreaRef;
             onSubmit(current!.value);
             current!.value = "";
-            setTextAreaHeight(current);
+            setTextAreaHeight(current, maxHeight, minHeight);
         }
     };
 
@@ -129,7 +118,11 @@ export const InputArea = (props: InputAreaProps) => {
                             onClick={() => {
                                 const { current } = textAreaRef;
                                 current!.value = "";
-                                setTextAreaHeight(current);
+                                setTextAreaHeight(
+                                    current,
+                                    maxHeight,
+                                    minHeight
+                                );
                             }}
                         >
                             <img
@@ -145,9 +138,13 @@ export const InputArea = (props: InputAreaProps) => {
                         placeholder={
                             disabled ? "等待回应..." : inputPlaceholder
                         }
-                        className={`pl-10 p-2.5 border-2 border-gray-300 rounded-lg overflow-y-scroll scrollbar-hide resize-none h-[${minHeight}px] w-[calc(100%)] text-sm lg:text-base`}
+                        className={`pl-10 p-2.5 border-2 border-gray-300 rounded-lg overflow-y-scroll resize-none h-[${minHeight}px] w-[calc(100%)] text-sm lg:text-base`}
                         onInput={({ currentTarget }) =>
-                            setTextAreaHeight(currentTarget)
+                            setTextAreaHeight(
+                                currentTarget,
+                                maxHeight,
+                                minHeight
+                            )
                         }
                         onKeyDown={({ ctrlKey, key }) => {
                             if (ctrlKey && key === "Enter" && !disabled) {
@@ -184,7 +181,9 @@ export const InputArea = (props: InputAreaProps) => {
                 </button>
             </div>
             {attachmentName.length > 0 && (
-                <span className="text-center text-gray-400 text-xs truncate">{attachmentName}</span>
+                <span className="text-center text-gray-400 text-xs truncate">
+                    {attachmentName}
+                </span>
             )}
         </div>
     );
