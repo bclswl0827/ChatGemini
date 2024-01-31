@@ -1,28 +1,28 @@
 name: Deploy Web App
 
 on:
-  push:
-    branches:
-      - master
+    push:
+        branches:
+            - master
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
 
-      - name: Install and Build
-        run: |
-          echo "$REACT_APP_GEMINI_API_KEY" > .env
-          npm install
-          npm run build
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@3.7.1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: build
-          CLEAN: true
+            - name: Install and Build
+              run: |
+                  echo "${{ vars.REACT_APP_GEMINI_API_KEY }}" > .env
+                  npm install
+                  npm run build
+            - name: Deploy
+              uses: JamesIves/github-pages-deploy-action@3.7.1
+              with:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  BRANCH: gh-pages
+                  FOLDER: build
+                  CLEAN: true
