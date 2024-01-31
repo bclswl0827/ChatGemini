@@ -71,7 +71,7 @@ export const PageScroller = (props: PageScrollerProps) => {
 
     return (
         <button
-            className={`bg-sky-400 hover:bg-sky-600 duration-300 size-8 rounded-full bottom-28 right-5 flex justify-center shadow-lg items-center ${
+            className={`bg-sky-600 hover:bg-sky-800 duration-300 size-8 rounded-full bottom-28 right-5 flex justify-center shadow-lg items-center ${
                 showScroller ? "fixed" : "hidden"
             }`}
             onClick={scrollToDirection}
@@ -79,7 +79,7 @@ export const PageScroller = (props: PageScrollerProps) => {
             <img
                 className={
                     scrollerState.direction === ScrollerDirection.UP
-                        ? "animate-fade-up size-4"
+                        ? "animate-duration-150 animate-fade-up size-4"
                         : "hidden"
                 }
                 src={scrollUpIcon}
@@ -88,7 +88,7 @@ export const PageScroller = (props: PageScrollerProps) => {
             <img
                 className={
                     scrollerState.direction === ScrollerDirection.DOWN
-                        ? "animate-fade-down size-4"
+                        ? "animate-duration-150 animate-fade-down size-4"
                         : "hidden"
                 }
                 src={scrollDownIcon}
