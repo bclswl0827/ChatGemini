@@ -21,7 +21,7 @@ export const InputArea = (props: InputAreaProps) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [inputPlaceholder, setInputPlaceholder] =
         useState("Ctrl + Enter 快捷发送");
-    const [hasAttachment, setHasAttachment] = useState(false);
+    const [attachmentName, setAttachmentName] = useState("");
 
     const setTextAreaHeight = (current: HTMLTextAreaElement | null) => {
         current!.style.height = "0px";
@@ -88,7 +88,7 @@ export const InputArea = (props: InputAreaProps) => {
                         const { files } = currentTarget;
                         if (files) {
                             if (checkAttachment(files[0])) {
-                                setHasAttachment(true);
+                                setAttachmentName(files[0].name);
                                 onUpload && onUpload(files[0]);
                             }
                         }
@@ -97,8 +97,8 @@ export const InputArea = (props: InputAreaProps) => {
                 <button
                     className="bg-gray-100 hover:bg-gray-200 rounded-lg p-3"
                     onClick={({ currentTarget }) => {
-                        if (hasAttachment) {
-                            setHasAttachment(false);
+                        if (attachmentName.length > 0) {
+                            setAttachmentName("");
                             onUpload && onUpload(null);
                             toast.success("已取消上传文件");
                         } else {
@@ -108,12 +108,16 @@ export const InputArea = (props: InputAreaProps) => {
                     }}
                 >
                     <img
-                        className={hasAttachment ? "size-5" : "hidden"}
+                        className={
+                            attachmentName.length > 0 ? "size-5" : "hidden"
+                        }
                         src={ejectionIcon}
                         alt=""
                     />
                     <img
-                        className={hasAttachment ? "hidden" : "size-5"}
+                        className={
+                            attachmentName.length > 0 ? "hidden" : "size-5"
+                        }
                         src={attachmentIcon}
                         alt=""
                     />
@@ -148,7 +152,7 @@ export const InputArea = (props: InputAreaProps) => {
                         onKeyDown={({ ctrlKey, key }) => {
                             if (ctrlKey && key === "Enter" && !disabled) {
                                 handleSubmit();
-                                setHasAttachment(false);
+                                setAttachmentName("");
                             } else if (ctrlKey && key === "Enter" && disabled) {
                                 toast.error("请等待回应完成");
                             }
@@ -159,7 +163,7 @@ export const InputArea = (props: InputAreaProps) => {
                     className="bg-sky-100 hover:bg-sky-200 rounded-lg p-3 disabled:cursor-not-allowed"
                     onClick={() => {
                         !disabled && handleSubmit();
-                        setHasAttachment(false);
+                        setAttachmentName("");
                     }}
                     disabled={disabled}
                 >
@@ -179,6 +183,9 @@ export const InputArea = (props: InputAreaProps) => {
                     />
                 </button>
             </div>
+            {attachmentName.length > 0 && (
+                <span className="text-center text-gray-400 text-xs truncate">{attachmentName}</span>
+            )}
         </div>
     );
 };

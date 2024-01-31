@@ -127,12 +127,19 @@ const Chat = () => {
                     const base64BlobURL = data.length
                         ? getBase64BlobUrl(`data:${mimeType};base64,${data}`)
                         : "";
-                    const attachmentHtml = `<div>
-                    <span>点击图片看大图</span>
-                    <a data-image-view="gallery" href="${base64BlobURL}">
-                        <img alt="图片附件" src="${base64BlobURL}" style="max-width: 7rem;" />
-                    </a>
-                </div>`;
+                    const attachmentHtml = `<div class="inline-block text-center overflow-hidden">
+                        <a data-image-view="gallery" href="${base64BlobURL}">
+                            <img src="${base64BlobURL}" style="
+                                max-width: 10rem;
+                                margin-top: 0;
+                                margin-bottom: 0.2rem;
+                                border-radius: 0.25rem;
+                            " alt="图片附件" />
+                        </a>
+                        <span class="text-xs text-gray-400">
+                            点击查看大图
+                        </span>
+                    </div>`;
 
                     return (
                         <Session

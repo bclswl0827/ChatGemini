@@ -123,6 +123,10 @@ export const saveMdToHtml = (data: string, name: string) => {
                 padding: 0px 10px 0px 10px;
             }
 
+            .app main img {
+                max-width: 80%;
+            }
+
             .app main a {
                 color: #3b82f6;
                 text-decoration: none;

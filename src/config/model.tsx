@@ -9,7 +9,7 @@ const stopSequences = superb.random().split(" ");
 export const modelConfig = {
     generationConfig: {
         stopSequences,
-        maxOutputTokens: 1000,
+        maxOutputTokens: 5000,
     },
     safetySettings: [
         {

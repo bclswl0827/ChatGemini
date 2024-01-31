@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAiObj } from "../helpers/createAiObj";
 import { globalConfig } from "../config/global";
 import { AiType, getAiModel } from "../helpers/getAiModel";
+import { modelConfig } from "../config/model";
 
 export interface AI {
     readonly busy: boolean;
@@ -13,8 +14,8 @@ export interface AI {
 const { key, api } = globalConfig;
 const obj = createAiObj(key ?? "", api);
 const model = {
-    pro: getAiModel(obj, "pro"),
-    vision: getAiModel(obj, "vision"),
+    pro: getAiModel(obj, "pro", modelConfig),
+    vision: getAiModel(obj, "vision", modelConfig),
 };
 
 export const initialAI: AI = { busy: false, obj, model };
