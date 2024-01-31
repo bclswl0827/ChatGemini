@@ -6,24 +6,26 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 
 如果你对本项目感兴趣，欢迎 Star 和 Fork。
 
-## 功能
+## 功能特性
 
- - [x] 仿 ChatGPT 3.5 界面
- - [x] 支持多轮聊天对话
- - [x] 支持上传图片进行识别
- - [x] 逐字输出（SSE）回应
- - [x] 集成 PHP 版反向代理
- - [x] 自定义 Gemini API 地址
- - [x] 对话内容保存至本地
- - [x] 聊天内容导出（HTML 和 PDF）
+ - 适配移动端
+ - 操作逻辑同 ChatGPT
+ - 仿 ChatGPT 3.5 界面
+ - 支持多轮聊天对话
+ - 支持上传图片进行识别
+ - 逐字输出（SSE）回应
+ - 集成 PHP 版反向代理
+ - 自定义 Gemini API 地址
+ - 对话内容保存至本地
+ - 聊天内容导出（HTML 和 PDF）
 
-## 演示
+## 演示站点
 
 体验该站点需要翻墙。
 
 [ChatGemini](https://ibcl.us/ChatGemini)
 
-## 预览
+## 界面预览
 
 移动端点击图片可查看大图。
 
@@ -36,7 +38,7 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 | 聊天导出 HTML | ![聊天导出 HTML](https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_html.png) |
 | 聊天导出 PDF  |  ![聊天导出 PDF](https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_pdf.png)  |
 
-## 部署
+## 应用部署
 
 确保已安装 [Node.js](https://nodejs.org/zh-cn/) 和 [Git](https://git-scm.com/)，且已经得到 Gemini API 密钥。
 
@@ -48,25 +50,24 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 ```bash
 $ git clone https://github.com/bclswl0827/ChatGemini
 ```
- 1. 进入项目目录
+ 2. 进入项目目录
 ```bash
 $ cd ChatGemini
 ```
- 1. 安装依赖
+ 3. 安装依赖
 ```bash
 $ npm install
 ```
- 1. 修改配置
+ 4. 修改配置
 > 参考下方的 [配置](#配置) 章节
- 1. 构建项目
+ 5. 构建项目
 ```bash
 $ npm run build
 ```
- 1. 部署项目
+ 6. 部署项目
 > 将 `build` 目录下的文件部署至服务器或虚拟主机上
- 1. 部署成功
 
-## 配置
+## 应用配置
 
 项目基础配置位于根目录下的 `.env` 文件中，请创建该文件并根据实际情况进行配置，格式如下：
 
