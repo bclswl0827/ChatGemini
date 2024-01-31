@@ -13,5 +13,5 @@ export const globalConfig = {
     },
     key: REACT_APP_GEMINI_API_KEY,
     api: REACT_APP_GEMINI_API_URL,
-    sse: REACT_APP_GEMINI_API_SSE === "true" ? true : false,
+    sse: REACT_APP_GEMINI_API_SSE === "false" ? false : true,
 };

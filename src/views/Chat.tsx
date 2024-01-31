@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { Markdown } from "../components/Markdown";
 import { Session, SessionEditState, SessionRole } from "../components/Session";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SessionHistory, Sessions } from "../store/sessions";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStoreProps } from "../config/store";
@@ -36,6 +36,23 @@ const Chat = () => {
         state: SessionEditState;
     }>({ index: 0, state: SessionEditState.Cancel });
     const sessionRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = useCallback(
+        (force: boolean = false) => {
+            (ai.busy || force) &&
+                sessionRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "end",
+                    inline: "end",
+                });
+        },
+        [ai]
+    );
+
+    const handleDOMNodeInserted = useCallback(
+        () => scrollToBottom(),
+        [scrollToBottom]
+    );
 
     const handleRefresh = async (index: number, customSessions?: Sessions) => {
         const finalSessions = customSessions ?? sessions;
@@ -151,13 +168,6 @@ const Chat = () => {
         }
     };
 
-    const scrollToBottom = () =>
-        sessionRef.current?.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-            inline: "end",
-        });
-
     useEffect(() => {
         if (id && id in sessions) {
             setChat(sessions[id]);
@@ -166,7 +176,7 @@ const Chat = () => {
                 sessionTitle = `${sessionTitle.substring(0, 25)} ...`;
             }
             document.title = `${sessionTitle} | ${siteTitle}`;
-            scrollToBottom();
+            scrollToBottom(true);
         } else {
             document.title = `会话无效 | ${siteTitle}`;
             setChat([
@@ -174,10 +184,20 @@ const Chat = () => {
             ]);
         }
         const { current } = sessionRef;
-        current?.addEventListener("DOMNodeInserted", scrollToBottom);
+        current?.addEventListener("DOMNodeInserted", handleDOMNodeInserted);
         return () =>
-            current?.removeEventListener("DOMNodeInserted", scrollToBottom);
-    }, [siteTitle, id, sessions, sessionRef]);
+            current?.removeEventListener(
+                "DOMNodeInserted",
+                handleDOMNodeInserted
+            );
+    }, [
+        siteTitle,
+        id,
+        sessions,
+        sessionRef,
+        scrollToBottom,
+        handleDOMNodeInserted,
+    ]);
 
     return (
         <Container
