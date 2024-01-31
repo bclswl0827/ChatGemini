@@ -16,9 +16,10 @@ jobs:
 
             - name: Install and Build
               run: |
-                  echo "${{ vars.REACT_APP_GEMINI_API_KEY }}" > .env
+                  echo "REACT_APP_GEMINI_API_KEY=${{ vars.REACT_APP_GEMINI_API_KEY }}" > .env
                   npm install
                   npm run build
+
             - name: Deploy
               uses: JamesIves/github-pages-deploy-action@3.7.1
               with:
