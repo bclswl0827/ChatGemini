@@ -138,7 +138,7 @@ export const InputArea = (props: InputAreaProps) => {
                         placeholder={
                             disabled ? "等待回应..." : inputPlaceholder
                         }
-                        className={`pl-10 p-2.5 border-2 border-gray-300 rounded-lg overflow-y-scroll resize-none h-[${minHeight}px] w-[calc(100%)] text-sm lg:text-base`}
+                        className={`pl-10 p-2.5 border-2 border-gray-300 rounded-lg overflow-y-scroll scrollbar-hide resize-none h-[${minHeight}px] w-[calc(100%)] text-sm lg:text-base`}
                         onInput={({ currentTarget }) =>
                             setTextAreaHeight(
                                 currentTarget,
