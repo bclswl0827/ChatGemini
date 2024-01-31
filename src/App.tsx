@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { globalConfig } from "./config/global";
 import { Sidebar } from "./components/Sidebar";
 import { Container } from "./components/Container";
@@ -10,7 +10,6 @@ import { Skeleton } from "./components/Skeleton";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStoreProps } from "./config/store";
 import { onUpdate as updateAI } from "./store/ai";
-import toast from "react-hot-toast";
 import { matchPath, useNavigate } from "react-router-dom";
 import { saveMdToHtml } from "./helpers/saveMdToHtml";
 import { getAiChats } from "./helpers/getAiChats";
@@ -19,6 +18,9 @@ import { initialSessions, onUpdate as updateSessions } from "./store/sessions";
 import { getAiContent } from "./helpers/getAiContent";
 import { GenerativeContentBlob } from "@google/generative-ai";
 import { getBase64Img } from "./helpers/getBase64Img";
+import { sendUserAlert } from "./helpers/sendUserAlert";
+import { sendUserConfirm } from "./helpers/sendUserConfirm";
+import { PageScroller } from "./components/PageScroller";
 
 const ModelPlaceholder = "正在思考中...";
 
@@ -33,6 +35,7 @@ const App = () => {
         (state: ReduxStoreProps) => state.sessions.sessions
     );
     const ai = useSelector((state: ReduxStoreProps) => state.ai.ai);
+    const mainSectionRef = useRef<HTMLDivElement>(null);
 
     const [uploadInlineData, setUploadInlineData] =
         useState<GenerativeContentBlob>({ data: "", mimeType: "" });
@@ -58,23 +61,35 @@ const App = () => {
             });
             saveMdToHtml(exportData, `会话导出_${site}_${id}`);
         } else {
-            toast.error("无法导出对话记录");
+            sendUserAlert("无法导出对话记录", true);
         }
     };
 
     const handleDeleteSession = (id: string) => {
-        navigate(routes.index.prefix);
-        const _sessions = { ...sessions };
-        delete _sessions[id];
-        dispatch(updateSessions(_sessions));
-        toast.success("成功删除这条对话记录");
+        sendUserConfirm(
+            "确定要删除这条对话记录吗？",
+            () => {
+                navigate(routes.index.prefix);
+                const _sessions = { ...sessions };
+                delete _sessions[id];
+                dispatch(updateSessions(_sessions));
+                sendUserAlert("对话记录已删除");
+            },
+            () => sendUserAlert("操作已取消")
+        );
     };
 
     const handlePurgeSessions = () => {
-        navigate(routes.index.prefix);
-        dispatch(updateSessions(initialSessions));
-        dispatch(updateAI({ ...ai, busy: false }));
-        toast.success("对话记录已清空");
+        sendUserConfirm(
+            "确定要清空所有对话记录吗？",
+            () => {
+                navigate(routes.index.prefix);
+                dispatch(updateSessions(initialSessions));
+                dispatch(updateAI({ ...ai, busy: false }));
+                sendUserAlert("对话记录已清空");
+            },
+            () => sendUserAlert("操作已取消")
+        );
     };
 
     const handleUpload = async (file: File | null) => {
@@ -92,7 +107,7 @@ const App = () => {
 
     const handleSubmit = async (prompt: string) => {
         if (!prompt.trim().length) {
-            toast.error("请输入对话内容");
+            sendUserAlert("请输入对话内容", true);
             return;
         }
 
@@ -104,7 +119,7 @@ const App = () => {
         )?.params as { id: string }) ?? { id: Date.now().toString() };
 
         if (isNaN(new Date(parseInt(id)).getTime())) {
-            toast.error("无法识别的对话 ID");
+            sendUserAlert("无法识别的对话 ID", true);
             return;
         }
 
@@ -175,10 +190,6 @@ const App = () => {
         setUploadInlineData({ data: "", mimeType: "" });
     };
 
-    useEffect(() => {
-        document.title = site;
-    }, [site]);
-
     return (
         <Container toaster={true}>
             <Sidebar
@@ -190,6 +201,7 @@ const App = () => {
                 onDeleteSession={handleDeleteSession}
             />
             <Container
+                ref={mainSectionRef}
                 className={`min-w-full overflow-y-auto overflow-x-hidden flex flex-col h-screen justify-between ${
                     !sidebarExpand ? "col-span-2" : ""
                 }`}
@@ -208,6 +220,7 @@ const App = () => {
                     onSubmit={handleSubmit}
                     onUpload={handleUpload}
                 />
+                <PageScroller monitorRef={mainSectionRef} />
             </Container>
         </Container>
     );

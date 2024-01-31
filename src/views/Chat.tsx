@@ -21,6 +21,8 @@ const FallbackIfIdInvalid =
     "您当前的会话 ID 似乎无效，请检查您的网址，您也可以新建一个会话。";
 
 const Chat = () => {
+    const { site: siteTitle } = globalConfig.title;
+
     const dispatch = useDispatch();
     const sessions = useSelector(
         (state: ReduxStoreProps) => state.sessions.sessions
@@ -149,27 +151,33 @@ const Chat = () => {
         }
     };
 
-    const scrollToBottom = ({ animationName }: AnimationEvent) =>
-        animationName === "nodeInserted" &&
+    const scrollToBottom = () =>
         sessionRef.current?.scrollIntoView({
             behavior: "smooth",
             block: "end",
+            inline: "end",
         });
 
     useEffect(() => {
         if (id && id in sessions) {
             setChat(sessions[id]);
-            scrollToBottom({ animationName: "nodeInserted" } as AnimationEvent);
+            let sessionTitle = sessions[id][0].parts;
+            if (sessionTitle.length > 25) {
+                sessionTitle = `${sessionTitle.substring(0, 25)} ...`;
+            }
+            document.title = `${sessionTitle} | ${siteTitle}`;
+            scrollToBottom();
         } else {
+            document.title = `会话无效 | ${siteTitle}`;
             setChat([
                 { role: "model", parts: FallbackIfIdInvalid, timestamp: 0 },
             ]);
         }
         const { current } = sessionRef;
-        current?.addEventListener("animationstart", scrollToBottom);
+        current?.addEventListener("DOMNodeInserted", scrollToBottom);
         return () =>
-            current?.removeEventListener("animationstart", scrollToBottom);
-    }, [id, sessions, sessionRef]);
+            current?.removeEventListener("DOMNodeInserted", scrollToBottom);
+    }, [siteTitle, id, sessions, sessionRef]);
 
     return (
         <Container

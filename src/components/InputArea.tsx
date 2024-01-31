@@ -4,8 +4,8 @@ import ejectionIcon from "../assets/icons/eject-solid.svg";
 import attachmentIcon from "../assets/icons/paperclip-solid.svg";
 import disabledIcon from "../assets/icons/comment-dots-regular.svg";
 import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
 import { setTextAreaHeight } from "../helpers/setTextAreaHeight";
+import { sendUserAlert } from "../helpers/sendUserAlert";
 
 interface InputAreaProps {
     readonly disabled: boolean;
@@ -43,13 +43,13 @@ export const InputArea = (props: InputAreaProps) => {
             "image/heif",
         ];
         if (file.size > sizeLimit * 1024 * 1024 - 100) {
-            toast.error(`文件大小超过 ${sizeLimit}MB 限制`);
+            sendUserAlert(`文件大小超过 ${sizeLimit}MB 限制`, true);
             return false;
         } else if (!allowedTypes.includes(file.type)) {
-            toast.error("文件类型仅限常见图片格式");
+            sendUserAlert("文件类型仅限常见图片格式", true);
             return false;
         } else {
-            toast.success("再次点击图标即可取消上传");
+            sendUserAlert("再次点击图标即可取消上传");
             return true;
         }
     };
@@ -89,7 +89,7 @@ export const InputArea = (props: InputAreaProps) => {
                         if (attachmentName.length > 0) {
                             setAttachmentName("");
                             onUpload && onUpload(null);
-                            toast.success("已取消上传文件");
+                            sendUserAlert("已取消上传文件");
                         } else {
                             currentTarget.blur();
                             fileInputRef.current!.click();
@@ -151,7 +151,7 @@ export const InputArea = (props: InputAreaProps) => {
                                 handleSubmit();
                                 setAttachmentName("");
                             } else if (ctrlKey && key === "Enter" && disabled) {
-                                toast.error("请等待回应完成");
+                                sendUserAlert("请等待回应完成", true);
                             }
                         }}
                     />

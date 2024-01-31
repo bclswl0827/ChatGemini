@@ -93,7 +93,7 @@ export const Sidebar = (props: SidebarProps) => {
             </div>
             <div className="py-2 mt-4 text-center">
                 <Link
-                    className="border text-gray-200 text-center text-sm hover:bg-slate-600 transition-all rounded-sm px-5 py-1"
+                    className="border border-dashed text-gray-200 text-center text-sm hover:bg-slate-600 transition-all rounded-sm px-6 py-1"
                     to={newChatUrl}
                 >
                     + 新聊天

@@ -4,10 +4,10 @@ import editIcon from "../assets/icons/pen-to-square-solid.svg";
 import deleteIcon from "../assets/icons/trash-solid.svg";
 import refreshIcon from "../assets/icons/arrows-rotate-solid.svg";
 import clipboardIcon from "../assets/icons/clipboard-regular.svg";
-import toast from "react-hot-toast";
 import { ReactElement, ReactNode, useRef } from "react";
 import { setClipboard } from "../helpers/setClipboard";
 import { setTextAreaHeight } from "../helpers/setTextAreaHeight";
+import { sendUserAlert } from "../helpers/sendUserAlert";
 
 export enum SessionRole {
     Model = "model",
@@ -53,9 +53,9 @@ export const Session = (props: SessionProps) => {
         const text = (children as ReactElement).props.children;
         const success = await setClipboard(text as string);
         if (success) {
-            toast.success("内容已复制到剪贴板");
+            sendUserAlert("内容已复制到剪贴板");
         } else {
-            toast.error("内容复制失败");
+            sendUserAlert("内容复制失败", true);
         }
     };
 
@@ -103,7 +103,7 @@ export const Session = (props: SessionProps) => {
                         />
                         <div className="flex gap-2 justify-center">
                             <button
-                                className="px-3 py-2 border-2 font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700"
+                                className="px-3 py-2 border font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700"
                                 onClick={() => {
                                     const { current } = textAreaRef;
                                     const { value } = current!;
@@ -117,7 +117,7 @@ export const Session = (props: SessionProps) => {
                                 储存并提交
                             </button>
                             <button
-                                className="px-3 py-2 border-2 font-medium rounded-lg hover:bg-gray-300"
+                                className="px-3 py-2 border font-medium rounded-lg hover:bg-gray-300"
                                 onClick={() =>
                                     onEdit(index, SessionEditState.Cancel, "")
                                 }
