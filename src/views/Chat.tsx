@@ -238,7 +238,7 @@ const Chat = () => {
                     </div>`;
 
                     if (
-                        !ai.busy &&
+                        ai.busy &&
                         role === SessionRole.Model &&
                         index === chat.length - 1
                     ) {
