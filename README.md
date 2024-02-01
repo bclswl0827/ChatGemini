@@ -13,13 +13,13 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
  - 操作逻辑同 ChatGPT
  - 仿 ChatGPT 3.5 界面
  - 支持多轮聊天对话
- - 对话内容保存在本地
  - 支持上传图片进行识别
  - 逐字输出（SSE）回应
  - 集成 PHP 版反向代理
  - 自定义 Gemini API 地址
  - 可启用站点通行码防止滥用
  - 聊天内容导出（HTML 和 PDF）
+ - 对话内容保存在 IndexedDB 中
 
 ## 演示站点（需翻墙）
 
