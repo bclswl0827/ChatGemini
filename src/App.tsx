@@ -228,6 +228,7 @@ const App = () => {
                         }`}
                     >
                         <Header
+                            logoutIcon={!!passcodes.length}
                             newChatUrl={routes.index.prefix}
                             title={!sidebarExpand ? header : ""}
                             onPurgeSessions={handlePurgeSessions}
