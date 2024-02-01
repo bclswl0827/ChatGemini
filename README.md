@@ -25,14 +25,14 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 
 ## 界面预览
 
-|     功能      |                                                                        预览                                                                        |
-| :-----------: | :------------------------------------------------------------------------------------------------------------------------------------------------: |
-|    主界面     |        <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/home.png" alt="主界面" style="max-width: 300px;" />        |
-|   多轮聊天    |       <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/chat.png" alt="多轮聊天" style="max-width: 300px;" />       |
-|   附件识图    |    <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/attachment.png" alt="附件识图" style="max-width: 300px;" />    |
-| 逐字输出回应  |     <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/sse.png" alt="逐字输出回应" style="max-width: 300px;" />      |
-| 聊天导出 HTML | <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_html.png" alt="聊天导出 HTML" style="max-width: 300px;" /> |
-| 聊天导出 PDF  |  <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_pdf.png" alt="聊天导出 PDF" style="max-width: 300px;" />  |
+|     功能      |                                                           预览                                                           |
+| :-----------: | :----------------------------------------------------------------------------------------------------------------------: |
+|    主界面     |        <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/home.png" alt="主界面" />        |
+|   多轮聊天    |       <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/chat.png" alt="多轮聊天" />       |
+|   附件识图    |    <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/attachment.png" alt="附件识图" />    |
+| 逐字输出回应  |     <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/sse.png" alt="逐字输出回应" />      |
+| 聊天导出 HTML | <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_html.png" alt="聊天导出 HTML" /> |
+| 聊天导出 PDF  |  <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_pdf.png" alt="聊天导出 PDF" />  |
 
 ## 应用部署
 
