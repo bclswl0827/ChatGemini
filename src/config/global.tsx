@@ -8,8 +8,14 @@ const {
 
 export const globalConfig = {
     title: {
-        site: REACT_APP_TITLE_SITE ?? "ChatGemini",
-        header: REACT_APP_TITLE_HEADER ?? "Gemini Pro",
+        site:
+            REACT_APP_TITLE_SITE && REACT_APP_TITLE_SITE.length > 0
+                ? REACT_APP_TITLE_SITE!
+                : "ChatGemini",
+        header:
+            REACT_APP_TITLE_HEADER && REACT_APP_TITLE_HEADER.length > 0
+                ? REACT_APP_TITLE_HEADER!
+                : "Gemini Pro",
     },
     key: REACT_APP_GEMINI_API_KEY,
     api: REACT_APP_GEMINI_API_URL,

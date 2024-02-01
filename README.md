@@ -4,7 +4,7 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 
 本项目还可自定义 Gemini API 服务器地址，用户可将本项目部署至支持 PHP 的服务器或虚拟主机上，或是自行配置 Nginx 反向代理，透过修改 Gemini API 路径，从而在中国大陆无障碍使用。
 
-如果你对本项目感兴趣，欢迎 Star 和 Fork。
+如果您对本项目感兴趣，欢迎 Star 和 Fork。
 
 ## 功能特性
 
@@ -19,9 +19,7 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
  - 对话内容保存至本地
  - 聊天内容导出（HTML 和 PDF）
 
-## 演示站点
-
-体验该站点需要翻墙。
+## 演示站点（需翻墙）
 
 [ChatGemini](https://ibcl.us/ChatGemini)
 
@@ -40,9 +38,11 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 
 ## 应用部署
 
-确保已安装 [Node.js](https://nodejs.org/zh-cn/) 和 [Git](https://git-scm.com/)，且已经得到 Gemini API 密钥。
+请确保您已经得到 Gemini API 密钥，有关 Gemini API 的申请，请前往 [Google AI Studio](https://makersuite.google.com/app/apikey)。
 
-有关 Gemini API 的申请，请前往 [Google AI Studio](https://makersuite.google.com/app/apikey)。
+### 手动部署
+
+确保已安装 [Node.js](https://nodejs.org/zh-cn/) 和 [Git](https://git-scm.com/)。
 
 准备工作完成后，执行以下步骤：
 
@@ -67,12 +67,34 @@ $ npm run build
  6. 部署项目
 > 将 `build` 目录下的文件部署至服务器或虚拟主机上
 
+### Docker 部署
+
+确保服务器上已安装 [Docker](https://www.docker.com/)，然后执行以下步骤：
+
+ 1. 拉取镜像
+```bash
+$ docker pull ghcr.io/bclswl0827/chatgemini
+```
+ 2. 运行容器
+```bash
+$ docker run -d \
+    --name chatgemini \
+    --restart always \
+    --publish 8080:8080 \
+    --env REACT_APP_GEMINI_API_KEY="您的密钥" \
+    ghcr.io/bclswl0827/chatgemini
+```
+ 3. 访问应用
+> 访问 `http://<IP>:8080` 即可
+
 ## 应用配置
 
-项目基础配置位于根目录下的 `.env` 文件中，请创建该文件并根据实际情况进行配置，格式如下：
+项目基础配置位于根目录下的 `.env` 文件中，请创建该文件并根据实际情况进行配置，若使用 Docker 方式部署，可在创建容器时传入 `--env` 参数进行配置。
+
+配置格式均为 `KEY="VALUE"`，建议使用双引号包裹值，例如：
 
 ```bash
-REACT_APP_GEMINI_API_KEY="你的密钥"
+REACT_APP_GEMINI_API_KEY="您的密钥"
 ```
 
 各配置项说明如下：
@@ -85,11 +107,23 @@ REACT_APP_GEMINI_API_KEY="你的密钥"
 |   REACT_APP_TITLE_SITE   | 否   | `string`        | `ChatGemini` | 站点标题，将显示在浏览器标签页上         |
 |  REACT_APP_TITLE_HEADER  | 否   | `string`        | `Gemini Pro` | 应用名称，显示在应用菜单栏和头部         |
 
- - 若要直连 Gemini API，请将 `.env` 中的 `REACT_APP_GEMINI_API_URL` 字段留空。
- - 若要使用 Nginx 反向代理，请将 `.env` 中的 `REACT_APP_GEMINI_API_URL` 修改为反向代理后的地址，例如 `https://example.org/api`。
- - 若要使用集成的 PHP 反向代理，请将 `.env` 中的 `REACT_APP_GEMINI_API_URL` 字段修改为 `/gemini.php?token=<访问密码>&path=`，其中 `<访问密码>` 不同于 Gemini API 密钥，需自行于 `public/gemini.php` 中修改。
+### 直连 Gemini API
 
-若要使用 Nginx 反向代理，路径以 `/api` 为例，示例如下：
+若要直连 Gemini API，请将 `.env` 中的 `REACT_APP_GEMINI_API_URL` 字段留空，即：
+
+```bash
+REACT_APP_GEMINI_API_URL=""
+```
+
+### Nginx 反向代理 Gemini API
+
+若要使用 Nginx 反向代理，请将 `.env` 中的 `REACT_APP_GEMINI_API_URL` 修改为反向代理后的地址，例如 `https://example.org/api`，即：
+
+```bash
+REACT_APP_GEMINI_API_URL="https://example.org/api"
+```
+
+下面是一个 Nginx 反代配置示例，路径以 `/api` 为例：
 
 ```nginx
 location /api {
@@ -100,6 +134,22 @@ location /api {
     proxy_pass https://generativelanguage.googleapis.com/;
 }
 ```
+
+*若反代同网站位于相同基础路径下，也可简写为 `/api`，跨域则须填写完整地址。*
+
+### PHP 反向代理 Gemini API
+
+若部署平台不允许修改 Nginx 配置，但是提供 PHP 环境，或是您有闲置的 PHP 虚拟主机，可以考虑使用项目集成的 PHP 反向代理，脚本位于 `public/gemini.php`。
+
+要使用 PHP 反向代理，**请修改 PHP 脚本中的 `ACCESS_TOKEN` 定义后**，将 PHP 脚本上传到相应平台，再修改 `.env` 中的 `REACT_APP_GEMINI_API_URL` 为 `https://example.org/gemini.php?token=<您定义的 Token>&path=`。
+
+Token 以 `Nt6PRcQ2BZ8FY9y7Lnk35S` 为例，即：
+
+```bash
+REACT_APP_GEMINI_API_URL="https://example.org/gemini.php?token=Nt6PRcQ2BZ8FY9y7Lnk35S&path="
+```
+
+*若反代同网站位于相同基础路径下，也可简写为 `/gemini.php?token=Nt6PRcQ2BZ8FY9y7Lnk35S&path=`，跨域则须填写完整地址。*
 
 ## 开源许可
 
