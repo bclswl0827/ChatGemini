@@ -237,7 +237,11 @@ const Chat = () => {
                         </span>
                     </div>`;
 
-                    if (ai.busy && role === SessionRole.Model) {
+                    if (
+                        !ai.busy &&
+                        role === SessionRole.Model &&
+                        index === chat.length - 1
+                    ) {
                         parts += `<div class="inline px-1 bg-black animate-pulse animate-duration-700"></div>`;
                     }
                     return (
