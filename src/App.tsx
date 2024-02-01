@@ -205,7 +205,7 @@ const App = () => {
         <Container
             className={
                 !hasLogined && passcodes.length
-                    ? "flex flex-col items-center justify-center min-h-screen p-8"
+                    ? "flex flex-col items-center justify-center min-h-screen p-10"
                     : ""
             }
             toaster={true}

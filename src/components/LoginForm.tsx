@@ -53,15 +53,15 @@ export const LoginForm = (props: LoginFormProps) => {
 
     return (
         <>
-            <div className="flex items-center mb-6">
+            <div className="flex items-center mb-8">
                 <img className="size-10 mr-2" src={logo} alt="" />
                 <span className="text-3xl font-semibold text-gray-900">
                     {title}
                 </span>
             </div>
-            <div className="w-full bg-gray-50 rounded-lg shadow-xl max-w-lg hover:scale-105 transition-all duration-500">
+            <div className="w-full bg-gray-50 rounded-lg shadow-xl max-w-lg hover:scale-105 transition-all duration-700">
                 <div className="p-8 space-y-6">
-                    <h1 className="font-bold text-gray-900 text-2xl">
+                    <h1 className="font-bold text-gray-900 text-xl">
                         输入通行码以继续
                     </h1>
                     <h3 className="text-gray-900 text-md">
@@ -75,10 +75,15 @@ export const LoginForm = (props: LoginFormProps) => {
                             通行码
                         </label>
                         <input
+                            className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5"
                             ref={passcodeInputRef}
                             type="password"
                             placeholder="* * * * * *"
-                            className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                            onKeyDown={({ key }) => {
+                                if (key === "Enter") {
+                                    handleLogin();
+                                }
+                            }}
                         />
                     </div>
                     <div className="flex py-1 md:py-2">
@@ -97,7 +102,7 @@ export const LoginForm = (props: LoginFormProps) => {
                                 }
                             }}
                         >
-                            以后自动登入
+                            自动登入
                         </label>
                     </div>
                     <button
