@@ -2,8 +2,6 @@ name: Deploy Web App
 
 on:
     push:
-        branches:
-            - master
         tags:
             - v*
 

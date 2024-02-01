@@ -25,16 +25,14 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 
 ## 界面预览
 
-移动端点击图片可查看大图。
-
-|     功能      |                                                   预览                                                   |
-| :-----------: | :------------------------------------------------------------------------------------------------------: |
-|    主界面     |        ![主界面](https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/home.png)        |
-|   多轮聊天    |       ![多轮聊天](https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/chat.png)       |
-|   附件识图    |    ![附件识图](https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/attachment.png)    |
-| 逐字输出回应  |     ![逐字输出回应](https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/sse.png)      |
-| 聊天导出 HTML | ![聊天导出 HTML](https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_html.png) |
-| 聊天导出 PDF  |  ![聊天导出 PDF](https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_pdf.png)  |
+|     功能      |                                                                        预览                                                                        |
+| :-----------: | :------------------------------------------------------------------------------------------------------------------------------------------------: |
+|    主界面     |        <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/home.png" alt="主界面" style="max-width: 300px;" />        |
+|   多轮聊天    |       <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/chat.png" alt="多轮聊天" style="max-width: 300px;" />       |
+|   附件识图    |    <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/attachment.png" alt="附件识图" style="max-width: 300px;" />    |
+| 逐字输出回应  |     <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/sse.png" alt="逐字输出回应" style="max-width: 300px;" />      |
+| 聊天导出 HTML | <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_html.png" alt="聊天导出 HTML" style="max-width: 300px;" /> |
+| 聊天导出 PDF  |  <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_pdf.png" alt="聊天导出 PDF" style="max-width: 300px;" />  |
 
 ## 应用部署
 
@@ -123,7 +121,9 @@ REACT_APP_GEMINI_API_URL=""
 REACT_APP_GEMINI_API_URL="https://example.org/api"
 ```
 
-下面是一个 Nginx 反代配置示例，路径以 `/api` 为例：
+*若反代同网站位于相同基础路径下，也可简写为 `/api`，跨域则须填写完整地址。*
+
+下面是一个 Nginx 反代配置示例供参考，路径以 `/api` 为例：
 
 ```nginx
 location /api {
@@ -134,8 +134,6 @@ location /api {
     proxy_pass https://generativelanguage.googleapis.com/;
 }
 ```
-
-*若反代同网站位于相同基础路径下，也可简写为 `/api`，跨域则须填写完整地址。*
 
 ### PHP 反向代理 Gemini API
 

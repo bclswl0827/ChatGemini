@@ -242,7 +242,7 @@ const Chat = () => {
                         role === SessionRole.Model &&
                         index === chat.length - 1
                     ) {
-                        parts += `<div class="inline px-1 bg-black animate-pulse animate-duration-700"></div>`;
+                        parts += `<div class="inline px-1 bg-gray-900 animate-pulse animate-duration-700"></div>`;
                     }
                     return (
                         <Session
