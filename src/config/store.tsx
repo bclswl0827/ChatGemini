@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage";
 import sessions, { Sessions } from "../store/sessions";
 import ai, { AI } from "../store/ai";
+import localForage from "localforage";
 
 const sessionsPersistConfig = persistReducer(
-    { storage, key: "sessions", whitelist: ["sessions"] },
+    { storage: localForage, key: "sessions", whitelist: ["sessions"] },
     sessions
 );
 

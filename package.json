@@ -1,6 +1,6 @@
 {
     "name": "chatgemini",
-    "version": "0.2.3",
+    "version": "0.3.0",
     "homepage": ".",
     "private": true,
     "dependencies": {
@@ -11,6 +11,7 @@
         "@tailwindcss/typography": "^0.5.10",
         "crypto-js": "^4.2.0",
         "file-saver": "^2.0.5",
+        "localforage": "^1.10.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-hot-toast": "^2.4.1",
