@@ -110,7 +110,8 @@ const App = () => {
             hash.replace("#", "") || pathname
         )?.params as { id: string }) ?? { id: Date.now().toString() };
 
-        if (isNaN(new Date(parseInt(id)).getTime())) {
+        const sessionDate = new Date(parseInt(id));
+        if (isNaN(sessionDate.getTime()) || sessionDate.getFullYear() < 2020) {
             sendUserAlert("无法识别的对话 ID", true);
             return;
         }
