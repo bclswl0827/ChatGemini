@@ -1,9 +1,9 @@
 {
   "files": {
-    "main.css": "./static/css/main.aae0e35e.css",
-    "main.js": "./static/js/main.57fe9b17.js",
-    "static/js/428.714af75d.chunk.js": "./static/js/428.714af75d.chunk.js",
-    "static/js/78.87a02a8e.chunk.js": "./static/js/78.87a02a8e.chunk.js",
+    "main.css": "./static/css/main.0b21b1c4.css",
+    "main.js": "./static/js/main.64211736.js",
+    "static/js/497.dd3ce975.chunk.js": "./static/js/497.dd3ce975.chunk.js",
+    "static/js/78.bed8406b.chunk.js": "./static/js/78.bed8406b.chunk.js",
     "static/js/941.93f5a163.chunk.js": "./static/js/941.93f5a163.chunk.js",
     "static/css/611.bc1514e0.chunk.css": "./static/css/611.bc1514e0.chunk.css",
     "static/js/611.c739cd5d.chunk.js": "./static/js/611.c739cd5d.chunk.js",
@@ -71,11 +71,13 @@
     "static/media/wand-magic-sparkles-solid.svg": "./static/media/wand-magic-sparkles-solid.b85c9c00c06c7ce7f5afa005c270a4e2.svg",
     "static/media/comment-dots-regular.svg": "./static/media/comment-dots-regular.f6ae4541a3de49db71f7d8f47360329b.svg",
     "static/media/arrows-rotate-solid.svg": "./static/media/arrows-rotate-solid.814c55263931133090f94e8a0e4d3c9b.svg",
+    "static/media/logo.svg": "./static/media/logo.931d23a30731c4e56edb4f08b2069a43.svg",
     "static/media/broom-ball-solid.svg": "./static/media/broom-ball-solid.221ecffe110443cb78654b93e4e22e85.svg",
     "static/media/pen-to-square-solid.svg": "./static/media/pen-to-square-solid.323a05100783991ea833e21daa2c0798.svg",
     "static/media/trash-can-solid.svg": "./static/media/trash-can-solid.8f9e76a0ab7fd5934f1d2d788fea9846.svg",
     "static/media/clock-rotate-left-solid.svg": "./static/media/clock-rotate-left-solid.523d78eef9e0ac499b7d2fc2eac12dac.svg",
     "static/media/paperclip-solid.svg": "./static/media/paperclip-solid.b8699cdd89f0952c40af4aecb281fc27.svg",
+    "static/media/right-from-bracket-solid.svg": "./static/media/right-from-bracket-solid.a701484a1e023ae7960e15d01b8aef6d.svg",
     "index.html": "./index.html",
     "static/media/square-plus-regular.svg": "./static/media/square-plus-regular.edcb58d2f9fb81215dce911b0cad6e97.svg",
     "static/media/clipboard-regular.svg": "./static/media/clipboard-regular.087182556a42a3609963076f55a76062.svg",
@@ -90,7 +92,7 @@
     "static/media/arrow-up-solid.svg": "./static/media/arrow-up-solid.25f1775e7ee2dd4c2bc2f2c3c07116bf.svg"
   },
   "entrypoints": [
-    "static/css/main.aae0e35e.css",
-    "static/js/main.57fe9b17.js"
+    "static/css/main.0b21b1c4.css",
+    "static/js/main.64211736.js"
   ]
 }
