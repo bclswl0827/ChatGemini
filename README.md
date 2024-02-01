@@ -93,10 +93,10 @@ REACT_APP_GEMINI_API_KEY="你的密钥"
 
 ```nginx
 location /api {
-    proxy_buffering off;
     proxy_http_version 1.1;
     proxy_read_timeout 86400s;
     proxy_cache off; # 注意关闭缓存
+    proxy_buffering off; # 注意关闭缓冲
     proxy_pass https://generativelanguage.googleapis.com/;
 }
 ```
