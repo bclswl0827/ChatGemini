@@ -89,7 +89,7 @@ $ docker run -d \
 
 ## 应用配置
 
-项目基础配置位于根目录下的 `.env` 文件中，请创建该文件并根据实际情况进行配置，若使用 Docker 方式部署，可在创建容器时传入 `--env` 参数进行配置。
+项目基础配置位于根目录下的 `.env` 文件中，手动部署时，请创建该文件并根据实际情况进行配置；若使用 Docker 方式部署，请在创建容器时传入 `--env` 参数进行配置。
 
 配置格式均为 `KEY="VALUE"`，建议使用双引号包裹值，例如：
 
@@ -99,13 +99,13 @@ REACT_APP_GEMINI_API_KEY="您的密钥"
 
 各配置项说明如下：
 
-|          配置项          | 必填 | 可选值          | 默认值       | 说明                                     |
-| :----------------------: | :--- | :-------------- | :----------- | :--------------------------------------- |
-| REACT_APP_GEMINI_API_KEY | 是   | `string`        | 空           | 填入申请得到的 Gemini API 密钥           |
-| REACT_APP_GEMINI_API_URL | 否   | `string`        | 空           | 自定义 Gemini API 地址，具体参考下方说明 |
-| REACT_APP_GEMINI_API_SSE | 否   | `true`\|`false` | `true`       | 是否逐字输出 Gemini 回应，即是否使能 SSE |
-|   REACT_APP_TITLE_SITE   | 否   | `string`        | `ChatGemini` | 站点标题，将显示在浏览器标签页上         |
-|  REACT_APP_TITLE_HEADER  | 否   | `string`        | `Gemini Pro` | 应用名称，显示在应用菜单栏和头部         |
+|           配置项           | 必填 | 可选值          | 默认值       | 说明                                     |
+| :------------------------: | :--- | :-------------- | :----------- | :--------------------------------------- |
+| `REACT_APP_GEMINI_API_KEY` | 是   | `string`        | 空           | 填入申请得到的 Gemini API 密钥           |
+| `REACT_APP_GEMINI_API_URL` | 否   | `string`        | 空           | 自定义 Gemini API 地址，具体参考下方说明 |
+| `REACT_APP_GEMINI_API_SSE` | 否   | `true`\|`false` | `true`       | 是否逐字输出 Gemini 回应，即是否使能 SSE |
+|   `REACT_APP_TITLE_SITE`   | 否   | `string`        | `ChatGemini` | 站点标题，将显示在浏览器标签页上         |
+|  `REACT_APP_TITLE_HEADER`  | 否   | `string`        | `Gemini Pro` | 应用名称，显示在应用菜单栏和头部         |
 
 ### 直连 Gemini API
 
@@ -141,9 +141,9 @@ location /api {
 
 若部署平台不允许修改 Nginx 配置，但是提供 PHP 环境，或是您有闲置的 PHP 虚拟主机，可以考虑使用项目集成的 PHP 反向代理，脚本位于 `public/gemini.php`。
 
-要使用 PHP 反向代理，**请修改 PHP 脚本中的 `ACCESS_TOKEN` 定义后**，将 PHP 脚本上传到相应平台，再修改 `.env` 中的 `REACT_APP_GEMINI_API_URL` 为 `https://example.org/gemini.php?token=<您定义的 Token>&path=`。
+要使用 PHP 反向代理，**请修改 PHP 脚本中的 `ACCESS_TOKEN` 定义后**，将 PHP 脚本上传到相应平台，再修改 `.env` 中的 `REACT_APP_GEMINI_API_URL` 为 `https://example.org/gemini.php?token=<您定义的 Access Token>&path=`。
 
-Token 以 `Nt6PRcQ2BZ8FY9y7Lnk35S` 为例，即：
+Access Token 以 `Nt6PRcQ2BZ8FY9y7Lnk35S` 为例，即：
 
 ```bash
 REACT_APP_GEMINI_API_URL="https://example.org/gemini.php?token=Nt6PRcQ2BZ8FY9y7Lnk35S&path="
