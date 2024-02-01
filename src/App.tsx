@@ -199,7 +199,6 @@ const App = () => {
         if (!hasLogined && passcodes.length) {
             document.title = `登入 - ${site}`;
         }
-        console.log(passcodes);
     }, [hasLogined, passcodes, site]);
 
     return (
