@@ -181,9 +181,14 @@ export const InputArea = (props: InputAreaProps) => {
                 </button>
             </div>
             {attachmentName.length > 0 && (
-                <span className="text-center text-gray-400 text-xs truncate">
+                <div className="text-center text-gray-500 text-xs truncate">
+                    <img
+                        className="inline-block size-3 mr-0.5"
+                        src={attachmentIcon}
+                        alt=""
+                    />
                     {attachmentName}
-                </span>
+                </div>
             )}
         </div>
     );
