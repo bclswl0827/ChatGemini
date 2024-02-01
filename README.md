@@ -89,6 +89,18 @@ REACT_APP_GEMINI_API_KEY="你的密钥"
  - 若要使用 Nginx 反向代理，请将 `.env` 中的 `REACT_APP_GEMINI_API_URL` 修改为反向代理后的地址，例如 `https://example.org/api`。
  - 若要使用集成的 PHP 反向代理，请将 `.env` 中的 `REACT_APP_GEMINI_API_URL` 字段修改为 `/gemini.php?token=<访问密码>&path=`，其中 `<访问密码>` 不同于 Gemini API 密钥，需自行于 `public/gemini.php` 中修改。
 
+若要使用 Nginx 反向代理，路径以 `/api` 为例，示例如下：
+
+```nginx
+location /api {
+    proxy_buffering off;
+    proxy_http_version 1.1;
+    proxy_read_timeout 86400s;
+    proxy_cache off; # 注意关闭缓存
+    proxy_pass https://generativelanguage.googleapis.com/;
+}
+```
+
 ## 开源许可
 
 本项目基于 MIT 协议开源，具体请参阅 [LICENSE](https://github.com/bclswl0827/ChatGemini/blob/master/LICENSE)
