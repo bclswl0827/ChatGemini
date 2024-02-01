@@ -15,6 +15,8 @@ import { getAiContent } from "../helpers/getAiContent";
 import { GenerativeContentBlob } from "@google/generative-ai";
 import { getBase64BlobUrl } from "../helpers/getBase64BlobUrl";
 import { ImageView } from "../components/ImageView";
+import { sendUserConfirm } from "../helpers/sendUserConfirm";
+import { sendUserAlert } from "../helpers/sendUserAlert";
 
 const RefreshPlaceholder = "重新生成中...";
 const FallbackIfIdInvalid =
@@ -113,6 +115,8 @@ const Chat = () => {
                     handler
                 );
             }
+        } else if (ai.busy) {
+            sendUserAlert("AI 正忙，请稍后再试", true);
         }
     };
 
@@ -151,20 +155,26 @@ const Chat = () => {
             };
             setChat(_sessions[id]);
             handleRefresh(index + 1, _sessions);
+        } else if (ai.busy) {
+            sendUserAlert("AI 正忙，请稍后再试", true);
         }
     };
 
     const handleDelete = (index: number) => {
-        if (id && id in sessions) {
-            const _sessions = {
-                ...sessions,
-                [id]: [
-                    ...sessions[id].slice(0, index - 1),
-                    ...sessions[id].slice(index + 1),
-                ],
-            };
-            dispatch(updateSessions(_sessions));
-            setChat(_sessions[id]);
+        if (!ai.busy && id && id in sessions) {
+            sendUserConfirm("这则回应和对应提问都将被移除，要继续吗？", () => {
+                const _sessions = {
+                    ...sessions,
+                    [id]: [
+                        ...sessions[id].slice(0, index - 1),
+                        ...sessions[id].slice(index + 1),
+                    ],
+                };
+                dispatch(updateSessions(_sessions));
+                setChat(_sessions[id]);
+            });
+        } else if (ai.busy) {
+            sendUserAlert("AI 正忙，请稍后再试", true);
         }
     };
 
@@ -227,6 +237,9 @@ const Chat = () => {
                         </span>
                     </div>`;
 
+                    if (ai.busy && role === SessionRole.Model) {
+                        parts += `<div class="inline px-1 bg-black animate-pulse animate-duration-700"></div>`;
+                    }
                     return (
                         <Session
                             key={index}

@@ -59,7 +59,7 @@ $ cd ChatGemini
 $ npm install
 ```
  4. 修改配置
-> 参考下方的 [配置](#配置) 章节
+> 参考下方的 [应用配置](#应用配置) 章节
  5. 构建项目
 ```bash
 $ npm run build

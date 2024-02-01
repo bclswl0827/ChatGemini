@@ -66,30 +66,22 @@ const App = () => {
     };
 
     const handleDeleteSession = (id: string) => {
-        sendUserConfirm(
-            "确定要删除这条对话记录吗？",
-            () => {
-                navigate(routes.index.prefix);
-                const _sessions = { ...sessions };
-                delete _sessions[id];
-                dispatch(updateSessions(_sessions));
-                sendUserAlert("对话记录已删除");
-            },
-            () => sendUserAlert("操作已取消")
-        );
+        sendUserConfirm("确定要删除这条对话记录吗？", () => {
+            navigate(routes.index.prefix);
+            const _sessions = { ...sessions };
+            delete _sessions[id];
+            dispatch(updateSessions(_sessions));
+            sendUserAlert("对话记录已删除");
+        });
     };
 
     const handlePurgeSessions = () => {
-        sendUserConfirm(
-            "确定要清空所有对话记录吗？",
-            () => {
-                navigate(routes.index.prefix);
-                dispatch(updateSessions(initialSessions));
-                dispatch(updateAI({ ...ai, busy: false }));
-                sendUserAlert("对话记录已清空");
-            },
-            () => sendUserAlert("操作已取消")
-        );
+        sendUserConfirm("确定要清空所有对话记录吗？", () => {
+            navigate(routes.index.prefix);
+            dispatch(updateSessions(initialSessions));
+            dispatch(updateAI({ ...ai, busy: false }));
+            sendUserAlert("对话记录已清空");
+        });
     };
 
     const handleUpload = async (file: File | null) => {
