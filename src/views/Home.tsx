@@ -21,7 +21,7 @@ const Home = () => {
 
     useEffect(() => {
         document.title = `新对话 | ${siteTitle}`;
-    });
+    }, [siteTitle]);
 
     return (
         <Landing

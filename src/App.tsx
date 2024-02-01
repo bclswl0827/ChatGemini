@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { globalConfig } from "./config/global";
 import { Sidebar } from "./components/Sidebar";
 import { Container } from "./components/Container";
@@ -21,13 +21,16 @@ import { getBase64Img } from "./helpers/getBase64Img";
 import { sendUserAlert } from "./helpers/sendUserAlert";
 import { sendUserConfirm } from "./helpers/sendUserConfirm";
 import { PageScroller } from "./components/PageScroller";
+import { LoginForm } from "./components/LoginForm";
+import siteLogo from "./assets/logo.svg";
+import setLocalStorage from "./helpers/setLocalStorage";
 
 const ModelPlaceholder = "正在思考中...";
 
 const App = () => {
-    const { routes } = routerConfig;
-    const { sse, title } = globalConfig;
+    const { sse, title, passcodes } = globalConfig;
     const { header, site } = title;
+    const { routes } = routerConfig;
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -37,6 +40,7 @@ const App = () => {
     const ai = useSelector((state: ReduxStoreProps) => state.ai.ai);
     const mainSectionRef = useRef<HTMLDivElement>(null);
 
+    const [hasLogined, setHasLogined] = useState(false);
     const [uploadInlineData, setUploadInlineData] =
         useState<GenerativeContentBlob>({ data: "", mimeType: "" });
     const [sidebarExpand, setSidebarExpand] = useState(window.innerWidth > 768);
@@ -50,7 +54,7 @@ const App = () => {
                 Intl.DateTimeFormat().resolvedOptions().timeZone
             }\n- 对话时间 ${sessionTime}\n- 导出时间 ${exportTime}\n\n---\n\n`;
             session.forEach(({ role, parts, timestamp, attachment }) => {
-                if (attachment?.data.length) {
+                if (!!attachment?.data.length) {
                     const { data, mimeType } = attachment;
                     const base64ImgData = `data:${mimeType};base64,${data}`;
                     parts += `\n\n<img alt="图片附件" src="${base64ImgData}" />`;
@@ -81,6 +85,14 @@ const App = () => {
             dispatch(updateSessions(initialSessions));
             dispatch(updateAI({ ...ai, busy: false }));
             sendUserAlert("对话记录已清空");
+        });
+    };
+
+    const handleLogout = () => {
+        sendUserConfirm("登出后对话记录仍会保留，确定要登出吗？", () => {
+            sendUserAlert("已退出登入");
+            setHasLogined(false);
+            setLocalStorage("passcode", "", false);
         });
     };
 
@@ -183,38 +195,66 @@ const App = () => {
         setUploadInlineData({ data: "", mimeType: "" });
     };
 
+    useEffect(() => {
+        if (!hasLogined && passcodes.length) {
+            document.title = `登入 - ${site}`;
+        }
+        console.log(passcodes);
+    }, [hasLogined, passcodes, site]);
+
     return (
-        <Container toaster={true}>
-            <Sidebar
-                title={header}
-                sessions={sessions}
-                expand={sidebarExpand}
-                newChatUrl={routes.index.prefix}
-                onExportSession={handleExportSession}
-                onDeleteSession={handleDeleteSession}
-            />
-            <Container
-                ref={mainSectionRef}
-                className={`min-w-full overflow-y-auto overflow-x-hidden flex flex-col h-screen justify-between ${
-                    !sidebarExpand ? "col-span-2" : ""
-                }`}
-            >
-                <Header
-                    newChatUrl={routes.index.prefix}
-                    title={!sidebarExpand ? header : ""}
-                    onPurgeSessions={handlePurgeSessions}
-                    onToggleSidebar={() => setSidebarExpand((state) => !state)}
+        <Container
+            className={
+                !hasLogined && passcodes.length
+                    ? "flex flex-col items-center justify-center min-h-screen p-8"
+                    : ""
+            }
+            toaster={true}
+        >
+            {hasLogined || !passcodes.length ? (
+                <>
+                    <Sidebar
+                        title={header}
+                        sessions={sessions}
+                        expand={sidebarExpand}
+                        newChatUrl={routes.index.prefix}
+                        onExportSession={handleExportSession}
+                        onDeleteSession={handleDeleteSession}
+                    />
+                    <Container
+                        ref={mainSectionRef}
+                        className={`min-w-full overflow-y-auto overflow-x-hidden flex flex-col h-screen justify-between ${
+                            !sidebarExpand ? "col-span-2" : ""
+                        }`}
+                    >
+                        <Header
+                            newChatUrl={routes.index.prefix}
+                            title={!sidebarExpand ? header : ""}
+                            onPurgeSessions={handlePurgeSessions}
+                            onToggleSidebar={() =>
+                                setSidebarExpand((state) => !state)
+                            }
+                            onLogout={handleLogout}
+                        />
+                        <RouterView routes={routes} suspense={<Skeleton />} />
+                        <InputArea
+                            minHeight={45}
+                            maxHeight={120}
+                            disabled={ai.busy}
+                            onSubmit={handleSubmit}
+                            onUpload={handleUpload}
+                        />
+                        <PageScroller monitorRef={mainSectionRef} />{" "}
+                    </Container>
+                </>
+            ) : (
+                <LoginForm
+                    title={header}
+                    logo={siteLogo}
+                    passcodes={passcodes}
+                    onPasscodeCorrect={() => setHasLogined(true)}
                 />
-                <RouterView routes={routes} suspense={<Skeleton />} />
-                <InputArea
-                    minHeight={45}
-                    maxHeight={120}
-                    disabled={ai.busy}
-                    onSubmit={handleSubmit}
-                    onUpload={handleUpload}
-                />
-                <PageScroller monitorRef={mainSectionRef} />
-            </Container>
+            )}
         </Container>
     );
 };

@@ -4,6 +4,7 @@ import { createAiObj } from "../helpers/createAiObj";
 import { globalConfig } from "../config/global";
 import { AiType, getAiModel } from "../helpers/getAiModel";
 import { modelConfig } from "../config/model";
+import { getRandomArr } from "../helpers/getRandomArr";
 
 export interface AI {
     readonly busy: boolean;
@@ -11,8 +12,10 @@ export interface AI {
     readonly model: Record<AiType, GenerativeModel>;
 }
 
-const { key, api } = globalConfig;
-const obj = createAiObj(key ?? "", api);
+const { keys, api } = globalConfig;
+const [key] = getRandomArr(keys, 1);
+
+const obj = createAiObj(key, api);
 const model = {
     pro: getAiModel(obj, "pro", modelConfig),
     vision: getAiModel(obj, "vision", modelConfig),

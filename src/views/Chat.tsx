@@ -51,7 +51,7 @@ const Chat = () => {
         [ai]
     );
 
-    const handleDOMNodeInserted = useCallback(
+    const handleDOMNodeChanged = useCallback(
         () => scrollToBottom(),
         [scrollToBottom]
     );
@@ -135,7 +135,7 @@ const Chat = () => {
             !ai.busy &&
             id &&
             id in sessions &&
-            prompt.length > 0 &&
+            !!prompt.length &&
             state === SessionEditState.Done
         ) {
             const _sessions = {
@@ -182,8 +182,8 @@ const Chat = () => {
         if (id && id in sessions) {
             setChat(sessions[id]);
             let sessionTitle = sessions[id][0].parts;
-            if (sessionTitle.length > 25) {
-                sessionTitle = `${sessionTitle.substring(0, 25)} ...`;
+            if (sessionTitle.length > 20) {
+                sessionTitle = `${sessionTitle.substring(0, 20)} ...`;
             }
             document.title = `${sessionTitle} | ${siteTitle}`;
             scrollToBottom(true);
@@ -194,19 +194,25 @@ const Chat = () => {
             ]);
         }
         const { current } = sessionRef;
-        current?.addEventListener("DOMNodeInserted", handleDOMNodeInserted);
-        return () =>
+        current?.addEventListener("DOMNodeInserted", handleDOMNodeChanged);
+        current?.addEventListener("DOMNodeRemoved", handleDOMNodeChanged);
+        return () => {
             current?.removeEventListener(
                 "DOMNodeInserted",
-                handleDOMNodeInserted
+                handleDOMNodeChanged
             );
+            current?.removeEventListener(
+                "DOMNodeRemoved",
+                handleDOMNodeChanged
+            );
+        };
     }, [
         siteTitle,
         id,
         sessions,
         sessionRef,
         scrollToBottom,
-        handleDOMNodeInserted,
+        handleDOMNodeChanged,
     ]);
 
     return (
@@ -220,7 +226,7 @@ const Chat = () => {
                         mimeType: "",
                         data: "",
                     };
-                    const base64BlobURL = data.length
+                    const base64BlobURL = !!data.length
                         ? getBase64BlobUrl(`data:${mimeType};base64,${data}`)
                         : "";
                     const attachmentHtml = `<div class="inline-block text-center overflow-hidden">
@@ -256,7 +262,7 @@ const Chat = () => {
                             onEdit={handleEdit}
                         >
                             <Markdown>{`${parts}${
-                                data.length
+                                !!data.length
                                     ? `\n\n---\n\n${attachmentHtml}`
                                     : ""
                             }`}</Markdown>

@@ -11,7 +11,7 @@ export const getAiChats = async (
 ) => {
     try {
         const payload = history.map((item) => {
-            const { timestamp, ...rest } = item;
+            const { timestamp, attachment, ...rest } = item;
             return rest;
         });
 

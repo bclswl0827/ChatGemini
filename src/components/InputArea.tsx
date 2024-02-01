@@ -86,7 +86,7 @@ export const InputArea = (props: InputAreaProps) => {
                 <button
                     className="bg-gray-100 hover:bg-gray-200 rounded-lg p-3"
                     onClick={({ currentTarget }) => {
-                        if (attachmentName.length > 0) {
+                        if (!!attachmentName.length) {
                             setAttachmentName("");
                             onUpload && onUpload(null);
                             sendUserAlert("已取消上传文件");
@@ -98,14 +98,14 @@ export const InputArea = (props: InputAreaProps) => {
                 >
                     <img
                         className={
-                            attachmentName.length > 0 ? "size-5" : "hidden"
+                            !!attachmentName.length ? "size-5" : "hidden"
                         }
                         src={ejectionIcon}
                         alt=""
                     />
                     <img
                         className={
-                            attachmentName.length > 0 ? "hidden" : "size-5"
+                            !!attachmentName.length ? "hidden" : "size-5"
                         }
                         src={attachmentIcon}
                         alt=""
@@ -180,7 +180,7 @@ export const InputArea = (props: InputAreaProps) => {
                     />
                 </button>
             </div>
-            {attachmentName.length > 0 && (
+            {!!attachmentName.length && (
                 <div className="text-center text-gray-500 text-xs truncate">
                     <img
                         className="inline-block size-3 mr-0.5"

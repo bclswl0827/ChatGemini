@@ -99,9 +99,9 @@ export const Sidebar = (props: SidebarProps) => {
                     + 新聊天
                 </Link>
             </div>
-            {Object.keys(sessions).length > 0 ? (
+            {!!Object.keys(sessions).length ? (
                 <div className="flex flex-col space-y-2 p-2">
-                    {Object.keys(sessionsCategory.today).length > 0 && (
+                    {!!Object.keys(sessionsCategory.today).length && (
                         <h3 className="text-gray-500 text-xs py-1">今天</h3>
                     )}
                     {Object.keys(sessionsCategory.today).map(
@@ -138,7 +138,7 @@ export const Sidebar = (props: SidebarProps) => {
                                 </div>
                             )
                     )}
-                    {Object.keys(sessionsCategory.yesterday).length > 0 && (
+                    {!!Object.keys(sessionsCategory.yesterday).length && (
                         <h3 className="text-gray-500 text-xs py-1">昨天</h3>
                     )}
                     {Object.keys(sessionsCategory.yesterday).map(
@@ -178,7 +178,7 @@ export const Sidebar = (props: SidebarProps) => {
                                 </div>
                             )
                     )}
-                    {Object.keys(sessionsCategory.earlier).length > 0 && (
+                    {!!Object.keys(sessionsCategory.earlier).length && (
                         <h3 className="text-gray-500 text-xs py-1">更早</h3>
                     )}
                     {Object.keys(sessionsCategory.earlier)

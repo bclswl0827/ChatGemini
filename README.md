@@ -97,13 +97,14 @@ REACT_APP_GEMINI_API_KEY="您的密钥"
 
 各配置项说明如下：
 
-|           配置项           | 必填 | 可选值          | 默认值       | 说明                                     |
-| :------------------------: | :--- | :-------------- | :----------- | :--------------------------------------- |
-| `REACT_APP_GEMINI_API_KEY` | 是   | `string`        | 空           | 填入申请得到的 Gemini API 密钥           |
-| `REACT_APP_GEMINI_API_URL` | 否   | `string`        | 空           | 自定义 Gemini API 地址，具体参考下方说明 |
-| `REACT_APP_GEMINI_API_SSE` | 否   | `true`\|`false` | `true`       | 是否逐字输出 Gemini 回应，即是否使能 SSE |
-|   `REACT_APP_TITLE_SITE`   | 否   | `string`        | `ChatGemini` | 站点标题，将显示在浏览器标签页上         |
-|  `REACT_APP_TITLE_HEADER`  | 否   | `string`        | `Gemini Pro` | 应用名称，显示在应用菜单栏和头部         |
+|           配置项           | 必填 | 可选值               | 默认值       | 说明                                     | 备注                                       |
+| :------------------------: | :--- | :------------------- | :----------- | :--------------------------------------- | :----------------------------------------- |
+| `REACT_APP_GEMINI_API_KEY` | 是   | `string`\|`string[]` | 空           | 填入 Gemini API 密钥，多个以 `\|` 分隔   | 存在多个密钥时，每次应用加载时随机选用一个 |
+| `REACT_APP_GEMINI_API_URL` | 否   | `string`             | 空           | 自定义 Gemini API 地址，具体参考下方说明 | 无                                         |
+| `REACT_APP_GEMINI_API_SSE` | 否   | `true`\|`false`      | `true`       | 是否逐字输出 Gemini 回应，即是否使能 SSE | 无                                         |
+|   `REACT_APP_TITLE_SITE`   | 否   | `string`             | `ChatGemini` | 站点标题，将显示在浏览器标签页上         | 无                                         |
+|  `REACT_APP_TITLE_HEADER`  | 否   | `string`             | `Gemini Pro` | 应用标题，显示在应用侧边栏和头部         | 无                                         |
+|  `REACT_APP_PASSCODE_MD5`  | 否   | `string`\|`string[]` | 空           | MD5 格式通行码，多个以 `\|` 分隔         | 存在多个通行码时，任意一个通过验证即可登入 |
 
 ### 直连 Gemini API
 
@@ -148,6 +149,20 @@ REACT_APP_GEMINI_API_URL="https://example.org/gemini.php?token=Nt6PRcQ2BZ8FY9y7L
 ```
 
 *若反代同网站位于相同基础路径下，也可简写为 `/gemini.php?token=Nt6PRcQ2BZ8FY9y7Lnk35S&path=`，跨域则须填写完整地址。*
+
+### 站点通行码
+
+启用通行码后，用户在每次访问应用时，需要先输入通行码，才能开始使用应用。
+
+若要为您的站点启用通行码，可以在 `.env` 中的 `REACT_APP_PASSCODE_MD5` 字段填入 MD5 格式的通行码，多个以 `|` 分隔，例如：
+
+```bash
+REACT_APP_PASSCODE_MD5="E10ADC3949BA59ABBE56E057F20F883E|C33367701511B4F6020EC61DED352059"
+```
+
+要生成 MD5 格式的通行码，可以使用相关在线工具，例如 [MD5 Hash Generator](https://passwordsgenerator.net/md5-hash-generator/)。
+
+**注意：本应用通行码为无盐值 MD5 格式，有一定概率被破解，因此请勿将您的重要密码作为通行码。**
 
 ## 开源许可
 

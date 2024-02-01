@@ -9,7 +9,7 @@ export const sendUserConfirm = (
     toast.custom(
         ({ visible, id }) => (
             <div
-                className={`animate-fade max-w-md w-full bg-white shadow-lg rounded-lg flex border ${
+                className={`animate-fade animate-duration-300 max-w-md w-full bg-white shadow-lg rounded-lg flex border ${
                     visible ? "block" : "hidden"
                 }`}
             >
