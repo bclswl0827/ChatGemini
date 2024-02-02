@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { MD5 } from "crypto-js";
+import { MD5, Rabbit, enc } from "crypto-js";
 import { sendUserAlert } from "../helpers/sendUserAlert";
 import setLocalStorage from "../helpers/setLocalStorage";
 import getLocalStorage from "../helpers/getLocalStorage";
@@ -33,12 +33,15 @@ export const LoginForm = (props: LoginFormProps) => {
                 if (remember) {
                     const fingerprint = await fpPromise.load();
                     const { visitorId } = await fingerprint.get();
-                    const passcodeWithFingerprint = MD5(
-                        `${passcode}@${visitorId}`
-                    )
-                        .toString()
-                        .toLocaleLowerCase();
-                    setLocalStorage("passcode", passcodeWithFingerprint, false);
+                    const fingerprintHash = MD5(visitorId).toString();
+                    const encodedPasscode = Rabbit.encrypt(
+                        JSON.stringify({
+                            passcode,
+                            fingerprint: fingerprintHash,
+                        }),
+                        visitorId
+                    ).toString();
+                    setLocalStorage("passcode", encodedPasscode, remember);
                 }
                 sendUserAlert("登入成功，即将跳转");
                 await new Promise((resolve) => setTimeout(resolve, 500));
@@ -50,19 +53,27 @@ export const LoginForm = (props: LoginFormProps) => {
     };
 
     const checkHasLogined = useCallback(async () => {
-        const passcode = getLocalStorage("passcode", "", false);
+        const encodedPasscode = getLocalStorage(
+            "passcode",
+            "",
+            false
+        ).replaceAll('"', "");
         const fingerprint = await fpPromise.load();
         const { visitorId } = await fingerprint.get();
-        for (const code of passcodes) {
-            const hashCodeMD5 = MD5(`${code}@${visitorId}`)
-                .toString()
-                .toLocaleLowerCase();
-            if (hashCodeMD5 === passcode) {
-                return true;
-            }
+        const fignerprintHash = MD5(visitorId).toString();
+        try {
+            const decryptedPasscode = JSON.parse(
+                Rabbit.decrypt(encodedPasscode.toString(), visitorId).toString(
+                    enc.Utf8
+                )
+            );
+            const { passcode, fingerprint } = decryptedPasscode;
+            return (
+                passcodes.includes(passcode) && fingerprint === fignerprintHash
+            );
+        } catch (e) {
+            return false;
         }
-
-        return false;
     }, [passcodes]);
 
     useEffect(() => {
@@ -70,7 +81,7 @@ export const LoginForm = (props: LoginFormProps) => {
             if (hasLogined) {
                 onPasscodeCorrect();
             } else {
-                setLocalStorage("passcode", "", false);
+                // setLocalStorage("passcode", "", false);
             }
         });
     }, [checkHasLogined, onPasscodeCorrect]);
