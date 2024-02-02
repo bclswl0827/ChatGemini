@@ -196,7 +196,7 @@ const App = () => {
     };
 
     useEffect(() => {
-        if (!hasLogined && passcodes.length) {
+        if (!hasLogined && !!passcodes.length) {
             document.title = `登入 - ${site}`;
         }
     }, [hasLogined, passcodes, site]);
@@ -204,7 +204,7 @@ const App = () => {
     return (
         <Container
             className={
-                !hasLogined && passcodes.length
+                !hasLogined && !!passcodes.length
                     ? "flex flex-col items-center justify-center min-h-screen p-10"
                     : ""
             }

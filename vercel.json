@@ -1,0 +1,3 @@
+{
+    "buildCommand": "cross-env GENERATE_SOURCEMAP=false react-scripts build"
+}
