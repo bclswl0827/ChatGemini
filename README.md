@@ -84,6 +84,7 @@ $ docker run -d \
     --env REACT_APP_GEMINI_API_KEY="您的密钥" \
     ghcr.io/bclswl0827/chatgemini
 ```
+> 若要在 Docker 版本中启用自动设定的 Nginx 反向代理，请将 `REACT_APP_GEMINI_API_URL` 变量值设为 `__use_nginx__`，即在创建容器时加上 `--env REACT_APP_GEMINI_API_URL="__use_nginx__"` 参数
  3. 访问应用
 > 访问 `http://<IP>:8080` 即可
 
