@@ -87,6 +87,14 @@ $ docker run -d \
  3. 访问应用
 > 访问 `http://<IP>:8080` 即可
 
+### Vercel 部署
+
+本项目支持 Vercel 一键部署，点击下方按钮即可部署至 Vercel 平台。
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbclswl0827%2FChatGemini&env=REACT_APP_GEMINI_API_KEY&envDescription=REACT_APP_GEMINI_API_KEY%20is%20essential&envLink=https%3A%2F%2Fgithub.com%2Fbclswl0827%2FChatGemini%2Fblob%2Fmaster%2FREADME.md&demo-title=ChatGemini&demo-url=https%3A%2F%2Fibcl.us%2FChatGemini&demo-image=https%3A%2F%2Fraw.githubusercontent.com%2Fbclswl0827%2FChatGemini%2Fmaster%2Fsrc%2Fassets%2Flogo.svg)
+
+*在部署完成过后，若需修改或新增配置，请前往 Vercel 控制台，点击对应项目，再点击 `Settings` -> `Environment Variables` 进行修改。修改完成后，需要在 Vercel 控制台重新触发部署，以使新配置生效。`
+
 ## 应用配置
 
 项目基础配置位于根目录下的 `.env` 文件中，手动部署时，请创建该文件并根据实际情况进行配置；若使用 Docker 方式部署，请在创建容器时传入 `--env` 参数进行配置。
