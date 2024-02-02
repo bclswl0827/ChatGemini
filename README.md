@@ -116,6 +116,20 @@ REACT_APP_GEMINI_API_KEY="您的密钥"
 |  `REACT_APP_TITLE_HEADER`  | 否   | `string`             | `Gemini Pro` | 应用标题，显示在应用侧边栏和头部         | 无                                         |
 |  `REACT_APP_PASSCODE_MD5`  | 否   | `string`\|`string[]` | 空           | MD5 格式通行码，多个以 `\|` 分隔         | 存在多个通行码时，任意一个通过验证即可登入 |
 
+### 站点通行码
+
+启用通行码后，用户在每次访问应用时，需要先输入通行码，才能开始使用应用。
+
+若要为您的站点启用通行码，可以在 `.env` 中的 `REACT_APP_PASSCODE_MD5` 字段填入 MD5 格式的通行码，多个以 `|` 分隔，例如：
+
+```bash
+REACT_APP_PASSCODE_MD5="E10ADC3949BA59ABBE56E057F20F883E|C33367701511B4F6020EC61DED352059"
+```
+
+要生成 MD5 格式的通行码，可以使用相关在线工具，例如 [MD5 Hash Generator](https://passwordsgenerator.net/md5-hash-generator/)。
+
+**注意：本应用通行码为无盐值 MD5 格式，有一定概率被破解，因此请勿将您的重要密码作为通行码。**
+
 ### 直连 Gemini API
 
 若要直连 Gemini API，请将 `.env` 中的 `REACT_APP_GEMINI_API_URL` 字段留空，即：
@@ -160,19 +174,15 @@ REACT_APP_GEMINI_API_URL="https://example.org/gemini.php?token=Nt6PRcQ2BZ8FY9y7L
 
 *若反代同网站位于相同基础路径下，也可简写为 `/gemini.php?token=Nt6PRcQ2BZ8FY9y7Lnk35S&path=`，跨域则须填写完整地址。*
 
-### 站点通行码
+### Netlify 反向代理 Gemini API
 
-启用通行码后，用户在每次访问应用时，需要先输入通行码，才能开始使用应用。
+Netlify 提供亦可以用于反向代理 Gemini API，有关使用方法和部署链接，请前往 [antergone/palm-netlify-proxy](https://github.com/antergone/palm-netlify-proxy) 查看。
 
-若要为您的站点启用通行码，可以在 `.env` 中的 `REACT_APP_PASSCODE_MD5` 字段填入 MD5 格式的通行码，多个以 `|` 分隔，例如：
+部署好应用过后，分配的域名以 `example.netlify.app` 为例，即：
 
 ```bash
-REACT_APP_PASSCODE_MD5="E10ADC3949BA59ABBE56E057F20F883E|C33367701511B4F6020EC61DED352059"
+REACT_APP_GEMINI_API_URL="https://example.netlify.app"
 ```
-
-要生成 MD5 格式的通行码，可以使用相关在线工具，例如 [MD5 Hash Generator](https://passwordsgenerator.net/md5-hash-generator/)。
-
-**注意：本应用通行码为无盐值 MD5 格式，有一定概率被破解，因此请勿将您的重要密码作为通行码。**
 
 ## 开源许可
 
