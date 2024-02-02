@@ -202,22 +202,14 @@ const Chat = (props: RouterComponentProps) => {
             ]);
         }
 
-        setTimeout(() => scrollToBottom(true), 100);
+        setTimeout(() => scrollToBottom(true), 300);
         mainSectionRef?.addEventListener(
             "DOMNodeInserted",
-            handleDOMNodeChanged
-        );
-        mainSectionRef?.addEventListener(
-            "DOMNodeRemoved",
             handleDOMNodeChanged
         );
         return () => {
             mainSectionRef?.removeEventListener(
                 "DOMNodeInserted",
-                handleDOMNodeChanged
-            );
-            mainSectionRef?.removeEventListener(
-                "DOMNodeRemoved",
                 handleDOMNodeChanged
             );
         };
