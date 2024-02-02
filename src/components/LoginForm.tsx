@@ -79,9 +79,10 @@ export const LoginForm = (props: LoginFormProps) => {
     useEffect(() => {
         checkHasLogined().then((hasLogined) => {
             if (hasLogined) {
+                sendUserAlert("自动登入成功");
                 onPasscodeCorrect();
             } else {
-                // setLocalStorage("passcode", "", false);
+                setLocalStorage("passcode", "", false);
             }
         });
     }, [checkHasLogined, onPasscodeCorrect]);

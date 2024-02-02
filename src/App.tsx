@@ -90,7 +90,7 @@ const App = () => {
 
     const handleLogout = () => {
         sendUserConfirm("登出后对话记录仍会保留，确定要登出吗？", () => {
-            sendUserAlert("已退出登入");
+            sendUserAlert("已成功登出");
             setHasLogined(false);
             setLocalStorage("passcode", "", false);
         });
