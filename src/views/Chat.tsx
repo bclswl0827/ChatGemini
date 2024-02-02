@@ -39,6 +39,9 @@ const Chat = (props: RouterComponentProps) => {
         index: number;
         state: SessionEditState;
     }>({ index: 0, state: SessionEditState.Cancel });
+    const [attachmentsURL, setAttachmentsURL] = useState<
+        Record<number, string>
+    >({});
 
     const scrollToBottom = useCallback(
         (force: boolean = false) => {
@@ -170,6 +173,12 @@ const Chat = (props: RouterComponentProps) => {
                         ...sessions[id].slice(index + 1),
                     ],
                 };
+                if (index - 1 in attachmentsURL) {
+                    setAttachmentsURL((prev) => {
+                        const { [index - 1]: _, ...rest } = prev;
+                        return rest;
+                    });
+                }
                 dispatch(updateSessions(_sessions));
                 setChat(_sessions[id]);
             });
@@ -229,9 +238,19 @@ const Chat = (props: RouterComponentProps) => {
                         mimeType: "",
                         data: "",
                     };
-                    const base64BlobURL = !!data.length
-                        ? getBase64BlobUrl(`data:${mimeType};base64,${data}`)
-                        : "";
+                    let base64BlobURL = "";
+                    if (!!data.length && index in attachmentsURL) {
+                        base64BlobURL = attachmentsURL[index];
+                    } else if (!!data.length) {
+                        base64BlobURL = getBase64BlobUrl(
+                            `data:${mimeType};base64,${data}`
+                        );
+                        setAttachmentsURL((prev) => ({
+                            ...prev,
+                            [index]: base64BlobURL,
+                        }));
+                    }
+
                     const attachmentHtml = `<div class="inline-block text-center overflow-hidden">
                         <a data-image-view="gallery" href="${base64BlobURL}">
                             <img src="${base64BlobURL}" style="
