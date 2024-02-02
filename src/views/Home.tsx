@@ -1,14 +1,16 @@
-import { Landing } from "../components/Landing";
+import { Landing, LandingSample } from "../components/Landing";
 import { sampleConfig } from "../config/sample";
 import { setClipboard } from "../helpers/setClipboard";
 import { getRandomArr } from "../helpers/getRandomArr";
 import { sendUserAlert } from "../helpers/sendUserAlert";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { globalConfig } from "../config/global";
 
 const Home = () => {
     const { site: siteTitle } = globalConfig.title;
     const { title, samples } = sampleConfig;
+
+    const [randomSamples, setRandomSamples] = useState<LandingSample[]>([]);
 
     const handleSelectSample = async (message: string) => {
         const success = await setClipboard(message);
@@ -21,12 +23,13 @@ const Home = () => {
 
     useEffect(() => {
         document.title = `新对话 | ${siteTitle}`;
+        setRandomSamples(getRandomArr(samples, 6));
     }, [siteTitle]);
 
     return (
         <Landing
             title={title}
-            samples={getRandomArr(samples, 6)}
+            samples={randomSamples}
             onSelectSample={handleSelectSample}
         />
     );

@@ -1,6 +1,6 @@
 import wandIcon from "../assets/icons/wand-sparkles-solid.svg";
 
-interface LandingSample {
+export interface LandingSample {
     readonly title: string;
     readonly description: string;
     readonly prompt: string;
