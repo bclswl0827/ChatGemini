@@ -10,7 +10,7 @@ const Home = () => {
     const { site: siteTitle } = globalConfig.title;
     const { title, samples } = sampleConfig;
 
-    const [randomSamples, setRandomSamples] = useState<LandingSample[]>([]);
+    const [randomSamples] = useState(getRandomArr(samples, 6));
 
     const handleSelectSample = async (message: string) => {
         const success = await setClipboard(message);
@@ -23,7 +23,6 @@ const Home = () => {
 
     useEffect(() => {
         document.title = `新对话 | ${siteTitle}`;
-        setRandomSamples(getRandomArr(samples, 6));
     }, [siteTitle]);
 
     return (

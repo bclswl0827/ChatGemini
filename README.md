@@ -27,6 +27,8 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 
 ## 界面预览
 
+<details><summary>点击展开网页效果</summary>
+
 |     功能      |                                                           预览                                                           |
 | :-----------: | :----------------------------------------------------------------------------------------------------------------------: |
 |    主界面     |        <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/home.png" alt="主界面" />        |
@@ -35,6 +37,8 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 | 逐字输出回应  |     <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/sse.png" alt="逐字输出回应" />      |
 | 聊天导出 HTML | <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_html.png" alt="聊天导出 HTML" /> |
 | 聊天导出 PDF  |  <img src="https://raw.githubusercontent.com/bclswl0827/ChatGemini/master/preview/export_pdf.png" alt="聊天导出 PDF" />  |
+
+</details>
 
 ## 应用部署
 

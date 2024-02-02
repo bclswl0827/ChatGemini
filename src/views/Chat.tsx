@@ -265,12 +265,13 @@ const Chat = (props: RouterComponentProps) => {
                         </span>
                     </div>`;
 
+                    const typingEffect = `<div class="inline px-1 bg-gray-900 animate-pulse animate-duration-700"></div>`;
                     if (
                         ai.busy &&
                         role === SessionRole.Model &&
                         index === chat.length - 1
                     ) {
-                        parts += `<div class="inline px-1 bg-gray-900 animate-pulse animate-duration-700"></div>`;
+                        parts += typingEffect;
                     }
                     return (
                         <Session
@@ -283,7 +284,7 @@ const Chat = (props: RouterComponentProps) => {
                             onDelete={handleDelete}
                             onEdit={handleEdit}
                         >
-                            <Markdown>{`${parts}${
+                            <Markdown typingEffect={typingEffect}>{`${parts}${
                                 !!data.length
                                     ? `\n\n---\n\n${attachmentHtml}`
                                     : ""

@@ -9,11 +9,13 @@ import { a11yDark as style } from "react-syntax-highlighter/dist/esm/styles/pris
 
 interface MarkdownProps {
     readonly className?: string;
+    readonly typingEffect: string;
     readonly children: string;
 }
 
 export const Markdown = (props: MarkdownProps) => {
-    const { className, children } = props;
+    const { className, typingEffect, children } = props;
+
     return (
         <ReactMarkdown
             className={`prose text-sm lg:prose-base max-w-[100%] break-words ${
@@ -35,7 +37,10 @@ export const Markdown = (props: MarkdownProps) => {
                     <pre className="bg-transparent p-2" {...props} />
                 ),
                 code: ({ className, children }) => {
-                    const match = /language-(\w+)/.exec(className || "");
+                    const match = /language-(\w+)/.exec(className ?? "");
+                    const code = String(children)
+                        .replace(/\n$/, "")
+                        .replace(typingEffect, "❚");
                     return match ? (
                         <Prism
                             PreTag={"div"}
@@ -47,10 +52,10 @@ export const Markdown = (props: MarkdownProps) => {
                                         : ""
                                     : ""
                             }
-                            children={String(children).replace(/\n$/, "")}
+                            children={code}
                         />
                     ) : (
-                        <code className="text-gray-700">{children}</code>
+                        <code className="text-gray-700">{code}</code>
                     );
                 },
                 table: ({ node, ...props }) => (
