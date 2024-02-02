@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { MD5 } from "crypto-js";
 import { sendUserAlert } from "../helpers/sendUserAlert";
 import setLocalStorage from "../helpers/setLocalStorage";
 import getLocalStorage from "../helpers/getLocalStorage";
+import fpPromise from "@fingerprintjs/fingerprintjs";
 
 interface LoginFormProps {
     readonly logo: string;
@@ -25,13 +26,19 @@ export const LoginForm = (props: LoginFormProps) => {
                 sendUserAlert("通行码不能为空", true);
                 return;
             }
-
             const passcode = MD5(value).toString().toLocaleLowerCase();
             if (passcodes.includes(passcode)) {
                 const { checked: remember } =
                     autoLoginCheckboxRef.current || {};
                 if (remember) {
-                    setLocalStorage("passcode", passcode, false);
+                    const fingerprint = await fpPromise.load();
+                    const { visitorId } = await fingerprint.get();
+                    const passcodeWithFingerprint = MD5(
+                        `${passcode}@${visitorId}`
+                    )
+                        .toString()
+                        .toLocaleLowerCase();
+                    setLocalStorage("passcode", passcodeWithFingerprint, false);
                 }
                 sendUserAlert("登入成功，即将跳转");
                 await new Promise((resolve) => setTimeout(resolve, 500));
@@ -42,14 +49,31 @@ export const LoginForm = (props: LoginFormProps) => {
         }
     };
 
-    useEffect(() => {
+    const checkHasLogined = useCallback(async () => {
         const passcode = getLocalStorage("passcode", "", false);
-        if (passcode && passcodes.includes(passcode)) {
-            onPasscodeCorrect();
-        } else {
-            setLocalStorage("passcode", "", false);
+        const fingerprint = await fpPromise.load();
+        const { visitorId } = await fingerprint.get();
+        for (const code of passcodes) {
+            const hashCodeMD5 = MD5(`${code}@${visitorId}`)
+                .toString()
+                .toLocaleLowerCase();
+            if (hashCodeMD5 === passcode) {
+                return true;
+            }
         }
-    }, [passcodes, onPasscodeCorrect]);
+
+        return false;
+    }, [passcodes]);
+
+    useEffect(() => {
+        checkHasLogined().then((hasLogined) => {
+            if (hasLogined) {
+                onPasscodeCorrect();
+            } else {
+                setLocalStorage("passcode", "", false);
+            }
+        });
+    }, [checkHasLogined, onPasscodeCorrect]);
 
     return (
         <>
