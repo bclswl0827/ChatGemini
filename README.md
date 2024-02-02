@@ -176,7 +176,7 @@ REACT_APP_GEMINI_API_URL="https://example.org/gemini.php?token=Nt6PRcQ2BZ8FY9y7L
 
 ### Netlify 反向代理 Gemini API
 
-Netlify 提供亦可以用于反向代理 Gemini API，有关使用方法和部署链接，请前往 [antergone/palm-netlify-proxy](https://github.com/antergone/palm-netlify-proxy) 查看。
+Netlify 亦可以用于反向代理 Gemini API，有关使用方法和部署链接，请前往 [antergone/palm-netlify-proxy](https://github.com/antergone/palm-netlify-proxy) 查看。
 
 部署好应用过后，分配的域名以 `example.netlify.app` 为例，即：
 
