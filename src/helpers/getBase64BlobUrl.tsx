@@ -19,7 +19,6 @@ export const getBase64BlobUrl = (base64: string) => {
         let url = URL.createObjectURL(blob);
         return url;
     } catch (e) {
-        console.log(e);
         return "";
     }
 };

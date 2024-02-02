@@ -84,7 +84,9 @@ export const PageScroller = (props: PageScrollerProps) => {
     return (
         <button
             className={`bg-sky-600 hover:bg-sky-800 duration-300 size-8 rounded-full bottom-28 right-5 flex justify-center shadow-lg items-center ${
-                showScroller ? "fixed" : "hidden"
+                showScroller
+                    ? "fixed animate-fade-left animate-duration-300"
+                    : "hidden"
             }`}
             onClick={scrollToDirection}
         >
