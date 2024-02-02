@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { Markdown } from "../components/Markdown";
 import { Session, SessionEditState, SessionRole } from "../components/Session";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SessionHistory, Sessions } from "../store/sessions";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStoreProps } from "../config/store";
@@ -17,12 +17,14 @@ import { getBase64BlobUrl } from "../helpers/getBase64BlobUrl";
 import { ImageView } from "../components/ImageView";
 import { sendUserConfirm } from "../helpers/sendUserConfirm";
 import { sendUserAlert } from "../helpers/sendUserAlert";
+import { RouterComponentProps } from "../config/router";
 
 const RefreshPlaceholder = "重新生成中...";
 const FallbackIfIdInvalid =
     "您当前的会话 ID 似乎无效，请检查您的网址，您也可以新建一个会话。";
 
-const Chat = () => {
+const Chat = (props: RouterComponentProps) => {
+    const mainSectionRef = props.refs?.mainSectionRef.current || null;
     const { site: siteTitle } = globalConfig.title;
 
     const dispatch = useDispatch();
@@ -37,18 +39,16 @@ const Chat = () => {
         index: number;
         state: SessionEditState;
     }>({ index: 0, state: SessionEditState.Cancel });
-    const sessionRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = useCallback(
         (force: boolean = false) => {
             (ai.busy || force) &&
-                sessionRef.current?.scrollIntoView({
+                mainSectionRef?.scrollTo({
+                    top: mainSectionRef.scrollHeight,
                     behavior: "smooth",
-                    block: "end",
-                    inline: "end",
                 });
         },
-        [ai]
+        [ai, mainSectionRef]
     );
 
     const handleDOMNodeChanged = useCallback(
@@ -186,22 +186,28 @@ const Chat = () => {
                 sessionTitle = `${sessionTitle.substring(0, 20)} ...`;
             }
             document.title = `${sessionTitle} | ${siteTitle}`;
-            scrollToBottom(true);
         } else {
             document.title = `会话无效 | ${siteTitle}`;
             setChat([
                 { role: "model", parts: FallbackIfIdInvalid, timestamp: 0 },
             ]);
         }
-        const { current } = sessionRef;
-        current?.addEventListener("DOMNodeInserted", handleDOMNodeChanged);
-        current?.addEventListener("DOMNodeRemoved", handleDOMNodeChanged);
+
+        setTimeout(() => scrollToBottom(true), 100);
+        mainSectionRef?.addEventListener(
+            "DOMNodeInserted",
+            handleDOMNodeChanged
+        );
+        mainSectionRef?.addEventListener(
+            "DOMNodeRemoved",
+            handleDOMNodeChanged
+        );
         return () => {
-            current?.removeEventListener(
+            mainSectionRef?.removeEventListener(
                 "DOMNodeInserted",
                 handleDOMNodeChanged
             );
-            current?.removeEventListener(
+            mainSectionRef?.removeEventListener(
                 "DOMNodeRemoved",
                 handleDOMNodeChanged
             );
@@ -210,16 +216,13 @@ const Chat = () => {
         siteTitle,
         id,
         sessions,
-        sessionRef,
+        mainSectionRef,
         scrollToBottom,
         handleDOMNodeChanged,
     ]);
 
     return (
-        <Container
-            className="max-w-[calc(100%)] py-5 pl-3 mb-auto mx-1 md:mx-[4rem] lg:mx-[8rem]"
-            ref={sessionRef}
-        >
+        <Container className="max-w-[calc(100%)] py-5 pl-3 mb-auto mx-1 md:mx-[4rem] lg:mx-[8rem]">
             <ImageView>
                 {chat.map(({ role, parts, attachment }, index) => {
                     const { mimeType, data } = attachment ?? {

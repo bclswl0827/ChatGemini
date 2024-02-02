@@ -236,7 +236,11 @@ const App = () => {
                             }
                             onLogout={handleLogout}
                         />
-                        <RouterView routes={routes} suspense={<Skeleton />} />
+                        <RouterView
+                            routes={routes}
+                            suspense={<Skeleton />}
+                            routerProps={{ refs: { mainSectionRef } }}
+                        />
                         <InputArea
                             minHeight={45}
                             maxHeight={120}
@@ -244,7 +248,16 @@ const App = () => {
                             onSubmit={handleSubmit}
                             onUpload={handleUpload}
                         />
-                        <PageScroller monitorRef={mainSectionRef} />{" "}
+                        {!ai.busy && (
+                            <PageScroller
+                                thresholds={{
+                                    top: 200,
+                                    bottom: 200,
+                                    debounce: 50,
+                                }}
+                                monitorRef={mainSectionRef}
+                            />
+                        )}
                     </Container>
                 </>
             ) : (

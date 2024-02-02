@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { RouterMode, RouterWrapper } from "./components/RouterWrapper";
+import { RouterWrapper } from "./components/RouterWrapper";
 import { routerConfig } from "./config/router";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <Provider store={store}>
         <PersistGate loading={null} persistor={REDUX_PRESIST}>
-            <RouterWrapper mode={routerConfig.mode as RouterMode}>
+            <RouterWrapper mode={routerConfig.mode}>
                 <App />
             </RouterWrapper>
         </PersistGate>

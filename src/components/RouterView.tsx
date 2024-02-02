@@ -1,30 +1,24 @@
 import { ReactNode, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
+import { RouterComponentProps, RouterConfigRoutes } from "../config/router";
 
 interface RouterViewProps {
-    readonly routes: Record<
-        string,
-        {
-            readonly prefix: string;
-            readonly uri: string;
-            readonly suffix: string;
-            readonly element: ReactNode;
-        }
-    >;
+    readonly routes: Record<string, RouterConfigRoutes>;
+    readonly routerProps?: RouterComponentProps;
     readonly suspense: ReactNode;
 }
 
 export const RouterView = (props: RouterViewProps) => {
-    const { suspense: SuspenseFallback, routes } = props;
+    const { routes, suspense, routerProps } = props;
 
     return (
-        <Suspense fallback={SuspenseFallback}>
+        <Suspense fallback={suspense}>
             <Routes>
                 {Object.values(routes).map(
-                    ({ prefix, uri, suffix, element }, index) => (
+                    ({ prefix, uri, suffix, element: Element }, index) => (
                         <Route
                             key={index}
-                            element={element}
+                            element={<Element {...routerProps} />}
                             path={`${prefix}${uri}${suffix}`}
                         />
                     )

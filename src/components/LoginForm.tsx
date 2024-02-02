@@ -106,7 +106,7 @@ export const LoginForm = (props: LoginFormProps) => {
                         </label>
                     </div>
                     <button
-                        className="w-full text-white bg-blue-500 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                        className="w-full text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                         onClick={handleLogin}
                     >
                         登入

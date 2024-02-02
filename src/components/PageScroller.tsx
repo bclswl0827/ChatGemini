@@ -3,6 +3,11 @@ import scrollUpIcon from "../assets/icons/arrow-up-solid.svg";
 import scrollDownIcon from "../assets/icons/arrow-down-solid.svg";
 
 interface PageScrollerProps {
+    readonly thresholds: {
+        readonly top: number;
+        readonly bottom: number;
+        readonly debounce: number;
+    };
     readonly monitorRef: React.RefObject<HTMLDivElement>;
 }
 
@@ -12,7 +17,7 @@ enum ScrollerDirection {
 }
 
 export const PageScroller = (props: PageScrollerProps) => {
-    const { monitorRef } = props;
+    const { thresholds, monitorRef } = props;
     const [showScroller, setShowScroller] = useState(false);
     const [scrollerState, setScrollerState] = useState<{
         direction: ScrollerDirection;
@@ -41,9 +46,10 @@ export const PageScroller = (props: PageScrollerProps) => {
         const { current } = monitorRef;
         if (current) {
             const { lastPosition } = scrollerState;
+            const { top, bottom, debounce } = thresholds;
             const { scrollHeight, clientHeight, scrollTop } = current;
 
-            if (Math.abs(scrollTop - lastPosition) < 50) {
+            if (Math.abs(scrollTop - lastPosition) < debounce) {
                 return;
             }
 
@@ -52,8 +58,8 @@ export const PageScroller = (props: PageScrollerProps) => {
             }
 
             if (
-                scrollTop < 50 ||
-                scrollTop + clientHeight > scrollHeight - 50
+                scrollTop < top ||
+                scrollTop + clientHeight > scrollHeight - bottom
             ) {
                 setShowScroller(false);
             }
@@ -66,7 +72,7 @@ export const PageScroller = (props: PageScrollerProps) => {
                 lastPosition: scrollTop,
             });
         }
-    }, [monitorRef, scrollerState]);
+    }, [monitorRef, scrollerState, thresholds]);
 
     useEffect(() => {
         const { current } = monitorRef;
