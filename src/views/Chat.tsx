@@ -215,7 +215,7 @@ const Chat = (props: RouterComponentProps) => {
                         }));
                     }
 
-                    const attachmentHtml = `<div class="inline-block text-center overflow-hidden">
+                    const attachmentPostscriptHtml = `\n\n---\n\n<div class="inline-block text-center overflow-hidden">
                         <a data-image-view="gallery" href="${base64BlobURL}">
                             <img src="${base64BlobURL}" style="
                                 max-width: 10rem;
@@ -247,11 +247,12 @@ const Chat = (props: RouterComponentProps) => {
                             onRefresh={handleRefresh}
                             onDelete={handleDelete}
                             onEdit={handleEdit}
+                            postscript={
+                                !!data.length ? attachmentPostscriptHtml : ""
+                            }
                         >
                             <Markdown typingEffect={typingEffect}>{`${parts}${
-                                !!data.length
-                                    ? `\n\n---\n\n${attachmentHtml}`
-                                    : ""
+                                !!data.length ? attachmentPostscriptHtml : ""
                             }`}</Markdown>
                         </Session>
                     );

@@ -23,6 +23,7 @@ export enum SessionEditState {
 interface SessionProps {
     readonly index: number;
     readonly prompt: string;
+    readonly postscript: string;
     readonly role: SessionRole;
     readonly children: ReactNode;
     readonly editState: { index: number; state: SessionEditState };
@@ -39,6 +40,7 @@ export const Session = (props: SessionProps) => {
     const {
         index,
         prompt,
+        postscript,
         editState,
         role,
         children,
@@ -50,8 +52,11 @@ export const Session = (props: SessionProps) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
     const handleCopy = async () => {
-        const text = (children as ReactElement).props.children;
-        const success = await setClipboard(text as string);
+        let text: string = (children as ReactElement).props.children;
+        if (postscript) {
+            text = text.replace(postscript, "");
+        }
+        const success = await setClipboard(text);
         if (success) {
             sendUserAlert("内容已复制到剪贴板");
         } else {
