@@ -7,6 +7,7 @@ export const getAiContent = async (
     stream: boolean,
     onContentMessage: (message: string, end: boolean) => void
 ) => {
+    const TypeWriterEffectThreshold = 30;
     try {
         if (stream) {
             const result = await model.generateContentStream([
@@ -15,7 +16,26 @@ export const getAiContent = async (
             ]);
             for await (const chunk of result.stream) {
                 const chunkText = chunk.text();
-                onContentMessage(chunkText, false);
+                if (chunkText.length > TypeWriterEffectThreshold) {
+                    const chunkTextArr = chunkText.split("");
+                    for (
+                        let i = 0;
+                        i < chunkTextArr.length;
+                        i += TypeWriterEffectThreshold
+                    ) {
+                        onContentMessage(
+                            chunkTextArr
+                                .slice(i, i + TypeWriterEffectThreshold)
+                                .join(""),
+                            false
+                        );
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, Math.random() * 600 + 300)
+                        );
+                    }
+                } else {
+                    onContentMessage(chunkText, false);
+                }
             }
             onContentMessage("", true);
         } else {
@@ -25,7 +45,26 @@ export const getAiContent = async (
             ]);
             const response = result.response;
             const text = response.text();
-            onContentMessage(text, false);
+            if (text.length > TypeWriterEffectThreshold) {
+                const textArr = text.split("");
+                for (
+                    let i = 0;
+                    i < textArr.length;
+                    i += TypeWriterEffectThreshold
+                ) {
+                    onContentMessage(
+                        textArr
+                            .slice(i, i + TypeWriterEffectThreshold)
+                            .join(""),
+                        false
+                    );
+                    await new Promise((resolve) =>
+                        setTimeout(resolve, Math.random() * 600 + 300)
+                    );
+                }
+            } else {
+                onContentMessage(text, false);
+            }
             onContentMessage("", true);
         }
     } catch (e) {

@@ -9,6 +9,7 @@ export const getAiChats = async (
     options: BaseParams,
     onChatMessage: (message: string, end: boolean) => void
 ) => {
+    const TypeWriterEffectThreshold = 30;
     try {
         const attachmentIndexArr = history
             .map(({ attachment }, index) =>
@@ -30,7 +31,26 @@ export const getAiChats = async (
             const result = await chat.sendMessageStream(prompts);
             for await (const chunk of result.stream) {
                 const chunkText = chunk.text();
-                onChatMessage(chunkText, false);
+                if (chunkText.length > TypeWriterEffectThreshold) {
+                    const chunkTextArr = chunkText.split("");
+                    for (
+                        let i = 0;
+                        i < chunkTextArr.length;
+                        i += TypeWriterEffectThreshold
+                    ) {
+                        onChatMessage(
+                            chunkTextArr
+                                .slice(i, i + TypeWriterEffectThreshold)
+                                .join(""),
+                            false
+                        );
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, Math.random() * 600 + 300)
+                        );
+                    }
+                } else {
+                    onChatMessage(chunkText, false);
+                }
             }
             onChatMessage("", true);
         } else {
@@ -41,7 +61,26 @@ export const getAiChats = async (
             const result = await chat.sendMessage(prompts);
             const response = result.response;
             const text = response.text();
-            onChatMessage(text, false);
+            if (text.length > TypeWriterEffectThreshold) {
+                const textArr = text.split("");
+                for (
+                    let i = 0;
+                    i < textArr.length;
+                    i += TypeWriterEffectThreshold
+                ) {
+                    onChatMessage(
+                        textArr
+                            .slice(i, i + TypeWriterEffectThreshold)
+                            .join(""),
+                        false
+                    );
+                    await new Promise((resolve) =>
+                        setTimeout(resolve, Math.random() * 600 + 300)
+                    );
+                }
+            } else {
+                onChatMessage(text, false);
+            }
             onChatMessage("", true);
         }
     } catch (e) {

@@ -54,11 +54,6 @@ const Chat = (props: RouterComponentProps) => {
         [ai, mainSectionRef]
     );
 
-    const handleDOMNodeChanged = useCallback(
-        () => scrollToBottom(),
-        [scrollToBottom]
-    );
-
     const handleRefresh = async (index: number, customSessions?: Sessions) => {
         const finalSessions = customSessions ?? sessions;
         if (!ai.busy && id && id in finalSessions) {
@@ -197,24 +192,7 @@ const Chat = (props: RouterComponentProps) => {
         }
 
         setTimeout(() => scrollToBottom(true), 300);
-        mainSectionRef?.addEventListener(
-            "DOMNodeInserted",
-            handleDOMNodeChanged
-        );
-        return () => {
-            mainSectionRef?.removeEventListener(
-                "DOMNodeInserted",
-                handleDOMNodeChanged
-            );
-        };
-    }, [
-        siteTitle,
-        id,
-        sessions,
-        mainSectionRef,
-        scrollToBottom,
-        handleDOMNodeChanged,
-    ]);
+    }, [siteTitle, id, sessions, mainSectionRef, scrollToBottom]);
 
     return (
         <Container className="max-w-[calc(100%)] py-5 pl-3 mb-auto mx-1 md:mx-[4rem] lg:mx-[8rem]">
