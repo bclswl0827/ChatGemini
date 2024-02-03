@@ -54,7 +54,11 @@ export const Markdown = (props: MarkdownProps) => {
                 ),
                 code: ({ className, children }) => {
                     const match = /language-(\w+)/.exec(className ?? "");
-                    const code = String(children).replace(typingEffect, "❚");
+                    const code = (!!children ? String(children) : "❚").replace(
+                        typingEffect,
+                        "❚"
+                    );
+
                     return match ? (
                         <>
                             <Prism
