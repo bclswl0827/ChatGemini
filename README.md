@@ -100,6 +100,63 @@ $ docker run -d \
 
 模板中仅留下了必填的 `REACT_APP_GEMINI_API_KEY` 变量， 在部署完成过后，若需修改或新增配置，请前往 Vercel 控制台，点击对应项目，再点击 `Settings` -> `Environment Variables` 进行修改。修改完成后，需要在 Vercel 控制台重新触发部署，以使新配置生效。
 
+## 保持更新
+
+### 若使用手动部署
+
+若使用手动部署，可透过以下步骤保持更新：
+
+ 1. 进入项目目录
+```bash
+$ cd ChatGemini
+```
+ 2. 拉取最新代码
+```bash
+$ git pull
+```
+ 3. 安装依赖
+```bash
+$ npm install
+```
+ 4. 重新构建项目
+```bash
+$ npm run build
+```
+ 5. 部署项目
+ 6. 重启服务
+
+### 若使用 Docker 部署
+
+若使用 Docker 部署，可透过以下步骤保持更新：
+
+ 1. 删除旧容器
+```bash
+$ docker rm -f chatgemini
+```
+ 2. 拉取最新镜像
+```bash
+$ docker pull ghcr.io/bclswl0827/chatgemini
+```
+ 3. 运行新容器
+```bash
+$ docker run -d \
+    --name chatgemini \
+    --restart always \
+    --publish 8080:8080 \
+    --env REACT_APP_GEMINI_API_KEY="您的密钥" \
+    ghcr.io/bclswl0827/chatgemini
+```
+
+### 若使用 Vercel 部署
+
+使用 Vercel 部署的项目，平台会在用户 GitHub 仓库创建一个新仓库，而不是 Fork 本仓库，因此无法正确检测更新。请按照下列步骤手动更新：
+
+ 1. 删掉由 Vercel 创建的仓库
+ 2. 使用页面右上角的 Fork 按钮，Fork 本项目
+ 3. 在 Vercel 重新选择并部署 Fork 后的项目并完成部署
+
+Fork 后的仓库，由于 GitHub 存在限制，需要手动去您 Fork 后仓库的 Actions 页面启用 Workflows，并启用 Upstream Sync Action，启用之后即可开启每小时定时自动同步上游代码。
+
 ## 应用配置
 
 项目基础配置位于根目录下的 `.env` 文件中，手动部署时，请创建该文件并根据实际情况进行配置；若使用 Docker 方式部署，请在创建容器时传入 `--env` 参数进行配置。

@@ -173,12 +173,6 @@ const Chat = (props: RouterComponentProps) => {
                         ...sessions[id].slice(index + 1),
                     ],
                 };
-                if (index - 1 in attachmentsURL) {
-                    setAttachmentsURL((prev) => {
-                        const { [index - 1]: _, ...rest } = prev;
-                        return rest;
-                    });
-                }
                 dispatch(updateSessions(_sessions));
                 setChat(_sessions[id]);
             });
@@ -225,21 +219,21 @@ const Chat = (props: RouterComponentProps) => {
     return (
         <Container className="max-w-[calc(100%)] py-5 pl-3 mb-auto mx-1 md:mx-[4rem] lg:mx-[8rem]">
             <ImageView>
-                {chat.map(({ role, parts, attachment }, index) => {
+                {chat.map(({ role, parts, attachment, timestamp }, index) => {
                     const { mimeType, data } = attachment ?? {
                         mimeType: "",
                         data: "",
                     };
                     let base64BlobURL = "";
-                    if (!!data.length && index in attachmentsURL) {
-                        base64BlobURL = attachmentsURL[index];
+                    if (!!data.length && timestamp in attachmentsURL) {
+                        base64BlobURL = attachmentsURL[timestamp];
                     } else if (!!data.length) {
                         base64BlobURL = getBase64BlobUrl(
                             `data:${mimeType};base64,${data}`
                         );
                         setAttachmentsURL((prev) => ({
                             ...prev,
-                            [index]: base64BlobURL,
+                            [timestamp]: base64BlobURL,
                         }));
                     }
 

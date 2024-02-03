@@ -10,7 +10,7 @@ env:
     IMAGE: bclswl0827/chatgemini
 
 jobs:
-    build-and-push:
+    build_docker_image:
         runs-on: ubuntu-latest
 
         permissions:
