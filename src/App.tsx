@@ -39,6 +39,7 @@ const App = () => {
     );
     const ai = useSelector((state: ReduxStoreProps) => state.ai.ai);
     const mainSectionRef = useRef<HTMLDivElement>(null);
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
     const [hasLogined, setHasLogined] = useState(false);
     const [uploadInlineData, setUploadInlineData] =
@@ -240,11 +241,13 @@ const App = () => {
                         <RouterView
                             routes={routes}
                             suspense={<Skeleton />}
-                            routerProps={{ refs: { mainSectionRef } }}
+                            routerProps={{
+                                refs: { mainSectionRef, textAreaRef },
+                            }}
                         />
                         <InputArea
                             minHeight={45}
-                            maxHeight={120}
+                            ref={textAreaRef}
                             disabled={ai.busy}
                             onSubmit={handleSubmit}
                             onUpload={handleUpload}

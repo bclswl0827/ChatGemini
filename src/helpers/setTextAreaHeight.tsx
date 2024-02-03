@@ -1,7 +1,7 @@
 export const setTextAreaHeight = (
     current: HTMLTextAreaElement | null,
-    maxHeight: number,
-    minHeight: number
+    minHeight: number = 45,
+    maxHeight: number = 120,
 ) => {
     current!.style.height = "0px";
     current!.style.height =

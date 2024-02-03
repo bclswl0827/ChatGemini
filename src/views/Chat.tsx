@@ -24,7 +24,7 @@ const FallbackIfIdInvalid =
     "您当前的会话 ID 似乎无效，请检查您的网址，您也可以新建一个会话。";
 
 const Chat = (props: RouterComponentProps) => {
-    const mainSectionRef = props.refs?.mainSectionRef.current || null;
+    const mainSectionRef = props.refs?.mainSectionRef.current ?? null;
     const { site: siteTitle } = globalConfig.title;
 
     const dispatch = useDispatch();

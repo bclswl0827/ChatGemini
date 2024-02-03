@@ -5,19 +5,29 @@ import { getRandomArr } from "../helpers/getRandomArr";
 import { sendUserAlert } from "../helpers/sendUserAlert";
 import { useEffect, useState } from "react";
 import { globalConfig } from "../config/global";
+import { RouterComponentProps } from "../config/router";
+import { setTextAreaHeight } from "../helpers/setTextAreaHeight";
 
-const Home = () => {
+const Home = (props: RouterComponentProps) => {
     const { site: siteTitle } = globalConfig.title;
     const { title, samples } = sampleConfig;
+    const textAreaRef =
+        (props.refs?.textAreaRef.current as HTMLTextAreaElement) ?? null;
 
-    const [randomSamples] = useState(getRandomArr(samples, 6));
+    const [randomSamples] = useState<LandingSample[]>(getRandomArr(samples, 6));
 
     const handleSelectSample = async (message: string) => {
-        const success = await setClipboard(message);
-        if (success) {
-            sendUserAlert("请将消息粘贴到输入框并提交");
+        if (textAreaRef) {
+            textAreaRef.focus();
+            textAreaRef.value = message;
+            setTextAreaHeight(textAreaRef);
         } else {
-            sendUserAlert("消息复制失败，请检查浏览器设置", true);
+            const success = await setClipboard(message);
+            if (success) {
+                sendUserAlert("请将消息粘贴到输入框并提交");
+            } else {
+                sendUserAlert("消息复制失败，请检查浏览器设置", true);
+            }
         }
     };
 

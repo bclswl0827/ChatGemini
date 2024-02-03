@@ -93,12 +93,12 @@ export const Session = (props: SessionProps) => {
                 index === editState.index ? (
                     <div className="flex flex-col space-y-2 lg:text-base text-sm">
                         <textarea
-                            className="bg-transparent text-gray-800 rounded-lg p-2 overflow-y-scroll resize-none"
+                            className="bg-transparent text-gray-800 rounded-lg p-2 overflow-y-scroll resize-none !outline-none"
                             placeholder="请输入内容..."
                             defaultValue={prompt}
                             ref={textAreaRef}
                             onInput={({ currentTarget }) =>
-                                setTextAreaHeight(currentTarget, 200, 60)
+                                setTextAreaHeight(currentTarget, 60, 200)
                             }
                         />
                         <div className="flex gap-2 justify-center">
@@ -141,9 +141,10 @@ export const Session = (props: SessionProps) => {
                     editState.state !== SessionEditState.Edit && (
                         <button
                             className="size-6 rounded-lg hover:bg-gray-200 flex justify-center items-center"
-                            onClick={() =>
-                                onEdit(index, SessionEditState.Edit, "")
-                            }
+                            onClick={() => {
+                                setTextAreaHeight(textAreaRef.current, 60, 200);
+                                onEdit(index, SessionEditState.Edit, "");
+                            }}
                         >
                             <img src={editIcon} className="size-4" alt="" />
                         </button>

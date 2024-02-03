@@ -1,4 +1,4 @@
-import { LegacyRef, ReactNode, forwardRef } from "react";
+import { ForwardedRef, ReactNode, forwardRef } from "react";
 import { Toaster } from "react-hot-toast";
 
 interface ContainerProps {
@@ -8,7 +8,7 @@ interface ContainerProps {
 }
 
 export const Container = forwardRef(
-    (props: ContainerProps, ref: LegacyRef<HTMLDivElement>) => {
+    (props: ContainerProps, ref: ForwardedRef<HTMLDivElement>) => {
         const { toaster, className, children } = props;
         return (
             <div
