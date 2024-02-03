@@ -127,7 +127,7 @@ $ npm run build
 
 ### 若使用 Docker 部署
 
-若使用 Docker 部署，可透过以下步骤保持更新：
+若是使用传统 `docker run` 指令部署的版本，可透过以下步骤保持更新：
 
  1. 删除旧容器
 ```bash
@@ -145,6 +145,22 @@ $ docker run -d \
     --publish 8080:8080 \
     --env REACT_APP_GEMINI_API_KEY="您的密钥" \
     ghcr.io/bclswl0827/chatgemini
+```
+
+若是使用 `docker-compose` 指令部署的版本，可透过以下步骤保持更新：
+
+ 1. 进入 `docker-compose.yml` 所在目录
+ 2. 拉取最新镜像
+```bash
+$ docker-compose pull
+```
+ 3. 重启容器
+```bash
+$ docker-compose up -d --remove-orphans
+```
+1. 移除旧镜像（可选）
+```bash
+$ docker image prune
 ```
 
 ### 若使用 Vercel 部署

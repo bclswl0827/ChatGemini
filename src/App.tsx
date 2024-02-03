@@ -196,6 +196,7 @@ const App = () => {
     };
 
     useEffect(() => {
+        document.querySelector(".loading")?.remove();
         if (!hasLogined && !!passcodes.length) {
             document.title = `登入 - ${site}`;
         }

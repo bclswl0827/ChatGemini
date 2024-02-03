@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:lts-alpine as builder
 
 WORKDIR /app
 
@@ -6,11 +6,19 @@ COPY ./.* ./
 COPY ./*.js* ./
 COPY ./src ./src
 COPY ./public ./public
-COPY entrypoint.sh /entrypoint.sh
 
-RUN apk add --no-cache nginx \
-    && chmod +x /entrypoint.sh \
-    && npm install
+RUN npm install && npm run build
+
+FROM nginx:stable-alpine
+
+COPY entrypoint.sh /entrypoint.sh
+RUN rm -rf /etc/nginx/conf.d/default.conf /usr/share/nginx/html/* \
+    && chmod +x /entrypoint.sh
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/build /usr/share/nginx/html
 
 EXPOSE 8080
+VOLUME [ "/etc/nginx" ]
+VOLUME [ "/usr/share/nginx/html" ]
 ENTRYPOINT [ "sh", "-c", "/entrypoint.sh" ]

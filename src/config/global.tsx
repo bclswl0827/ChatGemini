@@ -1,32 +1,42 @@
-const {
-    REACT_APP_PASSCODE_MD5,
-    REACT_APP_TITLE_SITE,
-    REACT_APP_TITLE_HEADER,
-    REACT_APP_GEMINI_API_KEY,
-    REACT_APP_GEMINI_API_URL,
-    REACT_APP_GEMINI_API_SSE,
-} = process.env;
+const env = Object.keys(process.env)
+    .filter((key) => key.startsWith("REACT_APP_"))
+    .reduce((env: Record<string, string | null>, key) => {
+        env[key] = process.env[key] ?? null;
+        return env;
+    }, {});
 
-const keys = REACT_APP_GEMINI_API_KEY
-    ? REACT_APP_GEMINI_API_KEY.split("|").map((v) => v.trim())
-    : [""];
-const passcodes = REACT_APP_PASSCODE_MD5
-    ? REACT_APP_PASSCODE_MD5?.split("|").map((v) =>
-          v.trim().toLocaleLowerCase()
-      )
-    : [];
+if (!Object.keys(env).length) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "/env.json", false);
+    try {
+        xhr.send();
+        const data = JSON.parse(xhr.responseText);
+        Object.assign(env, data);
+    } catch (e) {
+        Object.assign(env, {});
+    }
+}
+
+const keys = env["REACT_APP_GEMINI_API_KEY"]
+    ?.split("|")
+    .map((v) => v.trim()) ?? [""];
+const passcodes =
+    env["REACT_APP_PASSCODE_MD5"]
+        ?.split("|")
+        .filter((v) => !!v.length)
+        .map((v) => v.trim().toLocaleLowerCase()) ?? [];
 
 export const globalConfig = {
     passcodes,
     keys,
     title: {
-        site: !!REACT_APP_TITLE_SITE?.length
-            ? REACT_APP_TITLE_SITE
+        site: !!env["REACT_APP_TITLE_SITE"]?.length
+            ? env["REACT_APP_TITLE_SITE"]
             : "ChatGemini",
-        header: !!REACT_APP_TITLE_HEADER?.length
-            ? REACT_APP_TITLE_HEADER
+        header: !!env["REACT_APP_TITLE_HEADER"]?.length
+            ? env["REACT_APP_TITLE_HEADER"]
             : "Gemini Pro",
     },
-    api: REACT_APP_GEMINI_API_URL,
-    sse: REACT_APP_GEMINI_API_SSE === "false" ? false : true,
+    api: env["REACT_APP_GEMINI_API_URL"],
+    sse: env["REACT_APP_GEMINI_API_SSE"] === "false" ? false : true,
 };
