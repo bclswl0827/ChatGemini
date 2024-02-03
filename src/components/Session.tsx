@@ -146,10 +146,9 @@ export const Session = (props: SessionProps) => {
                     editState.state !== SessionEditState.Edit && (
                         <button
                             className="size-6 rounded-lg hover:bg-gray-200 flex justify-center items-center"
-                            onClick={() => {
-                                setTextAreaHeight(textAreaRef.current, 60, 200);
-                                onEdit(index, SessionEditState.Edit, "");
-                            }}
+                            onClick={() =>
+                                onEdit(index, SessionEditState.Edit, "")
+                            }
                         >
                             <img src={editIcon} className="size-4" alt="" />
                         </button>
