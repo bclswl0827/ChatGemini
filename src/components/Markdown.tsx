@@ -8,7 +8,7 @@ import { Prism } from "react-syntax-highlighter";
 import { setClipboard } from "../helpers/setClipboard";
 import { a11yDark as style } from "react-syntax-highlighter/dist/esm/styles/prism";
 import userThrottle from "../helpers/userThrottle";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loadPyodide } from "pyodide";
 import userDebounce from "../helpers/userDebounce";
 
@@ -65,6 +65,10 @@ __builtins__.input = input
         },
         300
     );
+
+    useEffect(() => {
+        setExecuteResult("");
+    }, [children]);
 
     return (
         <ReactMarkdown
