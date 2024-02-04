@@ -37,9 +37,16 @@ export const Sidebar = (props: SidebarProps) => {
     const [sessionsLimitation, setSessionsLimitation] = useState(
         limitation ?? 10
     );
-    const [sessionsCategory, setSessionsCategory] = useState<
-        Record<"today" | "yesterday" | "earlier", Sessions>
-    >({ today: {}, yesterday: {}, earlier: {} });
+    const [sessionsCategory, setSessionsCategory] = useState<{
+        [id: string]: {
+            label: string;
+            sessions?: Sessions;
+        };
+    }>({
+        today: { label: "今天" },
+        yesterday: { label: "昨天" },
+        earlier: { label: "更早" },
+    });
 
     const getCategorizedSessions = (
         sessions: Sessions,
@@ -83,7 +90,12 @@ export const Sidebar = (props: SidebarProps) => {
             isTimestampYesterday
         );
         const earlier = getCategorizedSessions(sessions, isTimestampEarlier);
-        setSessionsCategory({ today, yesterday, earlier });
+        setSessionsCategory((prev) => ({
+            ...prev,
+            today: { ...prev.today, sessions: today },
+            yesterday: { ...prev.yesterday, sessions: yesterday },
+            earlier: { ...prev.earlier, sessions: earlier },
+        }));
     }, [sessions]);
 
     return (
@@ -104,333 +116,160 @@ export const Sidebar = (props: SidebarProps) => {
                     + 新聊天
                 </Link>
             </div>
-            {!!Object.keys(sessions).length ? (
-                <div className="flex flex-col space-y-2 p-2">
-                    {!!Object.keys(sessionsCategory.today).length && (
-                        <h3 className="text-gray-500 text-xs py-1">今天</h3>
-                    )}
-                    {Object.keys(sessionsCategory.today).map((key, index) => {
-                        const currentSession = sessionsCategory.today[key];
-                        const currentSessionTitle = !!currentSession[0]?.title
-                            ?.length
-                            ? currentSession[0].title
-                            : currentSession[0].parts;
-                        return (
-                            currentSession && (
-                                <div
-                                    key={index}
-                                    className="flex rounded-lg items-center justify-between p-2 text-gray-200 hover:bg-slate-600 transition-all space-x-2"
-                                >
-                                    <Link
-                                        className={`flex-1 text-sm text-left truncate ${
-                                            renamingChatTitle.id === key
-                                                ? "hidden"
-                                                : ""
-                                        }`}
-                                        to={`/chat/${key}`}
-                                    >
-                                        {currentSessionTitle}
-                                    </Link>
-                                    <input
-                                        defaultValue={currentSessionTitle}
-                                        className={`flex-1 w-full bg-transparent text-sm ${
-                                            renamingChatTitle.id === key
-                                                ? ""
-                                                : "hidden"
-                                        }`}
-                                        onChange={({ target }) =>
-                                            setRenamingChatTitle((prev) => ({
-                                                ...prev,
-                                                title: target.value,
-                                            }))
-                                        }
-                                    />
-                                    <img
-                                        className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
-                                            renamingChatTitle.id === key
-                                                ? "hidden"
-                                                : ""
-                                        }`}
-                                        src={renameIcon}
-                                        alt=""
-                                        onClick={() =>
-                                            setRenamingChatTitle({
-                                                id: key,
-                                                title: currentSessionTitle,
-                                            })
-                                        }
-                                    />
-                                    <img
-                                        className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
-                                            renamingChatTitle.id !== key
-                                                ? "hidden"
-                                                : ""
-                                        }`}
-                                        src={submitIcon}
-                                        alt=""
-                                        onClick={() => {
-                                            const { title } = renamingChatTitle;
-                                            if (
-                                                !!title.length &&
-                                                onRenameSession &&
-                                                renamingChatTitle.title !==
-                                                    currentSessionTitle
-                                            ) {
-                                                onRenameSession(key, title);
-                                            }
-                                            setRenamingChatTitle({
-                                                id: "",
-                                                title: "",
-                                            });
-                                        }}
-                                    />
-                                    <img
-                                        className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
-                                        src={exportIcon}
-                                        alt=""
-                                        onClick={() =>
-                                            onExportSession &&
-                                            onExportSession(key)
-                                        }
-                                    />
-                                    <img
-                                        className="cursor-pointer size-3 hover:scale-125 transition-all"
-                                        src={deleteIcon}
-                                        alt=""
-                                        onClick={() =>
-                                            onDeleteSession &&
-                                            onDeleteSession(key)
-                                        }
-                                    />
-                                </div>
-                            )
-                        );
-                    })}
-                    {!!Object.keys(sessionsCategory.yesterday).length && (
-                        <h3 className="text-gray-500 text-xs py-1">昨天</h3>
-                    )}
-                    {Object.keys(sessionsCategory.yesterday).map(
-                        (key, index) => {
-                            const currentSession =
-                                sessionsCategory.yesterday[key];
-                            const currentSessionTitle = !!currentSession[0]
-                                ?.title?.length
-                                ? currentSession[0].title
-                                : currentSession[0].parts;
-                            return (
-                                currentSession && (
-                                    <div
-                                        key={index}
-                                        className="flex rounded-lg items-center justify-between p-2 text-gray-200 hover:bg-slate-600 transition-all space-x-2"
-                                    >
-                                        <Link
-                                            className={`flex-1 text-sm text-left truncate ${
-                                                renamingChatTitle.id === key
-                                                    ? "hidden"
-                                                    : ""
-                                            }`}
-                                            to={`/chat/${key}`}
-                                        >
-                                            {currentSessionTitle}
-                                        </Link>
-                                        <input
-                                            defaultValue={currentSessionTitle}
-                                            className={`flex-1 w-full bg-transparent text-sm ${
-                                                renamingChatTitle.id === key
-                                                    ? ""
-                                                    : "hidden"
-                                            }`}
-                                            onChange={({ target }) =>
-                                                setRenamingChatTitle(
-                                                    (prev) => ({
-                                                        ...prev,
-                                                        title: target.value,
-                                                    })
-                                                )
-                                            }
-                                        />
-                                        <img
-                                            className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
-                                                renamingChatTitle.id === key
-                                                    ? "hidden"
-                                                    : ""
-                                            }`}
-                                            src={renameIcon}
-                                            alt=""
-                                            onClick={() =>
-                                                setRenamingChatTitle({
-                                                    id: key,
-                                                    title: currentSessionTitle,
-                                                })
-                                            }
-                                        />
-                                        <img
-                                            className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
-                                                renamingChatTitle.id !== key
-                                                    ? "hidden"
-                                                    : ""
-                                            }`}
-                                            src={submitIcon}
-                                            alt=""
-                                            onClick={() => {
-                                                const { title } =
-                                                    renamingChatTitle;
-                                                if (
-                                                    !!title.length &&
-                                                    onRenameSession &&
-                                                    renamingChatTitle.title !==
+            <div className="flex flex-col space-y-2 p-2">
+                {Object.keys(sessionsCategory).map((key, index, arr) => {
+                    const currentLabel = sessionsCategory[key].label;
+                    const currentSessions =
+                        sessionsCategory[key].sessions ?? {};
+                    const currentSessionsKeys = Object.keys(currentSessions);
+                    const isEnablePagination = index === arr.length - 1;
+                    const isEmpty = !currentSessionsKeys.length;
+
+                    return (
+                        !isEmpty && (
+                            <div key={index}>
+                                <h3 className="text-gray-500 text-xs py-1">
+                                    {currentLabel}
+                                </h3>
+                                {currentSessionsKeys
+                                    .slice(
+                                        0,
+                                        isEnablePagination
+                                            ? sessionsLimitation
+                                            : currentSessionsKeys.length
+                                    )
+                                    .map((id, _index) => {
+                                        const currentSession =
+                                            currentSessions[id][0];
+                                        const currentSessionTitle =
+                                            !!currentSession?.title?.length
+                                                ? currentSession.title
+                                                : currentSession.parts;
+                                        return (
+                                            <div
+                                                key={_index}
+                                                className="flex rounded-lg items-center justify-between p-2 text-gray-200 hover:bg-slate-600 transition-all space-x-2"
+                                            >
+                                                <Link
+                                                    className={`flex-1 text-sm text-left truncate ${
+                                                        renamingChatTitle.id ===
+                                                        id
+                                                            ? "hidden"
+                                                            : ""
+                                                    }`}
+                                                    to={`/chat/${id}`}
+                                                >
+                                                    {currentSessionTitle}
+                                                </Link>
+                                                <input
+                                                    defaultValue={
                                                         currentSessionTitle
-                                                ) {
-                                                    onRenameSession(key, title);
+                                                    }
+                                                    className={`flex-1 w-full bg-transparent text-sm ${
+                                                        renamingChatTitle.id ===
+                                                        id
+                                                            ? ""
+                                                            : "hidden"
+                                                    }`}
+                                                    onChange={({ target }) =>
+                                                        setRenamingChatTitle(
+                                                            (prev) => ({
+                                                                ...prev,
+                                                                title: target.value,
+                                                            })
+                                                        )
+                                                    }
+                                                />
+                                                <img
+                                                    className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
+                                                        renamingChatTitle.id ===
+                                                        id
+                                                            ? "hidden"
+                                                            : ""
+                                                    }`}
+                                                    src={renameIcon}
+                                                    alt=""
+                                                    onClick={() =>
+                                                        setRenamingChatTitle({
+                                                            id,
+                                                            title: currentSessionTitle,
+                                                        })
+                                                    }
+                                                />
+                                                <img
+                                                    className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
+                                                        renamingChatTitle.id !==
+                                                        id
+                                                            ? "hidden"
+                                                            : ""
+                                                    }`}
+                                                    src={submitIcon}
+                                                    alt=""
+                                                    onClick={() => {
+                                                        const { title } =
+                                                            renamingChatTitle;
+                                                        if (
+                                                            !!title.length &&
+                                                            onRenameSession &&
+                                                            renamingChatTitle.title !==
+                                                                currentSessionTitle
+                                                        ) {
+                                                            onRenameSession(
+                                                                id,
+                                                                title
+                                                            );
+                                                        }
+                                                        setRenamingChatTitle({
+                                                            id: "",
+                                                            title: "",
+                                                        });
+                                                    }}
+                                                />
+                                                <img
+                                                    className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
+                                                    src={exportIcon}
+                                                    alt=""
+                                                    onClick={() =>
+                                                        onExportSession &&
+                                                        onExportSession(id)
+                                                    }
+                                                />
+                                                <img
+                                                    className="cursor-pointer size-3 hover:scale-125 transition-all"
+                                                    src={deleteIcon}
+                                                    alt=""
+                                                    onClick={() =>
+                                                        onDeleteSession &&
+                                                        onDeleteSession(id)
+                                                    }
+                                                />
+                                            </div>
+                                        );
+                                    })}
+                                {isEnablePagination &&
+                                    currentSessionsKeys.length >
+                                        sessionsLimitation && (
+                                        <div className="text-center m-2">
+                                            <button
+                                                className="font-semibold text-gray-400 hover:text-gray-200 text-sm transition-all"
+                                                onClick={() =>
+                                                    setSessionsLimitation(
+                                                        (state) => state + 5
+                                                    )
                                                 }
-                                                setRenamingChatTitle({
-                                                    id: "",
-                                                    title: "",
-                                                });
-                                            }}
-                                        />
-                                        <img
-                                            className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
-                                            src={exportIcon}
-                                            alt=""
-                                            onClick={() =>
-                                                onExportSession &&
-                                                onExportSession(key)
-                                            }
-                                        />
-                                        <img
-                                            className="cursor-pointer size-3 hover:scale-125 transition-all"
-                                            src={deleteIcon}
-                                            alt=""
-                                            onClick={() =>
-                                                onDeleteSession &&
-                                                onDeleteSession(key)
-                                            }
-                                        />
-                                    </div>
-                                )
-                            );
-                        }
-                    )}
-                    {!!Object.keys(sessionsCategory.earlier).length && (
-                        <h3 className="text-gray-500 text-xs py-1">更早</h3>
-                    )}
-                    {Object.keys(sessionsCategory.earlier)
-                        .slice(0, sessionsLimitation)
-                        .map((key, index) => {
-                            const currentSession =
-                                sessionsCategory.earlier[key];
-                            const currentSessionTitle = !!currentSession[0]
-                                ?.title?.length
-                                ? currentSession[0].title
-                                : currentSession[0].parts;
-                            return (
-                                currentSession && (
-                                    <div
-                                        key={index}
-                                        className="flex rounded-lg items-center justify-between p-2 text-gray-200 hover:bg-slate-600 transition-all space-x-2"
-                                    >
-                                        <Link
-                                            className={`flex-1 text-sm text-left truncate ${
-                                                renamingChatTitle.id === key
-                                                    ? "hidden"
-                                                    : ""
-                                            }`}
-                                            to={`/chat/${key}`}
-                                        >
-                                            {currentSessionTitle}
-                                        </Link>
-                                        <input
-                                            defaultValue={currentSessionTitle}
-                                            className={`flex-1 w-full bg-transparent text-sm ${
-                                                renamingChatTitle.id === key
-                                                    ? ""
-                                                    : "hidden"
-                                            }`}
-                                            onChange={({ target }) =>
-                                                setRenamingChatTitle(
-                                                    (prev) => ({
-                                                        ...prev,
-                                                        title: target.value,
-                                                    })
-                                                )
-                                            }
-                                        />
-                                        <img
-                                            className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
-                                                renamingChatTitle.id === key
-                                                    ? "hidden"
-                                                    : ""
-                                            }`}
-                                            src={renameIcon}
-                                            alt=""
-                                            onClick={() =>
-                                                setRenamingChatTitle({
-                                                    id: key,
-                                                    title: currentSessionTitle,
-                                                })
-                                            }
-                                        />
-                                        <img
-                                            className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
-                                                renamingChatTitle.id !== key
-                                                    ? "hidden"
-                                                    : ""
-                                            }`}
-                                            src={submitIcon}
-                                            alt=""
-                                            onClick={() => {
-                                                const { title } =
-                                                    renamingChatTitle;
-                                                if (
-                                                    !!title.length &&
-                                                    onRenameSession &&
-                                                    renamingChatTitle.title !==
-                                                        currentSessionTitle
-                                                ) {
-                                                    onRenameSession(key, title);
-                                                }
-                                                setRenamingChatTitle({
-                                                    id: "",
-                                                    title: "",
-                                                });
-                                            }}
-                                        />
-                                        <img
-                                            className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
-                                            src={exportIcon}
-                                            alt=""
-                                            onClick={() =>
-                                                onExportSession &&
-                                                onExportSession(key)
-                                            }
-                                        />
-                                        <img
-                                            className="cursor-pointer size-3 hover:scale-125 transition-all"
-                                            src={deleteIcon}
-                                            alt=""
-                                            onClick={() =>
-                                                onDeleteSession &&
-                                                onDeleteSession(key)
-                                            }
-                                        />
-                                    </div>
-                                )
-                            );
-                        })}
-                    {Object.keys(sessionsCategory.earlier).length >
-                        sessionsLimitation && (
-                        <button
-                            className="font-semibold text-gray-200 text-center text-sm hover:bg-slate-600 transition-all rounded-full p-1"
-                            onClick={() =>
-                                setSessionsLimitation((state) => state + 5)
-                            }
-                        >
-                            查看更多...
-                        </button>
-                    )}
-                </div>
-            ) : (
+                                            >
+                                                加载更多...
+                                            </button>
+                                        </div>
+                                    )}
+                            </div>
+                        )
+                    );
+                })}
+            </div>
+            {Object.values(sessionsCategory)
+                .map(({ sessions }) => sessions ?? {})
+                .every((sessions) => !Object.keys(sessions).length) && (
                 <div className="p-2 text-center text-gray-300/50 mt-16">
                     没有历史记录
                 </div>
