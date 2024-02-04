@@ -8,6 +8,9 @@ import { Prism } from "react-syntax-highlighter";
 import { setClipboard } from "../helpers/setClipboard";
 import { a11yDark as style } from "react-syntax-highlighter/dist/esm/styles/prism";
 import userThrottle from "../helpers/userThrottle";
+import { useState } from "react";
+import { loadPyodide } from "pyodide";
+import userDebounce from "../helpers/userDebounce";
 
 interface MarkdownProps {
     readonly className?: string;
@@ -15,22 +18,53 @@ interface MarkdownProps {
     readonly children: string;
 }
 
-const handleCopyCode = userThrottle(
-    async (code: string, currentTarget: EventTarget) => {
-        const success = await setClipboard(code);
-        const innerHTML = (currentTarget as HTMLButtonElement).innerHTML;
-        (currentTarget as HTMLButtonElement).innerHTML = success
-            ? "复制成功"
-            : "复制失败";
-        setTimeout(() => {
-            (currentTarget as HTMLButtonElement).innerHTML = innerHTML;
-        }, 1000);
-    },
-    1200
-);
-
 export const Markdown = (props: MarkdownProps) => {
     const { className, typingEffect, children } = props;
+
+    const [executeResult, setExecuteResult] = useState("");
+
+    const handleCopyCode = userThrottle(
+        async (code: string, currentTarget: EventTarget) => {
+            const success = await setClipboard(code);
+            const innerText = (currentTarget as HTMLButtonElement).innerText;
+            (currentTarget as HTMLButtonElement).innerText = success
+                ? "复制成功"
+                : "复制失败";
+            setTimeout(() => {
+                (currentTarget as HTMLButtonElement).innerText = innerText;
+            }, 1000);
+        },
+        1200
+    );
+
+    const handleExecuteCode = userDebounce(
+        async (code: string, currentTarget: EventTarget) => {
+            const innerText = (currentTarget as HTMLButtonElement).innerText;
+            try {
+                (currentTarget as HTMLButtonElement).innerText = "正在执行";
+                (currentTarget as HTMLButtonElement).disabled = true;
+                setExecuteResult("# 正在加载资源");
+                const pyodide = await loadPyodide({
+                    indexURL: `${window.location.pathname}pyodide/`,
+                    stdout: (x: string) => setExecuteResult(`# stdout\n${x}`),
+                    stderr: (x: string) => setExecuteResult(`# stderr\n${x}`),
+                });
+                await pyodide.runPythonAsync(`
+from js import prompt
+def input(p):
+    return prompt(p)
+__builtins__.input = input
+`);
+                setExecuteResult("# 正在执行代码");
+                await pyodide.runPythonAsync(code);
+            } catch (e) {
+                setExecuteResult(`# 运行失败\n${e}`);
+            }
+            (currentTarget as HTMLButtonElement).innerText = innerText;
+            (currentTarget as HTMLButtonElement).disabled = false;
+        },
+        300
+    );
 
     return (
         <ReactMarkdown
@@ -53,34 +87,52 @@ export const Markdown = (props: MarkdownProps) => {
                     <pre className="bg-transparent p-2" {...props} />
                 ),
                 code: ({ className, children }) => {
+                    const typeEffectPlaceholder = "❚";
                     const match = /language-(\w+)/.exec(className ?? "");
-                    const code = (!!children ? String(children) : "❚").replace(
-                        typingEffect,
-                        "❚"
-                    );
-
+                    const lang = match !== null ? match[1] : "";
+                    const code = (
+                        !!children ? String(children) : typeEffectPlaceholder
+                    ).replace(typingEffect, typeEffectPlaceholder);
                     return match ? (
                         <>
                             <Prism
                                 PreTag={"div"}
                                 style={style}
-                                language={
-                                    match !== null
-                                        ? match?.length > 1
-                                            ? match[1]
-                                            : ""
-                                        : ""
-                                }
+                                language={lang}
                                 children={code.replace(/\n$/, "")}
                             />
-                            <button
-                                className="text-gray-700/100 text-xs hover:opacity-50"
-                                onClick={({ currentTarget }) =>
-                                    handleCopyCode(code, currentTarget)
-                                }
-                            >
-                                复制代码
-                            </button>
+                            <div className="flex gap-2">
+                                <button
+                                    className="text-gray-700/100 text-xs hover:opacity-50"
+                                    onClick={({ currentTarget }) =>
+                                        handleCopyCode(code, currentTarget)
+                                    }
+                                >
+                                    复制代码
+                                </button>
+                                {!code.includes(typeEffectPlaceholder) &&
+                                    lang === "python" && (
+                                        <button
+                                            className="text-gray-700/100 text-xs hover:opacity-50"
+                                            onClick={({ currentTarget }) =>
+                                                handleExecuteCode(
+                                                    code,
+                                                    currentTarget
+                                                )
+                                            }
+                                        >
+                                            执行代码
+                                        </button>
+                                    )}
+                            </div>
+                            {!!executeResult.length && (
+                                <Prism
+                                    PreTag={"div"}
+                                    style={style}
+                                    language={"python"}
+                                    children={executeResult.replace(/\n$/, "")}
+                                />
+                            )}
                         </>
                     ) : (
                         <code className="text-gray-700">

@@ -35,7 +35,7 @@ export const Sidebar = (props: SidebarProps) => {
         title: string;
     }>({ id: "", title: "" });
     const [sessionsLimitation, setSessionsLimitation] = useState(
-        limitation ?? 10
+        limitation ?? 15
     );
     const [sessionsCategory, setSessionsCategory] = useState<{
         [id: string]: {
