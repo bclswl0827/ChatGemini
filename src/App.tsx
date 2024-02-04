@@ -70,24 +70,18 @@ const App = () => {
         }
     };
 
-    const onRenameSession = (id: string, newTitle: string) => {
-        let confirmStr = "确定要更新主题名称变更为 " + newTitle + " 吗?  ";
-        const _sessions = {
+    const handleRenameSession = (id: string, newTitle: string) => {
+        sendUserConfirm(`确定要变更标题为「${newTitle}」吗？`, () => {
+            const _sessions = {
                 ...sessions,
                 [id]: [
-                    {
-                        ...sessions[id][0],
-                        title: newTitle
-                    },
-                    ...sessions[id].slice(1)
+                    { ...sessions[id][0], title: newTitle },
+                    ...sessions[id].slice(1),
                 ],
             };
-
-        sendUserConfirm(confirmStr, () => {
             dispatch(updateSessions(_sessions));
-            sendUserAlert("对话记录已更新");
+            sendUserAlert("对话记录标题已更新");
         });
-
     };
 
     const handleDeleteSession = (id: string) => {
@@ -158,7 +152,6 @@ const App = () => {
                 {
                     role: "user",
                     parts: prompt,
-                    title: prompt.slice(0, 20),
                     timestamp: currentTimestamp,
                     attachment: uploadInlineData,
                 },
@@ -242,7 +235,7 @@ const App = () => {
                         newChatUrl={routes.index.prefix}
                         onExportSession={handleExportSession}
                         onDeleteSession={handleDeleteSession}
-                        onRenameSession={onRenameSession}
+                        onRenameSession={handleRenameSession}
                     />
                     <Container
                         ref={mainSectionRef}
