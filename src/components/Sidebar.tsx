@@ -171,6 +171,7 @@ export const Sidebar = (props: SidebarProps) => {
                                         onClick={() => {
                                             const { title } = renamingChatTitle;
                                             if (
+                                                !!title.length &&
                                                 onRenameSession &&
                                                 renamingChatTitle.title !==
                                                     currentSessionTitle
@@ -275,6 +276,7 @@ export const Sidebar = (props: SidebarProps) => {
                                                 const { title } =
                                                     renamingChatTitle;
                                                 if (
+                                                    !!title.length &&
                                                     onRenameSession &&
                                                     renamingChatTitle.title !==
                                                         currentSessionTitle
@@ -381,6 +383,7 @@ export const Sidebar = (props: SidebarProps) => {
                                                 const { title } =
                                                     renamingChatTitle;
                                                 if (
+                                                    !!title.length &&
                                                     onRenameSession &&
                                                     renamingChatTitle.title !==
                                                         currentSessionTitle

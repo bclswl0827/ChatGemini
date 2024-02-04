@@ -179,7 +179,7 @@ const Chat = (props: RouterComponentProps) => {
     useEffect(() => {
         if (id && id in sessions) {
             setChat(sessions[id]);
-            let sessionTitle = sessions[id][0].parts;
+            let sessionTitle = sessions[id][0].title ?? sessions[id][0].parts;
             if (sessionTitle.length > 20) {
                 sessionTitle = `${sessionTitle.substring(0, 20)} ...`;
             }
