@@ -1,5 +1,7 @@
 import exportIcon from "../assets/icons/file-export-solid.svg";
 import deleteIcon from "../assets/icons/trash-can-solid.svg";
+import renameIcon from "../assets/icons/file-pen-solid.svg";
+import submitIcon from "../assets/icons/circle-check-solid.svg";
 import historyIcon from "../assets/icons/clock-rotate-left-solid.svg";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -13,6 +15,7 @@ interface SidebarProps {
     readonly sessions: Sessions;
     readonly onDeleteSession?: (id: string) => void;
     readonly onExportSession?: (id: string) => void;
+    readonly onRenameSession?: (id: string, newTitle: string) => void;
 }
 
 export const Sidebar = (props: SidebarProps) => {
@@ -24,10 +27,15 @@ export const Sidebar = (props: SidebarProps) => {
         sessions,
         onDeleteSession,
         onExportSession,
+        onRenameSession,
     } = props;
 
+    const [renamingChatTitle, setRenamingChatTitle] = useState<{
+        id: string;
+        title: string;
+    }>({ id: "", title: "" });
     const [sessionsLimitation, setSessionsLimitation] = useState(
-        limitation || 10
+        limitation ?? 10
     );
     const [sessionsCategory, setSessionsCategory] = useState<
         Record<"today" | "yesterday" | "earlier", Sessions>
@@ -52,33 +60,30 @@ export const Sidebar = (props: SidebarProps) => {
                 return { ...prev, ...curr };
             }, {});
 
+    const isTimestampToday = (ts: number) =>
+        new Date(ts).toLocaleDateString() === new Date().toLocaleDateString();
+
+    const isTimestampYesterday = (ts: number) =>
+        new Date(ts).toLocaleDateString() ===
+        new Date(
+            new Date().setDate(new Date().getDate() - 1)
+        ).toLocaleDateString();
+
+    const isTimestampEarlier = (ts: number) =>
+        new Date(ts).toLocaleDateString() !== new Date().toLocaleDateString() &&
+        new Date(ts).toLocaleDateString() !==
+            new Date(
+                new Date().setDate(new Date().getDate() - 1)
+            ).toLocaleDateString();
+
     useEffect(() => {
-        setSessionsCategory({
-            today: getCategorizedSessions(
-                sessions,
-                (ts) =>
-                    new Date(ts).toLocaleDateString() ===
-                    new Date().toLocaleDateString()
-            ),
-            yesterday: getCategorizedSessions(
-                sessions,
-                (ts) =>
-                    new Date(ts).toLocaleDateString() ===
-                    new Date(
-                        new Date().setDate(new Date().getDate() - 1)
-                    ).toLocaleDateString()
-            ),
-            earlier: getCategorizedSessions(
-                sessions,
-                (ts) =>
-                    new Date(ts).toLocaleDateString() !==
-                        new Date().toLocaleDateString() &&
-                    new Date(ts).toLocaleDateString() !==
-                        new Date(
-                            new Date().setDate(new Date().getDate() - 1)
-                        ).toLocaleDateString()
-            ),
-        });
+        const today = getCategorizedSessions(sessions, isTimestampToday);
+        const yesterday = getCategorizedSessions(
+            sessions,
+            isTimestampYesterday
+        );
+        const earlier = getCategorizedSessions(sessions, isTimestampEarlier);
+        setSessionsCategory({ today, yesterday, earlier });
     }, [sessions]);
 
     return (
@@ -104,26 +109,87 @@ export const Sidebar = (props: SidebarProps) => {
                     {!!Object.keys(sessionsCategory.today).length && (
                         <h3 className="text-gray-500 text-xs py-1">今天</h3>
                     )}
-                    {Object.keys(sessionsCategory.today).map(
-                        (item, index) =>
-                            sessionsCategory.today[item] && (
+                    {Object.keys(sessionsCategory.today).map((key, index) => {
+                        const currentSession = sessionsCategory.today[key];
+                        const currentSessionTitle = !!currentSession[0]?.title
+                            ?.length
+                            ? currentSession[0].title
+                            : currentSession[0].parts;
+                        return (
+                            currentSession && (
                                 <div
                                     key={index}
                                     className="flex rounded-lg items-center justify-between p-2 text-gray-200 hover:bg-slate-600 transition-all space-x-2"
                                 >
                                     <Link
-                                        className="flex-1 text-sm text-left truncate"
-                                        to={`/chat/${item}`}
+                                        className={`flex-1 text-sm text-left truncate ${
+                                            renamingChatTitle.id === key
+                                                ? "hidden"
+                                                : ""
+                                        }`}
+                                        to={`/chat/${key}`}
                                     >
-                                        {sessionsCategory.today[item][0].parts}
+                                        {currentSessionTitle}
                                     </Link>
+                                    <input
+                                        defaultValue={currentSessionTitle}
+                                        className={`flex-1 w-full bg-transparent text-sm ${
+                                            renamingChatTitle.id === key
+                                                ? ""
+                                                : "hidden"
+                                        }`}
+                                        onChange={({ target }) =>
+                                            setRenamingChatTitle((prev) => ({
+                                                ...prev,
+                                                title: target.value,
+                                            }))
+                                        }
+                                    />
+                                    <img
+                                        className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
+                                            renamingChatTitle.id === key
+                                                ? "hidden"
+                                                : ""
+                                        }`}
+                                        src={renameIcon}
+                                        alt=""
+                                        onClick={() =>
+                                            setRenamingChatTitle({
+                                                id: key,
+                                                title: currentSessionTitle,
+                                            })
+                                        }
+                                    />
+                                    <img
+                                        className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
+                                            renamingChatTitle.id !== key
+                                                ? "hidden"
+                                                : ""
+                                        }`}
+                                        src={submitIcon}
+                                        alt=""
+                                        onClick={() => {
+                                            const { title } = renamingChatTitle;
+                                            if (
+                                                onRenameSession &&
+                                                renamingChatTitle.title !==
+                                                    currentSessionTitle
+                                            ) {
+                                                onRenameSession(key, title);
+                                            }
+                                            setRenamingChatTitle({
+                                                id: "",
+                                                title: "",
+                                            });
+                                        }}
+                                    />
                                     <img
                                         className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
                                         src={exportIcon}
                                         alt=""
                                         onClick={() =>
                                             onExportSession &&
-                                            onExportSession(item)
+                                            onExportSession(key)
                                         }
                                     />
                                     <img
@@ -132,81 +198,102 @@ export const Sidebar = (props: SidebarProps) => {
                                         alt=""
                                         onClick={() =>
                                             onDeleteSession &&
-                                            onDeleteSession(item)
+                                            onDeleteSession(key)
                                         }
                                     />
                                 </div>
                             )
-                    )}
+                        );
+                    })}
                     {!!Object.keys(sessionsCategory.yesterday).length && (
                         <h3 className="text-gray-500 text-xs py-1">昨天</h3>
                     )}
                     {Object.keys(sessionsCategory.yesterday).map(
-                        (item, index) =>
-                            sessionsCategory.yesterday[item] && (
-                                <div
-                                    key={index}
-                                    className="flex rounded-lg items-center justify-between p-2 text-gray-200 hover:bg-slate-600 transition-all space-x-2"
-                                >
-                                    <Link
-                                        className="flex-1 text-sm text-left truncate"
-                                        to={`/chat/${item}`}
-                                    >
-                                        {
-                                            sessionsCategory.yesterday[item][0]
-                                                .parts
-                                        }
-                                    </Link>
-                                    <img
-                                        className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
-                                        src={exportIcon}
-                                        alt=""
-                                        onClick={() =>
-                                            onExportSession &&
-                                            onExportSession(item)
-                                        }
-                                    />
-                                    <img
-                                        className="cursor-pointer size-3 hover:scale-125 transition-all"
-                                        src={deleteIcon}
-                                        alt=""
-                                        onClick={() =>
-                                            onDeleteSession &&
-                                            onDeleteSession(item)
-                                        }
-                                    />
-                                </div>
-                            )
-                    )}
-                    {!!Object.keys(sessionsCategory.earlier).length && (
-                        <h3 className="text-gray-500 text-xs py-1">更早</h3>
-                    )}
-                    {Object.keys(sessionsCategory.earlier)
-                        .slice(0, sessionsLimitation)
-                        .map(
-                            (item, index) =>
-                                sessionsCategory.earlier[item] && (
+                        (key, index) => {
+                            const currentSession =
+                                sessionsCategory.yesterday[key];
+                            const currentSessionTitle = !!currentSession[0]
+                                ?.title?.length
+                                ? currentSession[0].title
+                                : currentSession[0].parts;
+                            return (
+                                currentSession && (
                                     <div
                                         key={index}
                                         className="flex rounded-lg items-center justify-between p-2 text-gray-200 hover:bg-slate-600 transition-all space-x-2"
                                     >
                                         <Link
-                                            className="flex-1 text-sm text-left truncate"
-                                            to={`/chat/${item}`}
+                                            className={`flex-1 text-sm text-left truncate ${
+                                                renamingChatTitle.id === key
+                                                    ? "hidden"
+                                                    : ""
+                                            }`}
+                                            to={`/chat/${key}`}
                                         >
-                                            {
-                                                sessionsCategory.earlier[
-                                                    item
-                                                ][0].parts
-                                            }
+                                            {currentSessionTitle}
                                         </Link>
+                                        <input
+                                            defaultValue={currentSessionTitle}
+                                            className={`flex-1 w-full bg-transparent text-sm ${
+                                                renamingChatTitle.id === key
+                                                    ? ""
+                                                    : "hidden"
+                                            }`}
+                                            onChange={({ target }) =>
+                                                setRenamingChatTitle(
+                                                    (prev) => ({
+                                                        ...prev,
+                                                        title: target.value,
+                                                    })
+                                                )
+                                            }
+                                        />
+                                        <img
+                                            className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
+                                                renamingChatTitle.id === key
+                                                    ? "hidden"
+                                                    : ""
+                                            }`}
+                                            src={renameIcon}
+                                            alt=""
+                                            onClick={() =>
+                                                setRenamingChatTitle({
+                                                    id: key,
+                                                    title: currentSessionTitle,
+                                                })
+                                            }
+                                        />
+                                        <img
+                                            className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
+                                                renamingChatTitle.id !== key
+                                                    ? "hidden"
+                                                    : ""
+                                            }`}
+                                            src={submitIcon}
+                                            alt=""
+                                            onClick={() => {
+                                                const { title } =
+                                                    renamingChatTitle;
+                                                if (
+                                                    onRenameSession &&
+                                                    renamingChatTitle.title !==
+                                                        currentSessionTitle
+                                                ) {
+                                                    onRenameSession(key, title);
+                                                }
+                                                setRenamingChatTitle({
+                                                    id: "",
+                                                    title: "",
+                                                });
+                                            }}
+                                        />
                                         <img
                                             className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
                                             src={exportIcon}
                                             alt=""
                                             onClick={() =>
                                                 onExportSession &&
-                                                onExportSession(item)
+                                                onExportSession(key)
                                             }
                                         />
                                         <img
@@ -215,12 +302,119 @@ export const Sidebar = (props: SidebarProps) => {
                                             alt=""
                                             onClick={() =>
                                                 onDeleteSession &&
-                                                onDeleteSession(item)
+                                                onDeleteSession(key)
                                             }
                                         />
                                     </div>
                                 )
-                        )}
+                            );
+                        }
+                    )}
+                    {!!Object.keys(sessionsCategory.earlier).length && (
+                        <h3 className="text-gray-500 text-xs py-1">更早</h3>
+                    )}
+                    {Object.keys(sessionsCategory.earlier)
+                        .slice(0, sessionsLimitation)
+                        .map((key, index) => {
+                            const currentSession =
+                                sessionsCategory.earlier[key];
+                            const currentSessionTitle = !!currentSession[0]
+                                ?.title?.length
+                                ? currentSession[0].title
+                                : currentSession[0].parts;
+                            return (
+                                currentSession && (
+                                    <div
+                                        key={index}
+                                        className="flex rounded-lg items-center justify-between p-2 text-gray-200 hover:bg-slate-600 transition-all space-x-2"
+                                    >
+                                        <Link
+                                            className={`flex-1 text-sm text-left truncate ${
+                                                renamingChatTitle.id === key
+                                                    ? "hidden"
+                                                    : ""
+                                            }`}
+                                            to={`/chat/${key}`}
+                                        >
+                                            {currentSessionTitle}
+                                        </Link>
+                                        <input
+                                            defaultValue={currentSessionTitle}
+                                            className={`flex-1 w-full bg-transparent text-sm ${
+                                                renamingChatTitle.id === key
+                                                    ? ""
+                                                    : "hidden"
+                                            }`}
+                                            onChange={({ target }) =>
+                                                setRenamingChatTitle(
+                                                    (prev) => ({
+                                                        ...prev,
+                                                        title: target.value,
+                                                    })
+                                                )
+                                            }
+                                        />
+                                        <img
+                                            className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
+                                                renamingChatTitle.id === key
+                                                    ? "hidden"
+                                                    : ""
+                                            }`}
+                                            src={renameIcon}
+                                            alt=""
+                                            onClick={() =>
+                                                setRenamingChatTitle({
+                                                    id: key,
+                                                    title: currentSessionTitle,
+                                                })
+                                            }
+                                        />
+                                        <img
+                                            className={`cursor-pointer text-xs size-3 hover:scale-125 transition-all ${
+                                                renamingChatTitle.id !== key
+                                                    ? "hidden"
+                                                    : ""
+                                            }`}
+                                            src={submitIcon}
+                                            alt=""
+                                            onClick={() => {
+                                                const { title } =
+                                                    renamingChatTitle;
+                                                if (
+                                                    onRenameSession &&
+                                                    renamingChatTitle.title !==
+                                                        currentSessionTitle
+                                                ) {
+                                                    onRenameSession(key, title);
+                                                }
+                                                setRenamingChatTitle({
+                                                    id: "",
+                                                    title: "",
+                                                });
+                                            }}
+                                        />
+                                        <img
+                                            className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
+                                            src={exportIcon}
+                                            alt=""
+                                            onClick={() =>
+                                                onExportSession &&
+                                                onExportSession(key)
+                                            }
+                                        />
+                                        <img
+                                            className="cursor-pointer size-3 hover:scale-125 transition-all"
+                                            src={deleteIcon}
+                                            alt=""
+                                            onClick={() =>
+                                                onDeleteSession &&
+                                                onDeleteSession(key)
+                                            }
+                                        />
+                                    </div>
+                                )
+                            );
+                        })}
                     {Object.keys(sessionsCategory.earlier).length >
                         sessionsLimitation && (
                         <button

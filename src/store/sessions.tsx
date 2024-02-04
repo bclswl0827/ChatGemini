@@ -6,6 +6,7 @@ export interface SessionHistory {
     readonly parts: string;
     readonly timestamp: number;
     readonly attachment?: GenerativeContentBlob;
+    readonly title?: string;
 }
 export type Sessions = Record<string, SessionHistory[]>;
 export const initialSessions: Sessions = {};

@@ -70,6 +70,20 @@ const App = () => {
         }
     };
 
+    const handleRenameSession = (id: string, newTitle: string) => {
+        sendUserConfirm(`确定要变更标题为「${newTitle}」吗？`, () => {
+            const _sessions = {
+                ...sessions,
+                [id]: [
+                    { ...sessions[id][0], title: newTitle },
+                    ...sessions[id].slice(1),
+                ],
+            };
+            dispatch(updateSessions(_sessions));
+            sendUserAlert("对话记录标题已更新");
+        });
+    };
+
     const handleDeleteSession = (id: string) => {
         sendUserConfirm("确定要删除这条对话记录吗？", () => {
             navigate(routes.index.prefix);
@@ -221,6 +235,7 @@ const App = () => {
                         newChatUrl={routes.index.prefix}
                         onExportSession={handleExportSession}
                         onDeleteSession={handleDeleteSession}
+                        onRenameSession={handleRenameSession}
                     />
                     <Container
                         ref={mainSectionRef}
