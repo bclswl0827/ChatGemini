@@ -70,6 +70,26 @@ const App = () => {
         }
     };
 
+    const onRenameSession = (id: string, newTitle: string) => {
+        let confirmStr = "确定要更新主题名称变更为 " + newTitle + " 吗?  ";
+        const _sessions = {
+                ...sessions,
+                [id]: [
+                    {
+                        ...sessions[id][0],
+                        title: newTitle
+                    },
+                    ...sessions[id].slice(1)
+                ],
+            };
+
+        sendUserConfirm(confirmStr, () => {
+            dispatch(updateSessions(_sessions));
+            sendUserAlert("对话记录已更新");
+        });
+
+    };
+
     const handleDeleteSession = (id: string) => {
         sendUserConfirm("确定要删除这条对话记录吗？", () => {
             navigate(routes.index.prefix);
@@ -138,6 +158,7 @@ const App = () => {
                 {
                     role: "user",
                     parts: prompt,
+                    title: prompt.slice(0, 20),
                     timestamp: currentTimestamp,
                     attachment: uploadInlineData,
                 },
@@ -221,6 +242,7 @@ const App = () => {
                         newChatUrl={routes.index.prefix}
                         onExportSession={handleExportSession}
                         onDeleteSession={handleDeleteSession}
+                        onRenameSession={onRenameSession}
                     />
                     <Container
                         ref={mainSectionRef}

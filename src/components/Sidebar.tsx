@@ -1,5 +1,7 @@
 import exportIcon from "../assets/icons/file-export-solid.svg";
 import deleteIcon from "../assets/icons/trash-can-solid.svg";
+import renameIcon from "../assets/icons/pen-to-square-solid.svg";
+
 import historyIcon from "../assets/icons/clock-rotate-left-solid.svg";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -13,6 +15,7 @@ interface SidebarProps {
     readonly sessions: Sessions;
     readonly onDeleteSession?: (id: string) => void;
     readonly onExportSession?: (id: string) => void;
+    readonly onRenameSession?: (id: string, newTitle: string) => void;
 }
 
 export const Sidebar = (props: SidebarProps) => {
@@ -24,7 +27,11 @@ export const Sidebar = (props: SidebarProps) => {
         sessions,
         onDeleteSession,
         onExportSession,
+        onRenameSession,
     } = props;
+
+    const [editingId, setEditingId] = useState("")
+    const [chatTitle, setChatTitle] = useState("")
 
     const [sessionsLimitation, setSessionsLimitation] = useState(
         limitation || 10
@@ -115,8 +122,35 @@ export const Sidebar = (props: SidebarProps) => {
                                         className="flex-1 text-sm text-left truncate"
                                         to={`/chat/${item}`}
                                     >
-                                        {sessionsCategory.today[item][0].parts}
+                                        
+                                        {sessionsCategory.today[item][0].title? sessionsCategory.today[item][0].title : sessionsCategory.today[item][0].parts}
                                     </Link>
+                                    {editingId == item ? (
+                                    <input 
+                                        autoFocus={true}
+                                        className="flex=1 min-w-0 bg-transparent outline-none"
+                                        value={chatTitle}
+                                        onChange={(e) => {
+                                            setChatTitle(e.target.value)
+                                        }}
+                                        onBlur={(e)=>{
+                                            onRenameSession &&
+                                            onRenameSession(item, e.target.value)
+                                            setEditingId("")
+                                        }}
+                                        
+                                     />) :(
+                                    <img
+                                        className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
+                                        src={renameIcon}
+                                        alt="Rename"
+                                        onClick={() => {
+                                            setEditingId(item)
+                                            setChatTitle(String(sessionsCategory.today[item][0].title? sessionsCategory.today[item][0].title : sessionsCategory.today[item][0].parts))
+                                        }
+
+                                        }
+                                    />)}
                                     <img
                                         className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
                                         src={exportIcon}
@@ -152,11 +186,35 @@ export const Sidebar = (props: SidebarProps) => {
                                         className="flex-1 text-sm text-left truncate"
                                         to={`/chat/${item}`}
                                     >
-                                        {
-                                            sessionsCategory.yesterday[item][0]
-                                                .parts
-                                        }
+    
+                                        {sessionsCategory.yesterday[item][0].title? sessionsCategory.yesterday[item][0].title : sessionsCategory.yesterday[item][0].parts}
                                     </Link>
+                                    {editingId == item ? (
+                                    <input 
+                                        autoFocus={true}
+                                        className="flex=1 min-w-0 bg-transparent outline-none"
+                                        value={chatTitle}
+                                        onChange={(e) => {
+                                            setChatTitle(e.target.value)
+                                        }}
+                                        onBlur={(e)=>{
+                                            onRenameSession &&
+                                            onRenameSession(item, e.target.value)
+                                            setEditingId("")
+                                        }}
+                                        
+                                     />) :(
+                                    <img
+                                        className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
+                                        src={renameIcon}
+                                        alt="Rename"
+                                        onClick={() => {
+                                            setEditingId(item)
+                                            setChatTitle(String(sessionsCategory.yesterday[item][0].title? sessionsCategory.yesterday[item][0].title : sessionsCategory.yesterday[item][0].parts))
+                                        }
+
+                                        }
+                                    />)}
                                     <img
                                         className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
                                         src={exportIcon}
@@ -194,12 +252,34 @@ export const Sidebar = (props: SidebarProps) => {
                                             className="flex-1 text-sm text-left truncate"
                                             to={`/chat/${item}`}
                                         >
-                                            {
-                                                sessionsCategory.earlier[
-                                                    item
-                                                ][0].parts
-                                            }
+                                            {sessionsCategory.earlier[item][0].title? sessionsCategory.earlier[item][0].title : sessionsCategory.earlier[item][0].parts}
                                         </Link>
+                                        {editingId == item ? (
+                                        <input 
+                                            autoFocus={true}
+                                            className="flex=1 min-w-0 bg-transparent outline-none"
+                                            value={chatTitle}
+                                            onChange={(e) => {
+                                                setChatTitle(e.target.value)
+                                            }}
+                                            onBlur={(e)=>{
+                                                onRenameSession &&
+                                                onRenameSession(item, e.target.value)
+                                                setEditingId("")
+                                            }}
+                                            
+                                        />) :(
+                                        <img
+                                            className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
+                                            src={renameIcon}
+                                            alt="Rename"
+                                            onClick={() => {
+                                                setEditingId(item)
+                                                setChatTitle(String(sessionsCategory.yesterday[item][0].title? sessionsCategory.yesterday[item][0].title : sessionsCategory.yesterday[item][0].parts))
+                                            }
+
+                                            }
+                                        />)}
                                         <img
                                             className="cursor-pointer text-xs size-3 hover:scale-125 transition-all"
                                             src={exportIcon}
