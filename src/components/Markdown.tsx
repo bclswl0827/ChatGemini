@@ -11,8 +11,8 @@ import userThrottle from "../helpers/userThrottle";
 import { useEffect, useState } from "react";
 import { loadPyodide } from "pyodide";
 import userDebounce from "../helpers/userDebounce";
-import { Position } from "unist";
-import isEqual from "lodash.isequal";
+import { Point } from "unist";
+import { isObjectEqual } from "../helpers/isObjectEqual";
 
 interface MarkdownProps {
     readonly className?: string;
@@ -25,8 +25,9 @@ export const Markdown = (props: MarkdownProps) => {
 
     const [executeResult, setExecuteResult] = useState<{
         result: string;
-        position: Position | null;
-    }>({ result: "", position: null });
+        startPos: Point | null;
+        endPos: Point | null;
+    }>({ result: "", startPos: null, endPos: null });
 
     const handleCopyCode = userThrottle(
         async (code: string, currentTarget: EventTarget) => {
@@ -44,7 +45,8 @@ export const Markdown = (props: MarkdownProps) => {
 
     const handleExecuteCode = userDebounce(
         async (
-            position: Position | null,
+            startPos: Point | null,
+            endPos: Point | null,
             code: string,
             currentTarget: EventTarget
         ) => {
@@ -52,18 +54,20 @@ export const Markdown = (props: MarkdownProps) => {
             try {
                 (currentTarget as HTMLButtonElement).innerText = "正在执行";
                 (currentTarget as HTMLButtonElement).disabled = true;
-                setExecuteResult({ result: "# 正在加载资源", position });
+                setExecuteResult({ result: "# 正在执行中", startPos, endPos });
                 const pyodide = await loadPyodide({
                     indexURL: `${window.location.pathname}pyodide/`,
                     stdout: (x: string) =>
                         setExecuteResult({
-                            result: `# stdout\n${x}`,
-                            position,
+                            result: `>>> ${x}`,
+                            startPos,
+                            endPos,
                         }),
                     stderr: (x: string) =>
                         setExecuteResult({
-                            result: `# stderr\n${x}`,
-                            position,
+                            result: `>>> ${x}`,
+                            startPos,
+                            endPos,
                         }),
                 });
                 await pyodide.runPythonAsync(`
@@ -72,10 +76,13 @@ def input(p):
     return prompt(p)
 __builtins__.input = input
 `);
-                setExecuteResult({ result: "# 正在执行代码", position });
                 await pyodide.runPythonAsync(code);
             } catch (e) {
-                setExecuteResult({ result: `# 执行失败\n${e}`, position });
+                setExecuteResult({
+                    result: `# 执行失败\n${e}`,
+                    startPos,
+                    endPos,
+                });
             }
             (currentTarget as HTMLButtonElement).innerText = innerText;
             (currentTarget as HTMLButtonElement).disabled = false;
@@ -84,7 +91,7 @@ __builtins__.input = input
     );
 
     useEffect(() => {
-        setExecuteResult({ result: "", position: null });
+        setExecuteResult({ result: "", startPos: null, endPos: null });
     }, [children]);
 
     return (
@@ -114,7 +121,8 @@ __builtins__.input = input
                     const code = (
                         !!children ? String(children) : typeEffectPlaceholder
                     ).replace(typingEffect, typeEffectPlaceholder);
-                    const position = node?.position ?? null;
+                    const startPos = node?.position?.start ?? null;
+                    const endPos = node?.position?.end ?? null;
                     return match ? (
                         <>
                             <Prism
@@ -138,7 +146,8 @@ __builtins__.input = input
                                             className="text-gray-700/100 text-xs hover:opacity-50"
                                             onClick={({ currentTarget }) =>
                                                 handleExecuteCode(
-                                                    position,
+                                                    startPos,
+                                                    endPos,
                                                     code,
                                                     currentTarget
                                                 )
@@ -148,7 +157,14 @@ __builtins__.input = input
                                         </button>
                                     )}
                             </div>
-                            {isEqual(executeResult.position, position) &&
+                            {isObjectEqual(
+                                executeResult.startPos ?? {},
+                                startPos ?? {}
+                            ) &&
+                                isObjectEqual(
+                                    executeResult.endPos ?? {},
+                                    endPos ?? {}
+                                ) &&
                                 !!executeResult.result.length && (
                                     <Prism
                                         PreTag={"div"}

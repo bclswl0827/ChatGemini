@@ -20,7 +20,7 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
  - 可启用站点通行码防止滥用
  - 聊天内容导出（HTML 和 PDF）
  - 对话内容保存在 IndexedDB 中
- - 支持浏览器运行 AI 产生的 Python 脚本
+ - 在 AI 回应中运行 Python 代码
 
 ## 演示站点（需翻墙）
 
