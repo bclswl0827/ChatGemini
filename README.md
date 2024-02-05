@@ -72,6 +72,12 @@ $ npm run build
  6. 部署项目
 > 将 `build` 目录下的文件部署至服务器或虚拟主机上
 
+ 7. 启动服务
+> 若在本地运行，执行
+```bash
+$ npm run start
+```
+
 ### Docker 部署
 
 确保服务器上已安装 [Docker](https://www.docker.com/)，然后执行以下步骤：
