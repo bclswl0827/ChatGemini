@@ -1,9 +1,13 @@
-import { loadPyodide } from "pyodide";
+import { PyodideInterface } from "pyodide";
 
 export const getPythonResult = async (
-    pyodide: ReturnType<typeof loadPyodide>,
+    pyodide: PyodideInterface,
     code: string,
-    onException: (x: string) => void
+    onStdout: (x: string) => void,
+    onStderr: (x: string) => void,
+    onImporting: (x: string, err: boolean) => void,
+    onException: (x: string) => void,
+    onJobFinished: () => void
 ) => {
     const availablePackages = [
         { keyword: "numpy", package: "numpy" },
@@ -23,6 +27,8 @@ export const getPythonResult = async (
         { keyword: "hashlib", package: "hashlib" },
     ];
     try {
+        pyodide.setStdout({ batched: onStdout });
+        pyodide.setStderr({ batched: onStderr });
         const matchedPackages = availablePackages
             .filter(
                 ({ keyword }) =>
@@ -31,18 +37,19 @@ export const getPythonResult = async (
             )
             .map(({ package: pkg }) => pkg);
         if (!!matchedPackages.length) {
-            await (await pyodide).loadPackage(matchedPackages);
+            await pyodide.loadPackage(matchedPackages, {
+                errorCallback: (x) => onImporting(x, true),
+                messageCallback: (x) => onImporting(x, false),
+            });
         }
-        await (
-            await pyodide
-        ).runPythonAsync(`
-from js import prompt
-def input(p):
-    return prompt(p)
-__builtins__.input = input
-`);
-        await (await pyodide).runPythonAsync(code);
+        await pyodide.runPythonAsync(code);
     } catch (e) {
-        onException(`${e}`);
+        let err = String(e);
+        if (err.endsWith("\n")) {
+            err = err.slice(0, -1);
+        }
+        onException(err);
+    } finally {
+        onJobFinished();
     }
 };

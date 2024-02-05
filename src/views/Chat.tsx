@@ -18,6 +18,7 @@ import { ImageView } from "../components/ImageView";
 import { sendUserConfirm } from "../helpers/sendUserConfirm";
 import { sendUserAlert } from "../helpers/sendUserAlert";
 import { RouterComponentProps } from "../config/router";
+import { PyodideInterface } from "pyodide";
 
 const RefreshPlaceholder = "重新生成中...";
 const FallbackIfIdInvalid =
@@ -42,15 +43,20 @@ const Chat = (props: RouterComponentProps) => {
     const [attachmentsURL, setAttachmentsURL] = useState<
         Record<number, string>
     >({});
+    const [pythonRuntime, setPythonRuntime] = useState<PyodideInterface | null>(
+        null
+    );
+
+    const handlePythonRuntimeCreated = (pyodide: PyodideInterface) =>
+        setPythonRuntime(pyodide);
 
     const scrollToBottom = useCallback(
-        (force: boolean = false) => {
+        (force: boolean = false) =>
             (ai.busy || force) &&
-                mainSectionRef?.scrollTo({
-                    top: mainSectionRef.scrollHeight,
-                    behavior: "smooth",
-                });
-        },
+            mainSectionRef?.scrollTo({
+                top: mainSectionRef.scrollHeight,
+                behavior: "smooth",
+            }),
         [ai, mainSectionRef]
     );
 
@@ -251,7 +257,13 @@ const Chat = (props: RouterComponentProps) => {
                                 !!data.length ? attachmentPostscriptHtml : ""
                             }
                         >
-                            <Markdown typingEffect={typingEffect}>{`${parts}${
+                            <Markdown
+                                typingEffect={typingEffect}
+                                pythonRuntime={pythonRuntime}
+                                onPythonRuntimeCreated={
+                                    handlePythonRuntimeCreated
+                                }
+                            >{`${parts}${
                                 !!data.length ? attachmentPostscriptHtml : ""
                             }`}</Markdown>
                         </Session>

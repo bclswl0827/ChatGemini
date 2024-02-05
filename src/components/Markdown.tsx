@@ -13,26 +13,34 @@ import userDebounce from "../helpers/userDebounce";
 import { Point } from "unist";
 import { isObjectEqual } from "../helpers/isObjectEqual";
 import { getPythonResult } from "../helpers/getPythonResult";
-import { loadPyodide } from "pyodide";
+import { PyodideInterface } from "pyodide";
 import { getPythonRuntime } from "../helpers/getPythonRuntime";
 
 interface MarkdownProps {
     readonly className?: string;
     readonly typingEffect: string;
+    readonly pythonRuntime: PyodideInterface | null;
+    readonly onPythonRuntimeCreated: (pyodide: PyodideInterface) => void;
     readonly children: string;
 }
 
+const TraceLog = "😈 [TRACE]";
+const DebugLog = "🚀 [DEBUG]";
+const ErrorLog = "🤬 [ERROR]";
+const PythonScriptDisplayName = "script.py";
 const RunnerResultPlaceholder = `
-😈 [Info] 结果需以 print 输出
-🚀 [Info] 尝试执行 Python 脚本...
-`;
+${DebugLog} 结果需调用 print 打印
+${DebugLog} 尝试执行 Python 脚本...`;
 
 export const Markdown = (props: MarkdownProps) => {
-    const { className, typingEffect, children } = props;
+    const {
+        className,
+        typingEffect,
+        pythonRuntime,
+        onPythonRuntimeCreated,
+        children,
+    } = props;
 
-    const [pythonRuntime, setPythonRuntime] = useState<ReturnType<
-        typeof loadPyodide
-    > | null>(null);
     const [pythonResult, setPythonResult] = useState<{
         result: string;
         startPos: Point | null;
@@ -54,10 +62,34 @@ export const Markdown = (props: MarkdownProps) => {
     );
 
     const handleRunnerResult = (x: string) =>
-        setPythonResult((prev) => ({
-            ...prev,
-            result: `${prev.result.replace(RunnerResultPlaceholder, "")}\n${x}`,
-        }));
+        setPythonResult((prev) => {
+            let result = prev.result.replace(RunnerResultPlaceholder, "");
+            if (result.includes(TraceLog)) {
+                result = result
+                    .split("\n")
+                    .filter((x) => !x.includes(TraceLog))
+                    .join("\n");
+            }
+            return { ...prev, result: `${result}\n${x}` };
+        });
+
+    const handleRunnerImporting = (x: string, err: boolean) =>
+        setPythonResult((prev) => {
+            let { result } = prev;
+            if (err) {
+                result += `\n${ErrorLog} ${x}`;
+            } else {
+                result += `\n${TraceLog} ${x}`;
+            }
+            return { ...prev, result };
+        });
+
+    const handleJobFinished = () =>
+        setPythonResult((prev) => {
+            let { result } = prev;
+            result += `\n$`;
+            return { ...prev, result };
+        });
 
     const handleRunPython = userDebounce(
         async (
@@ -66,24 +98,28 @@ export const Markdown = (props: MarkdownProps) => {
             code: string,
             currentTarget: EventTarget
         ) => {
-            let runtime: ReturnType<typeof loadPyodide> | null;
-            if (pythonRuntime) {
-                runtime = pythonRuntime;
-            } else {
-                runtime = getPythonRuntime(
-                    `${window.location.pathname}pyodide/`,
-                    handleRunnerResult,
-                    handleRunnerResult
-                );
-                setPythonRuntime(runtime);
-            }
             (currentTarget as HTMLButtonElement).disabled = true;
             setPythonResult({
-                result: `$ python3 script.py${RunnerResultPlaceholder}`,
+                result: `$ python3 ${PythonScriptDisplayName}${RunnerResultPlaceholder}`,
                 startPos,
                 endPos,
             });
-            await getPythonResult(runtime, code, handleRunnerResult);
+            let runtime = pythonRuntime;
+            if (!runtime) {
+                runtime = await getPythonRuntime(
+                    `${window.location.pathname}pyodide/`
+                );
+                onPythonRuntimeCreated(runtime);
+            }
+            await getPythonResult(
+                runtime,
+                code,
+                handleRunnerResult,
+                handleRunnerResult,
+                handleRunnerImporting,
+                handleRunnerResult,
+                handleJobFinished
+            );
             (currentTarget as HTMLButtonElement).disabled = false;
         },
         300
