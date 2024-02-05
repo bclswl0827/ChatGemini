@@ -22,6 +22,7 @@ export const getPythonResult = async (
         { keyword: "Crypto", package: "pycryptodome" },
         { keyword: "nacl", package: "pynacl" },
         { keyword: "regex", package: "regex" },
+        { keyword: "hashlib", package: "hashlib" },
     ];
     try {
         const pyodide = await loadPyodide({
