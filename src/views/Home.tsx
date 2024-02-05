@@ -1,6 +1,6 @@
 import { Landing, LandingSample } from "../components/Landing";
 import { sampleConfig } from "../config/sample";
-import { setClipboard } from "../helpers/setClipboard";
+import { setClipboardText } from "../helpers/setClipboardText";
 import { getRandomArr } from "../helpers/getRandomArr";
 import { sendUserAlert } from "../helpers/sendUserAlert";
 import { useEffect, useState } from "react";
@@ -22,7 +22,7 @@ const Home = (props: RouterComponentProps) => {
             textAreaRef.value = message;
             setTextAreaHeight(textAreaRef);
         } else {
-            const success = await setClipboard(message);
+            const success = await setClipboardText(message);
             if (success) {
                 sendUserAlert("请将消息粘贴到输入框并提交");
             } else {

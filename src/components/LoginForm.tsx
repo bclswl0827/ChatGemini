@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useRef } from "react";
-import { MD5, Rabbit, enc } from "crypto-js";
 import { sendUserAlert } from "../helpers/sendUserAlert";
 import setLocalStorage from "../helpers/setLocalStorage";
 import getLocalStorage from "../helpers/getLocalStorage";
-import fpPromise from "@fingerprintjs/fingerprintjs";
+import { getFingerprint } from "../helpers/getFingerprint";
+import { asyncSleep } from "../helpers/asyncSleep";
+import { getMD5Hash } from "../helpers/getMD5Hash";
+import { getEncryption } from "../helpers/getEncryption";
+import { getDecryption } from "../helpers/getDecryption";
 
 interface LoginFormProps {
     readonly logo: string;
@@ -26,25 +29,24 @@ export const LoginForm = (props: LoginFormProps) => {
                 sendUserAlert("通行码不能为空", true);
                 return;
             }
-            const passcode = MD5(value).toString().toLocaleLowerCase();
+            const passcode = getMD5Hash(value);
             if (passcodes.includes(passcode)) {
                 const { checked: remember } =
                     autoLoginCheckboxRef.current || {};
                 if (remember) {
-                    const fingerprint = await fpPromise.load();
-                    const { visitorId } = await fingerprint.get();
-                    const fingerprintHash = MD5(visitorId).toString();
-                    const encodedPasscode = Rabbit.encrypt(
+                    const fingerprint = await getFingerprint();
+                    const fingerprintHash = getMD5Hash(fingerprint);
+                    const encodedPasscode = getEncryption(
                         JSON.stringify({
                             passcode,
                             fingerprint: fingerprintHash,
                         }),
-                        visitorId
-                    ).toString();
+                        fingerprint
+                    );
                     setLocalStorage("passcode", encodedPasscode, remember);
                 }
                 sendUserAlert("登入成功，即将跳转");
-                await new Promise((resolve) => setTimeout(resolve, 500));
+                await asyncSleep(500);
                 onPasscodeCorrect();
             } else {
                 sendUserAlert("通行码错误", true);
@@ -58,16 +60,12 @@ export const LoginForm = (props: LoginFormProps) => {
             "",
             false
         ).replaceAll('"', "");
-        const fingerprint = await fpPromise.load();
-        const { visitorId } = await fingerprint.get();
-        const fignerprintHash = MD5(visitorId).toString();
         try {
-            const decryptedPasscode = JSON.parse(
-                Rabbit.decrypt(encodedPasscode.toString(), visitorId).toString(
-                    enc.Utf8
-                )
+            const browserFingerprint = await getFingerprint();
+            const fignerprintHash = getMD5Hash(browserFingerprint);
+            const { passcode, fingerprint } = JSON.parse(
+                getDecryption(encodedPasscode, browserFingerprint)
             );
-            const { passcode, fingerprint } = decryptedPasscode;
             return (
                 passcodes.includes(passcode) && fingerprint === fignerprintHash
             );

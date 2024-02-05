@@ -1,4 +1,4 @@
-export const setClipboard = async (text: string) => {
+export const setClipboardText = async (text: string) => {
     const clipboard = navigator.clipboard || {
         writeText: (text) => {
             const copyInput = document.createElement("input");

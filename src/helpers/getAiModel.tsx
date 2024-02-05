@@ -6,9 +6,8 @@ export const getAiModel = (
     ai: GoogleGenerativeAI,
     type: AiType = "pro",
     options?: BaseParams
-) => {
-    return ai.getGenerativeModel({
+) =>
+    ai.getGenerativeModel({
         ...options,
         model: type === "pro" ? "gemini-pro" : "gemini-pro-vision",
     });
-};

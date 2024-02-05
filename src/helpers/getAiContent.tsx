@@ -1,4 +1,5 @@
 import { GenerativeContentBlob, GenerativeModel } from "@google/generative-ai";
+import { asyncSleep } from "./asyncSleep";
 
 export const getAiContent = async (
     model: GenerativeModel,
@@ -29,9 +30,7 @@ export const getAiContent = async (
                                 .join(""),
                             false
                         );
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, Math.random() * 600 + 300)
-                        );
+                        await asyncSleep(Math.random() * 600 + 300);
                     }
                 } else {
                     onContentMessage(chunkText, false);
@@ -58,9 +57,7 @@ export const getAiContent = async (
                             .join(""),
                         false
                     );
-                    await new Promise((resolve) =>
-                        setTimeout(resolve, Math.random() * 600 + 300)
-                    );
+                    await asyncSleep(Math.random() * 600 + 300);
                 }
             } else {
                 onContentMessage(text, false);

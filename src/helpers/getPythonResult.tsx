@@ -21,13 +21,14 @@ export const getPythonResult = async (
         { keyword: "cryptography", package: "cryptography" },
         { keyword: "Crypto", package: "pycryptodome" },
         { keyword: "nacl", package: "pynacl" },
+        { keyword: "regex", package: "regex" },
     ];
     try {
         const pyodide = await loadPyodide({
             indexURL: repoURL,
             stdout: onStdout,
             stderr: onStderr,
-            homedir: "/root",
+            homedir: "/home/user",
         });
         const matchedPackages = availablePackages
             .filter(

@@ -5,7 +5,7 @@ import deleteIcon from "../assets/icons/trash-solid.svg";
 import refreshIcon from "../assets/icons/arrows-rotate-solid.svg";
 import clipboardIcon from "../assets/icons/clipboard-regular.svg";
 import { ReactElement, ReactNode, useRef } from "react";
-import { setClipboard } from "../helpers/setClipboard";
+import { setClipboardText } from "../helpers/setClipboardText";
 import { setTextAreaHeight } from "../helpers/setTextAreaHeight";
 import { sendUserAlert } from "../helpers/sendUserAlert";
 
@@ -56,7 +56,7 @@ export const Session = (props: SessionProps) => {
         if (postscript) {
             text = text.replace(postscript, "");
         }
-        const success = await setClipboard(text);
+        const success = await setClipboardText(text);
         if (success) {
             sendUserAlert("内容已复制到剪贴板");
         } else {

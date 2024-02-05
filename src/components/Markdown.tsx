@@ -5,7 +5,7 @@ import remarkMath from "remark-math";
 import rehypeRaw from "rehype-raw";
 import "katex/dist/katex.min.css";
 import { Prism } from "react-syntax-highlighter";
-import { setClipboard } from "../helpers/setClipboard";
+import { setClipboardText } from "../helpers/setClipboardText";
 import { a11yDark as style } from "react-syntax-highlighter/dist/esm/styles/prism";
 import userThrottle from "../helpers/userThrottle";
 import { useEffect, useState } from "react";
@@ -23,7 +23,7 @@ interface MarkdownProps {
 export const Markdown = (props: MarkdownProps) => {
     const { className, typingEffect, children } = props;
 
-    const [executeResult, setExecuteResult] = useState<{
+    const [pythonResult, setPythonResult] = useState<{
         result: string;
         startPos: Point | null;
         endPos: Point | null;
@@ -31,7 +31,7 @@ export const Markdown = (props: MarkdownProps) => {
 
     const handleCopyCode = userThrottle(
         async (code: string, currentTarget: EventTarget) => {
-            const success = await setClipboard(code);
+            const success = await setClipboardText(code);
             const innerText = (currentTarget as HTMLButtonElement).innerText;
             (currentTarget as HTMLButtonElement).innerText = success
                 ? "复制成功"
@@ -43,23 +43,30 @@ export const Markdown = (props: MarkdownProps) => {
         1200
     );
 
-    const handleExecuteCode = userDebounce(
+    const handleRunPython = userDebounce(
         async (
             startPos: Point | null,
             endPos: Point | null,
             code: string,
             currentTarget: EventTarget
         ) => {
+            const resultPlaceholder = `
+😈 [Info] 结果需以 print 输出
+🚀 [Info] 尝试执行 Python 脚本...
+`;
             (currentTarget as HTMLButtonElement).disabled = true;
-            setExecuteResult({
-                result: "$ python3 script.py",
+            setPythonResult({
+                result: `$ python3 script.py${resultPlaceholder}`,
                 startPos,
                 endPos,
             });
             const handler = (x: string) =>
-                setExecuteResult((prev) => ({
+                setPythonResult((prev) => ({
                     ...prev,
-                    result: `${prev.result}\n${x}`,
+                    result: `${prev.result.replace(
+                        resultPlaceholder,
+                        ""
+                    )}\n${x}`,
                 }));
             await getPythonResult(
                 code,
@@ -74,7 +81,7 @@ export const Markdown = (props: MarkdownProps) => {
     );
 
     useEffect(() => {
-        setExecuteResult({ result: "", startPos: null, endPos: null });
+        setPythonResult({ result: "", startPos: null, endPos: null });
     }, [children]);
 
     return (
@@ -112,6 +119,8 @@ export const Markdown = (props: MarkdownProps) => {
                                 PreTag={"div"}
                                 style={style}
                                 language={lang}
+                                showLineNumbers={true}
+                                lineNumberStyle={{ opacity: 0.5 }}
                                 children={code.replace(/\n$/, "")}
                             />
                             <div className="flex gap-2">
@@ -128,7 +137,7 @@ export const Markdown = (props: MarkdownProps) => {
                                         <button
                                             className="text-gray-700/100 text-xs hover:opacity-50"
                                             onClick={({ currentTarget }) =>
-                                                handleExecuteCode(
+                                                handleRunPython(
                                                     startPos,
                                                     endPos,
                                                     code,
@@ -141,19 +150,19 @@ export const Markdown = (props: MarkdownProps) => {
                                     )}
                             </div>
                             {isObjectEqual(
-                                executeResult.startPos ?? {},
+                                pythonResult.startPos ?? {},
                                 startPos ?? {}
                             ) &&
                                 isObjectEqual(
-                                    executeResult.endPos ?? {},
+                                    pythonResult.endPos ?? {},
                                     endPos ?? {}
                                 ) &&
-                                !!executeResult.result.length && (
+                                !!pythonResult.result.length && (
                                     <>
                                         <Prism
                                             PreTag={"div"}
                                             style={style}
-                                            children={executeResult.result.replace(
+                                            children={pythonResult.result.replace(
                                                 /\n$/,
                                                 ""
                                             )}
@@ -163,7 +172,7 @@ export const Markdown = (props: MarkdownProps) => {
                                                 className="text-gray-700/100 text-xs hover:opacity-50"
                                                 onClick={({ currentTarget }) =>
                                                     handleCopyCode(
-                                                        executeResult.result,
+                                                        pythonResult.result,
                                                         currentTarget
                                                     )
                                                 }
@@ -173,7 +182,7 @@ export const Markdown = (props: MarkdownProps) => {
                                             <button
                                                 className="text-gray-700/100 text-xs hover:opacity-50"
                                                 onClick={() =>
-                                                    setExecuteResult({
+                                                    setPythonResult({
                                                         result: "",
                                                         startPos: null,
                                                         endPos: null,

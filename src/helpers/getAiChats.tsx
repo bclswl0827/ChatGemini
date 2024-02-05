@@ -1,5 +1,6 @@
 import { BaseParams, GenerativeModel, Part } from "@google/generative-ai";
 import { SessionHistory } from "../store/sessions";
+import { asyncSleep } from "./asyncSleep";
 
 export const getAiChats = async (
     model: GenerativeModel,
@@ -44,9 +45,7 @@ export const getAiChats = async (
                                 .join(""),
                             false
                         );
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, Math.random() * 600 + 300)
-                        );
+                        await asyncSleep(Math.random() * 600 + 300);
                     }
                 } else {
                     onChatMessage(chunkText, false);
@@ -74,9 +73,7 @@ export const getAiChats = async (
                             .join(""),
                         false
                     );
-                    await new Promise((resolve) =>
-                        setTimeout(resolve, Math.random() * 600 + 300)
-                    );
+                    await asyncSleep(Math.random() * 600 + 300);
                 }
             } else {
                 onChatMessage(text, false);
