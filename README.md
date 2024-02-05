@@ -16,7 +16,7 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 
 加入群组，请友善交流。
 
- - Telegram：[ChatGemini](https://t.me/+iHpQPT3hTDtlNDM1)
+ - [ChatGemini@Telegram](https://t.me/+iHpQPT3hTDtlNDM1)
 
 ## 功能特性
 
