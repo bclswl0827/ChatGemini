@@ -169,6 +169,7 @@ export const Markdown = (props: MarkdownProps) => {
                                 !!pythonResult.result.length && (
                                     <>
                                         <Prism
+                                            language="shell"
                                             PreTag={"div"}
                                             style={style}
                                             children={pythonResult.result.replace(
