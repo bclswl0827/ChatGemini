@@ -1,10 +1,8 @@
 import { loadPyodide } from "pyodide";
 
 export const getPythonResult = async (
+    pyodide: ReturnType<typeof loadPyodide>,
     code: string,
-    repoURL: string,
-    onStdout: (x: string) => void,
-    onStderr: (x: string) => void,
     onException: (x: string) => void
 ) => {
     const availablePackages = [
@@ -25,12 +23,6 @@ export const getPythonResult = async (
         { keyword: "hashlib", package: "hashlib" },
     ];
     try {
-        const pyodide = await loadPyodide({
-            indexURL: repoURL,
-            stdout: onStdout,
-            stderr: onStderr,
-            homedir: "/home/user",
-        });
         const matchedPackages = availablePackages
             .filter(
                 ({ keyword }) =>
@@ -39,15 +31,17 @@ export const getPythonResult = async (
             )
             .map(({ package: pkg }) => pkg);
         if (!!matchedPackages.length) {
-            await pyodide.loadPackage(matchedPackages);
+            await (await pyodide).loadPackage(matchedPackages);
         }
-        await pyodide.runPythonAsync(`
+        await (
+            await pyodide
+        ).runPythonAsync(`
 from js import prompt
 def input(p):
     return prompt(p)
 __builtins__.input = input
 `);
-        await pyodide.runPythonAsync(code);
+        await (await pyodide).runPythonAsync(code);
     } catch (e) {
         onException(`${e}`);
     }

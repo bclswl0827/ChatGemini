@@ -13,6 +13,8 @@ import userDebounce from "../helpers/userDebounce";
 import { Point } from "unist";
 import { isObjectEqual } from "../helpers/isObjectEqual";
 import { getPythonResult } from "../helpers/getPythonResult";
+import { loadPyodide } from "pyodide";
+import { getPythonRuntime } from "../helpers/getPythonRuntime";
 
 interface MarkdownProps {
     readonly className?: string;
@@ -20,9 +22,17 @@ interface MarkdownProps {
     readonly children: string;
 }
 
+const RunnerResultPlaceholder = `
+😈 [Info] 结果需以 print 输出
+🚀 [Info] 尝试执行 Python 脚本...
+`;
+
 export const Markdown = (props: MarkdownProps) => {
     const { className, typingEffect, children } = props;
 
+    const [pythonRuntime, setPythonRuntime] = useState<ReturnType<
+        typeof loadPyodide
+    > | null>(null);
     const [pythonResult, setPythonResult] = useState<{
         result: string;
         startPos: Point | null;
@@ -43,6 +53,12 @@ export const Markdown = (props: MarkdownProps) => {
         1200
     );
 
+    const handleRunnerResult = (x: string) =>
+        setPythonResult((prev) => ({
+            ...prev,
+            result: `${prev.result.replace(RunnerResultPlaceholder, "")}\n${x}`,
+        }));
+
     const handleRunPython = userDebounce(
         async (
             startPos: Point | null,
@@ -50,31 +66,24 @@ export const Markdown = (props: MarkdownProps) => {
             code: string,
             currentTarget: EventTarget
         ) => {
-            const resultPlaceholder = `
-😈 [Info] 结果需以 print 输出
-🚀 [Info] 尝试执行 Python 脚本...
-`;
+            let runtime: ReturnType<typeof loadPyodide> | null;
+            if (pythonRuntime) {
+                runtime = pythonRuntime;
+            } else {
+                runtime = getPythonRuntime(
+                    `${window.location.pathname}pyodide/`,
+                    handleRunnerResult,
+                    handleRunnerResult
+                );
+                setPythonRuntime(runtime);
+            }
             (currentTarget as HTMLButtonElement).disabled = true;
             setPythonResult({
-                result: `$ python3 script.py${resultPlaceholder}`,
+                result: `$ python3 script.py${RunnerResultPlaceholder}`,
                 startPos,
                 endPos,
             });
-            const handler = (x: string) =>
-                setPythonResult((prev) => ({
-                    ...prev,
-                    result: `${prev.result.replace(
-                        resultPlaceholder,
-                        ""
-                    )}\n${x}`,
-                }));
-            await getPythonResult(
-                code,
-                `${window.location.pathname}pyodide/`,
-                handler,
-                handler,
-                handler
-            );
+            await getPythonResult(runtime, code, handleRunnerResult);
             (currentTarget as HTMLButtonElement).disabled = false;
         },
         300
