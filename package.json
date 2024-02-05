@@ -1,6 +1,6 @@
 {
     "name": "chatgemini",
-    "version": "0.5.2",
+    "version": "0.5.3",
     "homepage": ".",
     "private": true,
     "dependencies": {

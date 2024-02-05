@@ -9,10 +9,10 @@ import { setClipboard } from "../helpers/setClipboard";
 import { a11yDark as style } from "react-syntax-highlighter/dist/esm/styles/prism";
 import userThrottle from "../helpers/userThrottle";
 import { useEffect, useState } from "react";
-import { loadPyodide } from "pyodide";
 import userDebounce from "../helpers/userDebounce";
 import { Point } from "unist";
 import { isObjectEqual } from "../helpers/isObjectEqual";
+import { getPythonResult } from "../helpers/getPythonResult";
 
 interface MarkdownProps {
     readonly className?: string;
@@ -50,47 +50,24 @@ export const Markdown = (props: MarkdownProps) => {
             code: string,
             currentTarget: EventTarget
         ) => {
-            const innerText = (currentTarget as HTMLButtonElement).innerText;
-            try {
-                (currentTarget as HTMLButtonElement).innerText = "正在执行";
-                (currentTarget as HTMLButtonElement).disabled = true;
-                setExecuteResult({
-                    result: "$ python3 snippets.py",
-                    startPos,
-                    endPos,
-                });
-                const pyodide = await loadPyodide({
-                    indexURL: `${window.location.pathname}pyodide/`,
-                    stdout: (x: string) =>
-                        setExecuteResult((prev) => ({
-                            ...prev,
-                            result: `${prev.result}\n${x}`,
-                        })),
-                    stderr: (x: string) =>
-                        setExecuteResult((prev) => ({
-                            ...prev,
-                            result: `${prev.result}\n${x}`,
-                        })),
-                });
-                await pyodide.runPythonAsync(`
-from js import prompt
-def input(p):
-    return prompt(p)
-__builtins__.input = input
-`);
-                await pyodide.runPythonAsync(code);
+            (currentTarget as HTMLButtonElement).disabled = true;
+            setExecuteResult({
+                result: "$ python3 script.py",
+                startPos,
+                endPos,
+            });
+            const handler = (x: string) =>
                 setExecuteResult((prev) => ({
                     ...prev,
-                    result: `${prev.result}\n$`,
+                    result: `${prev.result}\n${x}`,
                 }));
-            } catch (e) {
-                setExecuteResult({
-                    result: `${e}`,
-                    startPos,
-                    endPos,
-                });
-            }
-            (currentTarget as HTMLButtonElement).innerText = innerText;
+            await getPythonResult(
+                code,
+                `${window.location.pathname}pyodide/`,
+                handler,
+                handler,
+                handler
+            );
             (currentTarget as HTMLButtonElement).disabled = false;
         },
         300
@@ -172,14 +149,41 @@ __builtins__.input = input
                                     endPos ?? {}
                                 ) &&
                                 !!executeResult.result.length && (
-                                    <Prism
-                                        PreTag={"div"}
-                                        style={style}
-                                        children={executeResult.result.replace(
-                                            /\n$/,
-                                            ""
-                                        )}
-                                    />
+                                    <>
+                                        <Prism
+                                            PreTag={"div"}
+                                            style={style}
+                                            children={executeResult.result.replace(
+                                                /\n$/,
+                                                ""
+                                            )}
+                                        />
+                                        <div className="flex gap-2">
+                                            <button
+                                                className="text-gray-700/100 text-xs hover:opacity-50"
+                                                onClick={({ currentTarget }) =>
+                                                    handleCopyCode(
+                                                        executeResult.result,
+                                                        currentTarget
+                                                    )
+                                                }
+                                            >
+                                                复制结果
+                                            </button>
+                                            <button
+                                                className="text-gray-700/100 text-xs hover:opacity-50"
+                                                onClick={() =>
+                                                    setExecuteResult({
+                                                        result: "",
+                                                        startPos: null,
+                                                        endPos: null,
+                                                    })
+                                                }
+                                            >
+                                                关闭窗口
+                                            </button>
+                                        </div>
+                                    </>
                                 )}
                         </>
                     ) : (
