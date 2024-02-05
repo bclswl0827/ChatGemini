@@ -54,21 +54,23 @@ export const Markdown = (props: MarkdownProps) => {
             try {
                 (currentTarget as HTMLButtonElement).innerText = "正在执行";
                 (currentTarget as HTMLButtonElement).disabled = true;
-                setExecuteResult({ result: "# 正在执行中", startPos, endPos });
+                setExecuteResult({
+                    result: "$ python3 snippets.py",
+                    startPos,
+                    endPos,
+                });
                 const pyodide = await loadPyodide({
                     indexURL: `${window.location.pathname}pyodide/`,
                     stdout: (x: string) =>
-                        setExecuteResult({
-                            result: `>>> ${x}`,
-                            startPos,
-                            endPos,
-                        }),
+                        setExecuteResult((prev) => ({
+                            ...prev,
+                            result: `${prev.result}\n${x}`,
+                        })),
                     stderr: (x: string) =>
-                        setExecuteResult({
-                            result: `>>> ${x}`,
-                            startPos,
-                            endPos,
-                        }),
+                        setExecuteResult((prev) => ({
+                            ...prev,
+                            result: `${prev.result}\n${x}`,
+                        })),
                 });
                 await pyodide.runPythonAsync(`
 from js import prompt
@@ -77,9 +79,13 @@ def input(p):
 __builtins__.input = input
 `);
                 await pyodide.runPythonAsync(code);
+                setExecuteResult((prev) => ({
+                    ...prev,
+                    result: `${prev.result}\n$`,
+                }));
             } catch (e) {
                 setExecuteResult({
-                    result: `# 执行失败\n${e}`,
+                    result: `${e}`,
                     startPos,
                     endPos,
                 });
@@ -169,7 +175,6 @@ __builtins__.input = input
                                     <Prism
                                         PreTag={"div"}
                                         style={style}
-                                        language={"python"}
                                         children={executeResult.result.replace(
                                             /\n$/,
                                             ""
