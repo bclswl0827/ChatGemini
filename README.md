@@ -6,6 +6,18 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 
 如果您对本项目感兴趣，欢迎 Star 和 Fork。
 
+## 演示站点（需翻墙）
+
+[ChatGemini](https://ibcl.us/ChatGemini)
+
+## 讨论群组
+
+欢迎加入 Telegram 群组，同其他用户交流，反馈问题或建议，也可以在群组中了解最新动态。
+
+加入群组，请友善交流。
+
+ - Telegram：[ChatGemini](https://t.me/+iHpQPT3hTDtlNDM1)
+
 ## 功能特性
 
  - 适配移动端
@@ -21,10 +33,6 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
  - 聊天内容导出（HTML 和 PDF）
  - 对话内容保存在 IndexedDB 中
  - 在 AI 回应中运行 Python 代码
-
-## 演示站点（需翻墙）
-
-[ChatGemini](https://ibcl.us/ChatGemini)
 
 ## 界面预览
 
