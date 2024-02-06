@@ -25,6 +25,7 @@ export const getPythonResult = async (
         { keyword: "nacl", package: "pynacl" },
         { keyword: "regex", package: "regex" },
         { keyword: "hashlib", package: "hashlib" },
+        { keyword: "typing", package: "typing" },
     ];
     try {
         pyodide.setStdout({ batched: onStdout });
