@@ -19,6 +19,7 @@ import { getPythonRuntime } from "../helpers/getPythonRuntime";
 interface MarkdownProps {
     readonly className?: string;
     readonly typingEffect: string;
+    readonly pythonRepoUrl: string;
     readonly pythonRuntime: PyodideInterface | null;
     readonly onPythonRuntimeCreated: (pyodide: PyodideInterface) => void;
     readonly children: string;
@@ -31,11 +32,14 @@ const PythonScriptDisplayName = "script.py";
 const RunnerResultPlaceholder = `
 ${DebugLog} 结果需调用 print 打印
 ${DebugLog} 尝试执行 Python 脚本...`;
+const TypingEffectPlaceholder = "❚";
+const ShellPrompt = `[user@${Math.random().toString(16).slice(-12)} ~]$ `;
 
 export const Markdown = (props: MarkdownProps) => {
     const {
         className,
         typingEffect,
+        pythonRepoUrl,
         pythonRuntime,
         onPythonRuntimeCreated,
         children,
@@ -87,7 +91,7 @@ export const Markdown = (props: MarkdownProps) => {
     const handleJobFinished = () =>
         setPythonResult((prev) => {
             let { result } = prev;
-            result += `\n$`;
+            result += `\n${ShellPrompt}${TypingEffectPlaceholder}`;
             return { ...prev, result };
         });
 
@@ -100,15 +104,13 @@ export const Markdown = (props: MarkdownProps) => {
         ) => {
             (currentTarget as HTMLButtonElement).disabled = true;
             setPythonResult({
-                result: `$ python3 ${PythonScriptDisplayName}${RunnerResultPlaceholder}`,
+                result: `${ShellPrompt}python3 ${PythonScriptDisplayName}${RunnerResultPlaceholder}`,
                 startPos,
                 endPos,
             });
             let runtime = pythonRuntime;
             if (!runtime) {
-                runtime = await getPythonRuntime(
-                    `${window.location.pathname}pyodide/`
-                );
+                runtime = await getPythonRuntime(pythonRepoUrl);
                 onPythonRuntimeCreated(runtime);
             }
             await getPythonResult(
@@ -150,12 +152,11 @@ export const Markdown = (props: MarkdownProps) => {
                     <pre className="bg-transparent p-2" {...props} />
                 ),
                 code: ({ className, children, node }) => {
-                    const typeEffectPlaceholder = "❚";
                     const match = /language-(\w+)/.exec(className ?? "");
                     const lang = match !== null ? match[1] : "";
                     const code = (
-                        !!children ? String(children) : typeEffectPlaceholder
-                    ).replace(typingEffect, typeEffectPlaceholder);
+                        !!children ? String(children) : TypingEffectPlaceholder
+                    ).replace(typingEffect, TypingEffectPlaceholder);
                     const startPos = node?.position?.start ?? null;
                     const endPos = node?.position?.end ?? null;
                     return match ? (
@@ -177,7 +178,7 @@ export const Markdown = (props: MarkdownProps) => {
                                 >
                                     复制代码
                                 </button>
-                                {!code.includes(typeEffectPlaceholder) &&
+                                {!code.includes(TypingEffectPlaceholder) &&
                                     lang === "python" && (
                                         <button
                                             className="text-gray-700/100 text-xs hover:opacity-50"

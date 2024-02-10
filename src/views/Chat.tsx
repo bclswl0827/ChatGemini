@@ -17,7 +17,7 @@ import { getBase64BlobUrl } from "../helpers/getBase64BlobUrl";
 import { ImageView } from "../components/ImageView";
 import { sendUserConfirm } from "../helpers/sendUserConfirm";
 import { sendUserAlert } from "../helpers/sendUserAlert";
-import { RouterComponentProps } from "../config/router";
+import { RouterComponentProps, routerConfig } from "../config/router";
 import { PyodideInterface } from "pyodide";
 
 const RefreshPlaceholder = "重新生成中...";
@@ -27,6 +27,7 @@ const FallbackIfIdInvalid =
 const Chat = (props: RouterComponentProps) => {
     const mainSectionRef = props.refs?.mainSectionRef.current ?? null;
     const { site: siteTitle } = globalConfig.title;
+    const { mode, basename } = routerConfig;
 
     const dispatch = useDispatch();
     const sessions = useSelector(
@@ -263,6 +264,11 @@ const Chat = (props: RouterComponentProps) => {
                                 onPythonRuntimeCreated={
                                     handlePythonRuntimeCreated
                                 }
+                                pythonRepoUrl={`${
+                                    mode === "hash"
+                                        ? window.location.pathname
+                                        : basename
+                                }pyodide`}
                             >{`${parts}${
                                 !!data.length ? attachmentPostscriptHtml : ""
                             }`}</Markdown>

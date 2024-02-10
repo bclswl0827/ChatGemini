@@ -56,16 +56,24 @@ export const InputArea = forwardRef(
             } else if (!allowedTypes.includes(file.type)) {
                 sendUserAlert("文件类型仅限常见图片格式", true);
                 return false;
-            } else {
-                sendUserAlert("再次点击图标即可取消上传");
-                return true;
             }
+            sendUserAlert("再次点击图标即可取消上传");
+            return true;
         };
 
-        const setPlaceholderByWidth = () =>
-            setInputPlaceholder(
-                window.innerWidth > 512 ? "Ctrl + Enter 快捷发送" : "请输入..."
-            );
+        const setPlaceholderByWidth = () => {
+            const { current } = textAreaRef;
+            if (current) {
+                const { clientWidth } = current;
+                if (clientWidth > 512) {
+                    setInputPlaceholder("Ctrl + Enter 快捷发送");
+                } else if (clientWidth > 256) {
+                    setInputPlaceholder("请输入...");
+                } else {
+                    setInputPlaceholder("...");
+                }
+            }
+        };
 
         useEffect(() => {
             setPlaceholderByWidth();

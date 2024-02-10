@@ -13,7 +13,10 @@ const root = ReactDOM.createRoot(
 root.render(
     <Provider store={store}>
         <PersistGate loading={null} persistor={REDUX_PRESIST}>
-            <RouterWrapper mode={routerConfig.mode}>
+            <RouterWrapper
+                mode={routerConfig.mode}
+                basename={routerConfig.basename}
+            >
                 <App />
             </RouterWrapper>
         </PersistGate>

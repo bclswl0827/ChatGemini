@@ -14,7 +14,7 @@ export const Container = forwardRef(
             <div
                 ref={ref}
                 className={
-                    !!(className || "").length
+                    !!(className ?? "").length
                         ? className
                         : `h-screen w-full grid md:grid-cols-[15rem_1fr] grid-cols-[12rem_1fr]`
                 }

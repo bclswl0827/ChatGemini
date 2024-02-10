@@ -22,10 +22,12 @@ export interface RouterConfigRoutes {
 
 type RouterConfig = {
     readonly mode: RouterMode;
+    readonly basename: string;
     readonly routes: Record<string, RouterConfigRoutes>;
 };
 
 export const routerConfig: RouterConfig = {
+    basename: "/",
     mode: "hash",
     routes: {
         index: { prefix: "/", uri: "", suffix: "", element: Home },

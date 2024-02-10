@@ -4,6 +4,7 @@ export type RouterMode = "hash" | "history";
 
 export interface RouterWrapperProps {
     readonly mode: RouterMode;
+    readonly basename: string;
     readonly children: React.ReactNode;
 }
 
