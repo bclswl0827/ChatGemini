@@ -290,7 +290,7 @@ export const Sidebar = (props: SidebarProps) => {
             )}
             <div className="sticky bottom-0 bg-slate-900 py-1 flex justify-center items-center text-xs text-gray-100 border-gray-400 border-t">
                 <select
-                    defaultValue={currentLocale}
+                    value={currentLocale}
                     className="text-gray-300/50 text-center bg-transparent w-full"
                     onChange={({ target }) => onSwitchLocale(target.value)}
                 >
