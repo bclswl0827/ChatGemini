@@ -39,6 +39,7 @@ export const Sidebar = (props: SidebarProps) => {
     } = props;
     const navigate = useNavigate();
 
+    const [checkedLocale, setCheckedLocale] = useState(currentLocale);
     const [renamingChatTitle, setRenamingChatTitle] = useState<{
         id: string;
         title: string;
@@ -109,6 +110,7 @@ export const Sidebar = (props: SidebarProps) => {
                 label: t("components.Sidebar.earlier_label"),
             },
         });
+        setCheckedLocale(currentLocale);
     }, [t, currentLocale, sessions]);
 
     return (
@@ -292,7 +294,7 @@ export const Sidebar = (props: SidebarProps) => {
                 <select
                     className="text-gray-300/50 text-center bg-transparent w-full"
                     onChange={({ target }) => onSwitchLocale(target.value)}
-                    defaultValue={currentLocale}
+                    defaultValue={checkedLocale}
                 >
                     <option disabled>Choose Language</option>
                     {Object.entries(locales).map(([key, value]) => (
