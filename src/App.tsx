@@ -248,7 +248,7 @@ const App = () => {
             document.title = site;
         }
         setCurrentLocaleToState();
-    }, [hasLogined, passcodes, site]);
+    }, [t, hasLogined, passcodes, site]);
 
     return (
         <Container
