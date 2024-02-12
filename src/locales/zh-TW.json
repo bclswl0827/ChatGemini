@@ -10,7 +10,8 @@
             "export_failed": "無法匯出對話紀錄"
         },
         "handleDeleteSession": {
-            "confirm_message": "確定要刪除這條對話紀錄嗎？",
+            "not_available": "AI 正忙，請稍後再刪除",
+            "confirm_message": "確定要刪除這則對話紀錄嗎？",
             "confirm_title": "確認操作",
             "confirm_button": "確定",
             "cancel_button": "取消",

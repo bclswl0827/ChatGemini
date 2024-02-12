@@ -10,6 +10,7 @@
             "export_failed": "无法导出对话记录"
         },
         "handleDeleteSession": {
+            "not_available": "AI 正忙，请稍后再尝试删除",
             "confirm_message": "确定要删除这则对话记录吗？",
             "confirm_title": "确认操作",
             "confirm_button": "确认",
