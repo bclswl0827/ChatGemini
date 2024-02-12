@@ -1,0 +1,115 @@
+{
+    "App": {
+        "handleExportSession": {
+            "user_timezone": "用户时区",
+            "session_time": "对话时间",
+            "export_time": "导出时间",
+            "role_user": "用户",
+            "role_model": "AI",
+            "filename_prefix": "会话导出",
+            "export_failed": "无法导出对话记录"
+        },
+        "handleDeleteSession": {
+            "confirm_message": "确定要删除这则对话记录吗？",
+            "confirm_title": "确认操作",
+            "confirm_button": "确认",
+            "cancel_button": "取消",
+            "on_confirmed": "对话记录已删除"
+        },
+        "handlePurgeSessions": {
+            "confirm_message": "确定要清空所有对话记录吗？",
+            "confirm_title": "确认操作",
+            "confirm_button": "确认",
+            "cancel_button": "取消",
+            "on_confirmed": "对话记录已清空"
+        },
+        "handleLogout": {
+            "confirm_message": "如果这不是您的电脑，请在登出前清空对话记录",
+            "confirm_title": "确认登出",
+            "confirm_button": "确认",
+            "cancel_button": "取消",
+            "on_confirmed": "已成功登出"
+        },
+        "handleSubmit": {
+            "invalid_message": "请输入对话内容",
+            "invalid_session": "无法识别的对话 ID",
+            "model_placeholder": "正在思考中"
+        }
+    },
+    "views": {
+        "Home": {
+            "landing_title": "今天我能如何帮助您？"
+        },
+        "Chat": {
+            "view_attachment": "点击查看附件",
+            "refresh_placeholder": "重新生成中...",
+            "invalid_placeholder": "您当前的会话 ID 似乎无效，请检查您的网址，您也可以新建一个会话。",
+            "handleRefresh": {
+                "not_available": "AI 正忙，请稍后再刷新"
+            },
+            "handleEdit": {
+                "not_available": "AI 正忙，请稍后尝试编辑"
+            },
+            "handleDelete": {
+                "confirm_message": "这则回应和对应提问都将被移除，要继续吗？",
+                "confirm_title": "确认登出",
+                "confirm_button": "确认",
+                "cancel_button": "取消",
+                "not_available": "AI 正忙，请稍后尝试删除"
+            }
+        }
+    },
+    "components": {
+        "InputArea": {
+            "checkAttachment": {
+                "size_exceed": "文件大小超过 {{ size }} MB 限制",
+                "illegal_format": "仅限上传常见图片格式",
+                "upload_success": "再次点击图标即可取消上传"
+            },
+            "setPlaceholderByWidth": {
+                "placeholder_for_pc": "按下 Enter 快捷发送",
+                "placeholder_for_mobile": "请输入内容..."
+            }
+        },
+        "LoginForm": {
+            "login_title": "输入通行码以继续",
+            "login_tagline": "您在访问一个受保护的站点，请输入通行码以继续。",
+            "passcode_label": "通行码",
+            "remember_me": "自动登入",
+            "login_button": "登入",
+            "handleLogin": {
+                "invalid_passcode": "通行码有误",
+                "login_success": "登入成功，即将跳转",
+                "login_failed": "通行码错误，登入失败"
+            }
+        },
+        "Markdown": {
+            "copy_code": "复制代码",
+            "run_script": "运行脚本",
+            "copy_result": "复制结果",
+            "close_window": "关闭窗口",
+            "handleCopyCode": {
+                "copy_success": "复制成功",
+                "copy_failed": "复制失败"
+            }
+        },
+        "Session": {
+            "role_user": "您",
+            "role_model": "AI",
+            "submit_button": "储存并提交",
+            "cancel_button": "取消",
+            "handleCopy": {
+                "copy_success": "内容已复制到剪贴板",
+                "copy_failed": "内容复制失败"
+            }
+        },
+        "Sidebar": {
+            "today_label": "今天",
+            "yesterday_label": "昨天",
+            "earlier_label": "更早",
+            "new_chat": "+ 新聊天",
+            "load_more": "加载更多...",
+            "no_history_chat": "没有历史记录"
+        }
+    }
+}

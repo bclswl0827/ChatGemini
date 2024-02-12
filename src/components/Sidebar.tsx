@@ -2,10 +2,11 @@ import exportIcon from "../assets/icons/file-export-solid.svg";
 import deleteIcon from "../assets/icons/trash-can-solid.svg";
 import renameIcon from "../assets/icons/file-pen-solid.svg";
 import submitIcon from "../assets/icons/circle-check-solid.svg";
-import historyIcon from "../assets/icons/clock-rotate-left-solid.svg";
+import emptyIcon from "../assets/icons/folder-open-solid.svg";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Sessions } from "../store/sessions";
+import { useTranslation } from "react-i18next";
 
 interface SidebarProps {
     readonly title: string;
@@ -13,22 +14,30 @@ interface SidebarProps {
     readonly limitation?: number;
     readonly newChatUrl: string;
     readonly sessions: Sessions;
-    readonly onDeleteSession?: (id: string) => void;
-    readonly onExportSession?: (id: string) => void;
-    readonly onRenameSession?: (id: string, newTitle: string) => void;
+    readonly locales: Record<string, string>;
+    readonly currentLocale: string;
+    readonly onDeleteSession: (id: string) => void;
+    readonly onExportSession: (id: string) => void;
+    readonly onSwitchLocale: (locale: string) => void;
+    readonly onRenameSession: (id: string, newTitle: string) => void;
 }
 
 export const Sidebar = (props: SidebarProps) => {
+    const { t } = useTranslation();
     const {
         title,
         expand,
         limitation,
         newChatUrl,
         sessions,
+        locales,
+        currentLocale,
         onDeleteSession,
         onExportSession,
+        onSwitchLocale,
         onRenameSession,
     } = props;
+    const navigate = useNavigate();
 
     const [renamingChatTitle, setRenamingChatTitle] = useState<{
         id: string;
@@ -39,14 +48,10 @@ export const Sidebar = (props: SidebarProps) => {
     );
     const [sessionsCategory, setSessionsCategory] = useState<{
         [id: string]: {
-            label: string;
+            label?: string;
             sessions?: Sessions;
         };
-    }>({
-        today: { label: "今天" },
-        yesterday: { label: "昨天" },
-        earlier: { label: "更早" },
-    });
+    }>({});
 
     const getCategorizedSessions = (
         sessions: Sessions,
@@ -90,33 +95,42 @@ export const Sidebar = (props: SidebarProps) => {
             isTimestampYesterday
         );
         const earlier = getCategorizedSessions(sessions, isTimestampEarlier);
-        setSessionsCategory((prev) => ({
-            ...prev,
-            today: { ...prev.today, sessions: today },
-            yesterday: { ...prev.yesterday, sessions: yesterday },
-            earlier: { ...prev.earlier, sessions: earlier },
-        }));
-    }, [sessions]);
+        setSessionsCategory({
+            today: {
+                sessions: today,
+                label: t("components.Sidebar.today_label"),
+            },
+            yesterday: {
+                sessions: yesterday,
+                label: t("components.Sidebar.yesterday_label"),
+            },
+            earlier: {
+                sessions: earlier,
+                label: t("components.Sidebar.earlier_label"),
+            },
+        });
+    }, [t, sessions]);
 
     return (
         <nav
-            className={`bg-slate-900 overflow-auto ${
+            className={`bg-slate-900 overflow-auto flex flex-col justify-between ${
                 expand ? "block" : "hidden"
             }`}
         >
             <div className="sticky top-0 bg-slate-900 py-4 flex justify-center items-center font-semibold text-gray-100 border-b border-gray-400">
-                <img src={historyIcon} className="size-4 mr-2" alt="" />
                 <span>{title}</span>
             </div>
-            <div className="py-2 mt-4 text-center">
-                <Link
-                    className="border border-dashed text-gray-200 text-center text-sm hover:bg-slate-600 transition-all rounded-sm px-6 py-1"
-                    to={newChatUrl}
+            {!Object.values(sessionsCategory)
+                .map(({ sessions }) => sessions ?? {})
+                .every((sessions) => !Object.keys(sessions).length) && (
+                <div
+                    className="mx-3 my-5 py-1 border border-dashed text-sm text-center text-gray-200 hover:bg-slate-600 transition-all rounded-sm cursor-pointer"
+                    onClick={() => navigate(newChatUrl)}
                 >
-                    + 新聊天
-                </Link>
-            </div>
-            <div className="flex flex-col space-y-2 p-2">
+                    {t("components.Sidebar.new_chat")}
+                </div>
+            )}
+            <div className="flex flex-col space-y-2 p-2 mb-auto">
                 {Object.keys(sessionsCategory).map((key, index, arr) => {
                     const currentLabel = sessionsCategory[key].label;
                     const currentSessions =
@@ -210,7 +224,6 @@ export const Sidebar = (props: SidebarProps) => {
                                                             renamingChatTitle;
                                                         if (
                                                             !!title.length &&
-                                                            onRenameSession &&
                                                             renamingChatTitle.title !==
                                                                 currentSessionTitle
                                                         ) {
@@ -230,7 +243,6 @@ export const Sidebar = (props: SidebarProps) => {
                                                     src={exportIcon}
                                                     alt=""
                                                     onClick={() =>
-                                                        onExportSession &&
                                                         onExportSession(id)
                                                     }
                                                 />
@@ -239,7 +251,6 @@ export const Sidebar = (props: SidebarProps) => {
                                                     src={deleteIcon}
                                                     alt=""
                                                     onClick={() =>
-                                                        onDeleteSession &&
                                                         onDeleteSession(id)
                                                     }
                                                 />
@@ -258,7 +269,9 @@ export const Sidebar = (props: SidebarProps) => {
                                                     )
                                                 }
                                             >
-                                                加载更多...
+                                                {t(
+                                                    "components.Sidebar.load_more"
+                                                )}
                                             </button>
                                         </div>
                                     )}
@@ -270,10 +283,25 @@ export const Sidebar = (props: SidebarProps) => {
             {Object.values(sessionsCategory)
                 .map(({ sessions }) => sessions ?? {})
                 .every((sessions) => !Object.keys(sessions).length) && (
-                <div className="p-2 text-center text-gray-300/50 mt-16">
-                    没有历史记录
+                <div className="p-2 text-center text-gray-300/50 mb-[calc(50vh-4rem)] flex flex-col gap-4">
+                    <img src={emptyIcon} alt="" className="mx-auto size-10" />
+                    {t("components.Sidebar.no_history_chat")}
                 </div>
             )}
+            <div className="sticky bottom-0 bg-slate-900 py-1 flex justify-center items-center text-xs text-gray-100 border-gray-400 border-t">
+                <select
+                    defaultValue={currentLocale}
+                    className="text-gray-300/50 text-center bg-transparent w-full"
+                    onChange={({ target }) => onSwitchLocale(target.value)}
+                >
+                    <option disabled>Choose Language</option>
+                    {Object.entries(locales).map(([key, value]) => (
+                        <option key={key} value={key}>
+                            {value}
+                        </option>
+                    ))}
+                </select>
+            </div>
         </nav>
     );
 };

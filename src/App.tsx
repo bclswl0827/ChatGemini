@@ -24,13 +24,21 @@ import { PageScroller } from "./components/PageScroller";
 import { LoginForm } from "./components/LoginForm";
 import siteLogo from "./assets/logo.svg";
 import setLocalStorage from "./helpers/setLocalStorage";
-
-const ModelPlaceholder = "正在思考中...";
+import i18n, { i18nConfig } from "./config/i18n";
+import { setUserLocale } from "./helpers/setUserLocale";
+import { useTranslation } from "react-i18next";
+import { getCurrentLocale } from "./helpers/getCurrentLocale";
 
 const App = () => {
+    const { t } = useTranslation();
     const { sse, title, passcodes } = globalConfig;
     const { header, site } = title;
     const { routes } = routerConfig;
+    const { fallback, resources } = i18nConfig;
+    const locales = Object.entries(resources).reduce((acc, [key, value]) => {
+        acc[key] = value.label;
+        return acc;
+    }, {} as Record<string, string>);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -41,73 +49,102 @@ const App = () => {
     const mainSectionRef = useRef<HTMLDivElement>(null);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+    const [currentLocale, setCurrentLocale] = useState(fallback);
     const [hasLogined, setHasLogined] = useState(false);
     const [uploadInlineData, setUploadInlineData] =
         useState<GenerativeContentBlob>({ data: "", mimeType: "" });
     const [sidebarExpand, setSidebarExpand] = useState(window.innerWidth > 768);
 
+    const setCurrentLocaleToState = async () =>
+        setCurrentLocale(await getCurrentLocale(i18n));
+
+    const handleSwitchLocale = (locale: string) => setUserLocale(i18n, locale);
+
     const handleExportSession = (id: string) => {
         const session = sessions[id];
         if (session) {
-            const exportTime = new Date().toLocaleString();
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const sessionTime = new Date(parseInt(id)).toLocaleString();
-            let exportData = `# ${header}\n\n---\n\n- 用户时区 ${
-                Intl.DateTimeFormat().resolvedOptions().timeZone
-            }\n- 对话时间 ${sessionTime}\n- 导出时间 ${exportTime}\n\n---\n\n`;
+            const exportTime = new Date().toLocaleString();
+            let exportData = `# ${header}\n\n---\n\n- ${t(
+                "App.handleExportSession.user_timezone"
+            )} ${timezone}\n- ${t(
+                "App.handleExportSession.session_time"
+            )} ${sessionTime}\n- ${t(
+                "App.handleExportSession.export_time"
+            )} ${exportTime}\n\n---\n\n`;
             session.forEach(({ role, parts, timestamp, attachment }) => {
                 if (!!attachment?.data.length) {
                     const { data, mimeType } = attachment;
                     const base64ImgData = `data:${mimeType};base64,${data}`;
-                    parts += `\n\n<img alt="图片附件" src="${base64ImgData}" />`;
+                    parts += `\n\n<img alt="" src="${base64ImgData}" />`;
                 }
-                exportData += `## ${role === "user" ? "用户" : "AI"}@${new Date(
-                    timestamp
-                ).toLocaleString()}\n\n${parts}\n\n`;
+                const timeString = new Date(timestamp).toLocaleString();
+                exportData += `## ${
+                    role === "user"
+                        ? t("App.handleExportSession.role_user")
+                        : t("App.handleExportSession.role_model")
+                }@${timeString}\n\n${parts}\n\n`;
             });
-            saveMdToHtml(exportData, `会话导出_${site}_${id}`);
+            saveMdToHtml(
+                exportData,
+                `${t("App.handleExportSession.filename_prefix")}_${site}_${id}`
+            );
         } else {
-            sendUserAlert("无法导出对话记录", true);
+            sendUserAlert(t("App.handleExportSession.export_failed"), true);
         }
     };
 
     const handleRenameSession = (id: string, newTitle: string) => {
-        sendUserConfirm(`确定要变更标题为「${newTitle}」吗？`, () => {
-            const _sessions = {
-                ...sessions,
-                [id]: [
-                    { ...sessions[id][0], title: newTitle },
-                    ...sessions[id].slice(1),
-                ],
-            };
-            dispatch(updateSessions(_sessions));
-            sendUserAlert("对话记录标题已更新");
-        });
+        const _sessions = {
+            ...sessions,
+            [id]: [
+                { ...sessions[id][0], title: newTitle },
+                ...sessions[id].slice(1),
+            ],
+        };
+        dispatch(updateSessions(_sessions));
     };
 
     const handleDeleteSession = (id: string) => {
-        sendUserConfirm("确定要删除这条对话记录吗？", () => {
-            navigate(routes.index.prefix);
-            const _sessions = { ...sessions };
-            delete _sessions[id];
-            dispatch(updateSessions(_sessions));
-            sendUserAlert("对话记录已删除");
+        sendUserConfirm(t("App.handleDeleteSession.confirm_message"), {
+            title: t("App.handleDeleteSession.confirm_title"),
+            confirmText: t("App.handleDeleteSession.confirm_button"),
+            cancelText: t("App.handleDeleteSession.cancel_button"),
+            onConfirmed: () => {
+                navigate(routes.index.prefix);
+                const _sessions = { ...sessions };
+                delete _sessions[id];
+                dispatch(updateSessions(_sessions));
+                sendUserAlert(t("App.handleDeleteSession.on_confirmed"));
+            },
         });
     };
 
     const handlePurgeSessions = () => {
-        sendUserConfirm("确定要清空所有对话记录吗？", () => {
-            navigate(routes.index.prefix);
-            dispatch(updateSessions(initialSessions));
-            dispatch(updateAI({ ...ai, busy: false }));
-            sendUserAlert("对话记录已清空");
+        sendUserConfirm(t("App.handlePurgeSessions.confirm_message"), {
+            title: t("App.handlePurgeSessions.confirm_title"),
+            confirmText: t("App.handlePurgeSessions.confirm_button"),
+            cancelText: t("App.handlePurgeSessions.cancel_button"),
+            onConfirmed: () => {
+                navigate(routes.index.prefix);
+                dispatch(updateSessions(initialSessions));
+                dispatch(updateAI({ ...ai, busy: false }));
+                sendUserAlert(t("App.handlePurgeSessions.on_confirmed"));
+            },
         });
     };
 
     const handleLogout = () => {
-        sendUserConfirm("登出后对话记录仍会保留，确定要登出吗？", () => {
-            sendUserAlert("已成功登出");
-            setHasLogined(false);
-            setLocalStorage("passcode", "", false);
+        sendUserConfirm(t("App.handleLogout.confirm_message"), {
+            title: t("App.handleLogout.confirm_title"),
+            confirmText: t("App.handleLogout.confirm_button"),
+            cancelText: t("App.handleLogout.cancel_button"),
+            onConfirmed: () => {
+                sendUserAlert(t("App.handleLogout.on_confirmed"));
+                setHasLogined(false);
+                setLocalStorage("passcode", "", false);
+            },
         });
     };
 
@@ -126,23 +163,21 @@ const App = () => {
 
     const handleSubmit = async (prompt: string) => {
         if (!prompt.trim().length) {
-            sendUserAlert("请输入对话内容", true);
+            sendUserAlert(t("App.handleSubmit.invalid_message"), true);
             return;
         }
-
         const { prefix, uri, suffix } = routes.chat;
         const { hash, pathname } = window.location;
         let { id } = (matchPath(
             { path: `${prefix}${uri}${suffix}` },
             hash.replace("#", "") || pathname
         )?.params as { id: string }) ?? { id: Date.now().toString() };
-
         const sessionDate = new Date(parseInt(id));
         if (isNaN(sessionDate.getTime()) || sessionDate.getFullYear() < 2020) {
-            sendUserAlert("无法识别的对话 ID", true);
+            sendUserAlert(t("App.handleSubmit.invalid_session"), true);
             return;
         }
-
+        const modelPlaceholder = t("App.handleSubmit.model_placeholder");
         const currentSessionHistory = id in sessions ? sessions[id] : [];
         const currentTimestamp = Date.now();
         let _sessions = {
@@ -157,7 +192,7 @@ const App = () => {
                 },
                 {
                     role: "model",
-                    parts: ModelPlaceholder,
+                    parts: modelPlaceholder,
                     timestamp: currentTimestamp,
                 },
             ],
@@ -165,17 +200,14 @@ const App = () => {
         dispatch(updateAI({ ...ai, busy: true }));
         dispatch(updateSessions(_sessions));
         navigate(`${prefix}/${id}${suffix}`);
-
         const handler = (message: string, end: boolean) => {
             if (end) {
                 dispatch(updateAI({ ...ai, busy: false }));
             }
-            const updatedTimestamp = Date.now();
             let prevParts = _sessions[id][_sessions[id].length - 1].parts;
-            if (prevParts === ModelPlaceholder) {
+            if (prevParts === modelPlaceholder) {
                 prevParts = "";
             }
-
             _sessions = {
                 ..._sessions,
                 [id]: [
@@ -183,7 +215,7 @@ const App = () => {
                     {
                         role: "model",
                         parts: `${prevParts}${message}`,
-                        timestamp: updatedTimestamp,
+                        timestamp: Date.now(),
                     },
                 ],
             };
@@ -213,8 +245,9 @@ const App = () => {
     useEffect(() => {
         document.querySelector(".loading")?.remove();
         if (!hasLogined && !!passcodes.length) {
-            document.title = `登入 - ${site}`;
+            document.title = site;
         }
+        setCurrentLocaleToState();
     }, [hasLogined, passcodes, site]);
 
     return (
@@ -230,9 +263,12 @@ const App = () => {
                 <>
                     <Sidebar
                         title={header}
+                        locales={locales}
                         sessions={sessions}
                         expand={sidebarExpand}
+                        currentLocale={currentLocale}
                         newChatUrl={routes.index.prefix}
+                        onSwitchLocale={handleSwitchLocale}
                         onExportSession={handleExportSession}
                         onDeleteSession={handleDeleteSession}
                         onRenameSession={handleRenameSession}
@@ -263,7 +299,7 @@ const App = () => {
                         <InputArea
                             minHeight={45}
                             ref={textAreaRef}
-                            disabled={ai.busy}
+                            busy={ai.busy}
                             onSubmit={handleSubmit}
                             onUpload={handleUpload}
                         />

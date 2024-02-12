@@ -9,7 +9,7 @@ export interface LandingSample {
 interface LandingProps {
     readonly title: string;
     readonly samples: LandingSample[];
-    readonly onSelectSample?: (prompt: string) => void;
+    readonly onSelectSample: (prompt: string) => void;
 }
 
 export const Landing = (props: LandingProps) => {
@@ -29,7 +29,7 @@ export const Landing = (props: LandingProps) => {
                     <button
                         key={index}
                         className="p-3 rounded-lg hover:bg-gray-100 border"
-                        onClick={() => onSelectSample && onSelectSample(prompt)}
+                        onClick={() => onSelectSample(prompt)}
                     >
                         <div className="font-semibold md:text-md text-sm text-gray-800/80">
                             {title}

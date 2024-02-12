@@ -5,6 +5,7 @@ import attachmentIcon from "../assets/icons/paperclip-solid.svg";
 import disabledIcon from "../assets/icons/comment-dots-regular.svg";
 import {
     ForwardedRef,
+    KeyboardEvent,
     forwardRef,
     useEffect,
     useImperativeHandle,
@@ -13,32 +14,32 @@ import {
 } from "react";
 import { setTextAreaHeight } from "../helpers/setTextAreaHeight";
 import { sendUserAlert } from "../helpers/sendUserAlert";
+import { useTranslation } from "react-i18next";
+import { isMobileDevice } from "../helpers/isMobileDevice";
 
 interface InputAreaProps {
-    readonly disabled: boolean;
+    readonly busy: boolean;
     readonly minHeight: number;
     readonly maxHeight?: number;
-    readonly onSubmit?: (prompt: string) => void;
-    readonly onUpload?: (file: File | null) => void;
+    readonly onSubmit: (prompt: string) => void;
+    readonly onUpload: (file: File | null) => void;
 }
 
 export const InputArea = forwardRef(
     (props: InputAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) => {
-        const { disabled, minHeight, maxHeight, onSubmit, onUpload } = props;
+        const { busy, minHeight, maxHeight, onSubmit, onUpload } = props;
+        const { t } = useTranslation();
 
         const fileInputRef = useRef<HTMLInputElement>(null);
         const textAreaRef = useRef<HTMLTextAreaElement>(null);
-        const [inputPlaceholder, setInputPlaceholder] =
-            useState("Ctrl + Enter 快捷发送");
+        const [inputPlaceholder, setInputPlaceholder] = useState("");
         const [attachmentName, setAttachmentName] = useState("");
 
         const handleSubmit = () => {
-            if (onSubmit) {
-                const { current } = textAreaRef;
-                onSubmit(current!.value);
-                current!.value = "";
-                setTextAreaHeight(current, minHeight, maxHeight);
-            }
+            const { current } = textAreaRef;
+            onSubmit(current!.value);
+            current!.value = "";
+            setTextAreaHeight(current, minHeight, maxHeight);
         };
 
         const checkAttachment = (file: File) => {
@@ -51,13 +52,23 @@ export const InputArea = forwardRef(
                 "image/heif",
             ];
             if (file.size > sizeLimit * 1024 * 1024 - 100) {
-                sendUserAlert(`文件大小超过 ${sizeLimit}MB 限制`, true);
+                sendUserAlert(
+                    t("components.InputArea.checkAttachment.size_exceed", {
+                        size: sizeLimit,
+                    }),
+                    true
+                );
                 return false;
             } else if (!allowedTypes.includes(file.type)) {
-                sendUserAlert("文件类型仅限常见图片格式", true);
+                sendUserAlert(
+                    t("components.InputArea.checkAttachment.illegal_format"),
+                    true
+                );
                 return false;
             }
-            sendUserAlert("再次点击图标即可取消上传");
+            sendUserAlert(
+                t("components.InputArea.checkAttachment.upload_success")
+            );
             return true;
         };
 
@@ -66,22 +77,43 @@ export const InputArea = forwardRef(
             if (current) {
                 const { clientWidth } = current;
                 if (clientWidth > 512) {
-                    setInputPlaceholder("Ctrl + Enter 快捷发送");
-                } else if (clientWidth > 256) {
-                    setInputPlaceholder("请输入...");
+                    setInputPlaceholder(
+                        t(
+                            "components.InputArea.setPlaceholderByWidth.placeholder_for_pc"
+                        )
+                    );
                 } else {
-                    setInputPlaceholder("...");
+                    setInputPlaceholder(
+                        t(
+                            "components.InputArea.setPlaceholderByWidth.placeholder_for_mobile"
+                        )
+                    );
                 }
+            }
+        };
+
+        const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+            const { shiftKey, key, currentTarget } = e;
+            const { value } = currentTarget;
+            if (
+                !busy &&
+                !shiftKey &&
+                key === "Enter" &&
+                !!value.trim().length &&
+                !isMobileDevice()
+            ) {
+                e.preventDefault();
+                handleSubmit();
+                setAttachmentName("");
             }
         };
 
         useEffect(() => {
             setPlaceholderByWidth();
-            textAreaRef.current?.focus();
             window.addEventListener("resize", setPlaceholderByWidth);
             return () =>
                 window.removeEventListener("resize", setPlaceholderByWidth);
-        }, []);
+        }, [t]);
 
         useImperativeHandle(ref, () => textAreaRef.current!);
 
@@ -97,7 +129,7 @@ export const InputArea = forwardRef(
                             if (files) {
                                 if (checkAttachment(files[0])) {
                                     setAttachmentName(files[0].name);
-                                    onUpload && onUpload(files[0]);
+                                    onUpload(files[0]);
                                 }
                             }
                         }}
@@ -107,8 +139,7 @@ export const InputArea = forwardRef(
                         onClick={({ currentTarget }) => {
                             if (!!attachmentName.length) {
                                 setAttachmentName("");
-                                onUpload && onUpload(null);
-                                sendUserAlert("已取消上传文件");
+                                onUpload(null);
                             } else {
                                 currentTarget.blur();
                                 fileInputRef.current!.click();
@@ -153,10 +184,9 @@ export const InputArea = forwardRef(
                         </div>
                         <textarea
                             rows={1}
+                            autoFocus={true}
                             ref={textAreaRef}
-                            placeholder={
-                                disabled ? "等待回应..." : inputPlaceholder
-                            }
+                            placeholder={busy ? "..." : inputPlaceholder}
                             className={`pl-10 p-2.5 border-2 border-gray-300 rounded-lg overflow-y-scroll scrollbar-hide resize-none h-[${minHeight}px] w-[calc(100%)] text-sm lg:text-base !outline-none`}
                             onInput={({ currentTarget }) =>
                                 setTextAreaHeight(
@@ -165,36 +195,25 @@ export const InputArea = forwardRef(
                                     maxHeight
                                 )
                             }
-                            onKeyDown={({ ctrlKey, key }) => {
-                                if (ctrlKey && key === "Enter" && !disabled) {
-                                    handleSubmit();
-                                    setAttachmentName("");
-                                } else if (
-                                    ctrlKey &&
-                                    key === "Enter" &&
-                                    disabled
-                                ) {
-                                    sendUserAlert("请等待回应完成", true);
-                                }
-                            }}
+                            onKeyDown={handleKeyDown}
                         />
                     </div>
                     <button
                         className="bg-sky-100 hover:bg-sky-200 rounded-lg p-3 disabled:cursor-not-allowed"
                         onClick={() => {
-                            !disabled && handleSubmit();
+                            !busy && handleSubmit();
                             setAttachmentName("");
                         }}
-                        disabled={disabled}
+                        disabled={busy}
                     >
                         <img
-                            className={disabled ? "hidden" : "size-5"}
+                            className={busy ? "hidden" : "size-5"}
                             src={submitIcon}
                             alt=""
                         />
                         <img
                             className={
-                                disabled
+                                busy
                                     ? "size-5 animate-pulse animate-infinite animate-duration-1000"
                                     : "hidden"
                             }

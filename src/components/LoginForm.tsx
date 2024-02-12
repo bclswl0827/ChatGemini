@@ -7,6 +7,7 @@ import { asyncSleep } from "../helpers/asyncSleep";
 import { getMD5Hash } from "../helpers/getMD5Hash";
 import { getEncryption } from "../helpers/getEncryption";
 import { getDecryption } from "../helpers/getDecryption";
+import { useTranslation } from "react-i18next";
 
 interface LoginFormProps {
     readonly logo: string;
@@ -17,6 +18,7 @@ interface LoginFormProps {
 
 export const LoginForm = (props: LoginFormProps) => {
     const { logo, title, passcodes, onPasscodeCorrect } = props;
+    const { t } = useTranslation();
 
     const passcodeInputRef = useRef<HTMLInputElement>(null);
     const autoLoginCheckboxRef = useRef<HTMLInputElement>(null);
@@ -26,7 +28,10 @@ export const LoginForm = (props: LoginFormProps) => {
         if (current) {
             const { value } = current;
             if (!value.length) {
-                sendUserAlert("通行码不能为空", true);
+                sendUserAlert(
+                    t("components.LoginForm.handleLogin.invalid_passcode"),
+                    true
+                );
                 return;
             }
             const passcode = getMD5Hash(value);
@@ -45,16 +50,21 @@ export const LoginForm = (props: LoginFormProps) => {
                     );
                     setLocalStorage("passcode", encodedPasscode, remember);
                 }
-                sendUserAlert("登入成功，即将跳转");
+                sendUserAlert(
+                    t("components.LoginForm.handleLogin.login_success")
+                );
                 await asyncSleep(500);
                 onPasscodeCorrect();
             } else {
-                sendUserAlert("通行码错误", true);
+                sendUserAlert(
+                    t("components.LoginForm.handleLogin.login_failed"),
+                    true
+                );
             }
         }
     };
 
-    const checkHasLogined = useCallback(async () => {
+    const checkHasLoggedIn = useCallback(async () => {
         const encodedPasscode = getLocalStorage(
             "passcode",
             "",
@@ -75,15 +85,14 @@ export const LoginForm = (props: LoginFormProps) => {
     }, [passcodes]);
 
     useEffect(() => {
-        checkHasLogined().then((hasLogined) => {
-            if (hasLogined) {
-                sendUserAlert("自动登入成功");
+        checkHasLoggedIn().then((login) => {
+            if (login) {
                 onPasscodeCorrect();
             } else {
                 setLocalStorage("passcode", "", false);
             }
         });
-    }, [checkHasLogined, onPasscodeCorrect]);
+    }, [checkHasLoggedIn, onPasscodeCorrect]);
 
     return (
         <>
@@ -96,20 +105,21 @@ export const LoginForm = (props: LoginFormProps) => {
             <div className="w-full bg-gray-50 rounded-lg shadow-xl max-w-lg hover:scale-105 transition-all duration-700">
                 <div className="p-8 space-y-6">
                     <h1 className="font-bold text-gray-900 text-xl">
-                        输入通行码以继续
+                        {t("components.LoginForm.login_title")}
                     </h1>
                     <h3 className="text-gray-900 text-md">
-                        您在访问一个受保护的站点，请输入通行码以继续。
+                        {t("components.LoginForm.login_tagline")}
                     </h3>
                     <div className="flex flex-col py-1 md:py-2 space-y-2">
                         <label
                             htmlFor="password"
                             className="text-sm font-medium text-gray-900"
                         >
-                            通行码
+                            {t("components.LoginForm.passcode_label")}
                         </label>
                         <input
-                            className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                            autoFocus={true}
+                            className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 outline-none"
                             ref={passcodeInputRef}
                             type="password"
                             placeholder="* * * * * *"
@@ -136,14 +146,14 @@ export const LoginForm = (props: LoginFormProps) => {
                                 }
                             }}
                         >
-                            自动登入
+                            {t("components.LoginForm.remember_me")}
                         </label>
                     </div>
                     <button
                         className="w-full text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                         onClick={handleLogin}
                     >
-                        登入
+                        {t("components.LoginForm.login_button")}
                     </button>
                 </div>
             </div>

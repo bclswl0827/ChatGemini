@@ -8,6 +8,7 @@ import { ReactElement, ReactNode, useRef } from "react";
 import { setClipboardText } from "../helpers/setClipboardText";
 import { setTextAreaHeight } from "../helpers/setTextAreaHeight";
 import { sendUserAlert } from "../helpers/sendUserAlert";
+import { useTranslation } from "react-i18next";
 
 export enum SessionRole {
     Model = "model",
@@ -37,6 +38,7 @@ interface SessionProps {
 }
 
 export const Session = (props: SessionProps) => {
+    const { t } = useTranslation();
     const {
         index,
         prompt,
@@ -58,9 +60,9 @@ export const Session = (props: SessionProps) => {
         }
         const success = await setClipboardText(text);
         if (success) {
-            sendUserAlert("内容已复制到剪贴板");
+            sendUserAlert(t("components.Session.handleCopy.copy_success"));
         } else {
-            sendUserAlert("内容复制失败", true);
+            sendUserAlert(t("components.Session.handleCopy.copy_failed"), true);
         }
     };
 
@@ -90,7 +92,9 @@ export const Session = (props: SessionProps) => {
                     />
                 </div>
                 <span className="ml-2 font-semibold text-gray-800/100">
-                    {role === SessionRole.Model ? "AI" : "您"}
+                    {role === SessionRole.Model
+                        ? t("components.Session.role_model")
+                        : t("components.Session.role_user")}
                 </span>
             </div>
             <div className="px-7">
@@ -99,7 +103,7 @@ export const Session = (props: SessionProps) => {
                     <div className="flex flex-col space-y-2 lg:text-base text-sm">
                         <textarea
                             className="bg-transparent text-gray-800 rounded-lg p-2 overflow-y-scroll resize-none !outline-none"
-                            placeholder="请输入内容..."
+                            placeholder="..."
                             defaultValue={prompt}
                             ref={textAreaRef}
                             onInput={({ currentTarget }) =>
@@ -119,7 +123,7 @@ export const Session = (props: SessionProps) => {
                                     );
                                 }}
                             >
-                                储存并提交
+                                {t("components.Session.submit_button")}
                             </button>
                             <button
                                 className="px-3 py-2 border font-medium rounded-lg hover:bg-gray-300"
@@ -127,7 +131,7 @@ export const Session = (props: SessionProps) => {
                                     onEdit(index, SessionEditState.Cancel, "")
                                 }
                             >
-                                取消
+                                {t("components.Session.cancel_button")}
                             </button>
                         </div>
                     </div>

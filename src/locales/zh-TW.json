@@ -1,0 +1,115 @@
+{
+    "App": {
+        "handleExportSession": {
+            "user_timezone": "使用者時區",
+            "session_time": "對話時間",
+            "export_time": "匯出時間",
+            "role_user": "使用者",
+            "role_model": "AI",
+            "filename_prefix": "會話匯出",
+            "export_failed": "無法匯出對話紀錄"
+        },
+        "handleDeleteSession": {
+            "confirm_message": "確定要刪除這條對話紀錄嗎？",
+            "confirm_title": "確認操作",
+            "confirm_button": "確定",
+            "cancel_button": "取消",
+            "on_confirmed": "對話紀錄已刪除"
+        },
+        "handlePurgeSessions": {
+            "confirm_message": "確定要清空所有對話紀錄嗎？",
+            "confirm_title": "確認操作",
+            "confirm_button": "確定",
+            "cancel_button": "取消",
+            "on_confirmed": "對話紀錄已清空"
+        },
+        "handleLogout": {
+            "confirm_message": "若這不是您的電腦，請在登出前清空對話紀錄",
+            "confirm_title": "確認登出",
+            "confirm_button": "確定",
+            "cancel_button": "取消",
+            "on_confirmed": "已成功登出"
+        },
+        "handleSubmit": {
+            "invalid_message": "請輸入對話內容",
+            "invalid_session": "無法識別的對話 ID",
+            "model_placeholder": "思考中"
+        }
+    },
+    "views": {
+        "Home": {
+            "landing_title": "我今天可以如何幫助您？"
+        },
+        "Chat": {
+            "view_attachment": "點擊查看附件",
+            "refresh_placeholder": "重新生成中...",
+            "invalid_placeholder": "您目前的會話 ID 似乎無效，請檢查您的網址，或者您可以新建一個會話。",
+            "handleRefresh": {
+                "not_available": "AI 正忙，請稍後再刷新"
+            },
+            "handleEdit": {
+                "not_available": "AI 正忙，請稍後嘗試編輯"
+            },
+            "handleDelete": {
+                "confirm_message": "這則回應和對應的提問都將被移除，是否繼續？",
+                "confirm_title": "確認操作",
+                "confirm_button": "確定",
+                "cancel_button": "取消",
+                "not_available": "AI 正忙，請稍後嘗試刪除"
+            }
+        }
+    },
+    "components": {
+        "InputArea": {
+            "checkAttachment": {
+                "size_exceed": "文件大小超過 {{ size }} MB 限制",
+                "illegal_format": "僅限上傳常見圖片格式",
+                "upload_success": "再次點擊圖示即可取消上傳"
+            },
+            "setPlaceholderByWidth": {
+                "placeholder_for_pc": "按下 Enter 快捷發送",
+                "placeholder_for_mobile": "請輸入内容..."
+            }
+        },
+        "LoginForm": {
+            "login_title": "輸入通行碼以繼續",
+            "login_tagline": "您正在訪問一個受保護的站點，請輸入通行碼以繼續。",
+            "passcode_label": "通行碼",
+            "remember_me": "自動登入",
+            "login_button": "登入",
+            "handleLogin": {
+                "invalid_passcode": "通行碼不能為空",
+                "login_success": "登入成功，即將跳轉",
+                "login_failed": "通行碼錯誤，登入失敗"
+            }
+        },
+        "Markdown": {
+            "copy_code": "複製代碼",
+            "run_script": "執行腳本",
+            "copy_result": "複製結果",
+            "close_window": "關閉視窗",
+            "handleCopyCode": {
+                "copy_success": "複製成功",
+                "copy_failed": "複製失敗"
+            }
+        },
+        "Session": {
+            "role_user": "您",
+            "role_model": "AI",
+            "submit_button": "儲存並提交",
+            "cancel_button": "取消",
+            "handleCopy": {
+                "copy_success": "內容已複製到剪貼簿",
+                "copy_failed": "內容複製失敗"
+            }
+        },
+        "Sidebar": {
+            "today_label": "今天",
+            "yesterday_label": "昨天",
+            "earlier_label": "更早",
+            "new_chat": "+ 新聊天",
+            "load_more": "載入更多...",
+            "no_history_chat": "無歷史記錄"
+        }
+    }
+}

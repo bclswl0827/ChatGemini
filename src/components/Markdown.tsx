@@ -15,6 +15,7 @@ import { isObjectEqual } from "../helpers/isObjectEqual";
 import { getPythonResult } from "../helpers/getPythonResult";
 import { PyodideInterface } from "pyodide";
 import { getPythonRuntime } from "../helpers/getPythonRuntime";
+import { useTranslation } from "react-i18next";
 
 interface MarkdownProps {
     readonly className?: string;
@@ -29,13 +30,12 @@ const TraceLog = "😈 [TRACE]";
 const DebugLog = "🚀 [DEBUG]";
 const ErrorLog = "🤬 [ERROR]";
 const PythonScriptDisplayName = "script.py";
-const RunnerResultPlaceholder = `
-${DebugLog} 结果需调用 print 打印
-${DebugLog} 尝试执行 Python 脚本...`;
+const RunnerResultPlaceholder = `\n${DebugLog} Running Python Script...`;
 const TypingEffectPlaceholder = "❚";
 const ShellPrompt = `[user@${Math.random().toString(16).slice(-12)} ~]$ `;
 
 export const Markdown = (props: MarkdownProps) => {
+    const { t } = useTranslation();
     const {
         className,
         typingEffect,
@@ -56,8 +56,8 @@ export const Markdown = (props: MarkdownProps) => {
             const success = await setClipboardText(code);
             const innerText = (currentTarget as HTMLButtonElement).innerText;
             (currentTarget as HTMLButtonElement).innerText = success
-                ? "复制成功"
-                : "复制失败";
+                ? t("components.Markdown.handleCopyCode.copy_success")
+                : t("components.Markdown.handleCopyCode.copy_failed");
             setTimeout(() => {
                 (currentTarget as HTMLButtonElement).innerText = innerText;
             }, 1000);
@@ -129,7 +129,7 @@ export const Markdown = (props: MarkdownProps) => {
 
     useEffect(() => {
         setPythonResult({ result: "", startPos: null, endPos: null });
-    }, [children]);
+    }, [t, children]);
 
     return (
         <ReactMarkdown
@@ -176,7 +176,7 @@ export const Markdown = (props: MarkdownProps) => {
                                         handleCopyCode(code, currentTarget)
                                     }
                                 >
-                                    复制代码
+                                    {t("components.Markdown.copy_code")}
                                 </button>
                                 {!code.includes(TypingEffectPlaceholder) &&
                                     lang === "python" && (
@@ -191,7 +191,9 @@ export const Markdown = (props: MarkdownProps) => {
                                                 )
                                             }
                                         >
-                                            执行代码
+                                            {t(
+                                                "components.Markdown.run_script"
+                                            )}
                                         </button>
                                     )}
                             </div>
@@ -224,7 +226,9 @@ export const Markdown = (props: MarkdownProps) => {
                                                     )
                                                 }
                                             >
-                                                复制结果
+                                                {t(
+                                                    "components.Markdown.copy_result"
+                                                )}
                                             </button>
                                             <button
                                                 className="text-gray-700/100 text-xs hover:opacity-50"
@@ -236,7 +240,9 @@ export const Markdown = (props: MarkdownProps) => {
                                                     })
                                                 }
                                             >
-                                                关闭窗口
+                                                {t(
+                                                    "components.Markdown.close_window"
+                                                )}
                                             </button>
                                         </div>
                                     </>

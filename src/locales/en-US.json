@@ -1,0 +1,115 @@
+{
+    "App": {
+        "handleExportSession": {
+            "user_timezone": "User time zone",
+            "session_time": "Time of conversation",
+            "export_time": "Export time",
+            "role_user": "User",
+            "role_model": "AI",
+            "filename_prefix": "Conversation export",
+            "export_failed": "Failed to export the conversation transcript"
+        },
+        "handleDeleteSession": {
+            "confirm_message": "Are you sure you want to delete this conversation history?",
+            "confirm_title": "Confirm action",
+            "confirm_button": "OK",
+            "cancel_button": "Cancel",
+            "on_confirmed": "Conversation history deleted"
+        },
+        "handlePurgeSessions": {
+            "confirm_message": "Are you sure you want to clear all conversation history?",
+            "confirm_title": "Confirm action",
+            "confirm_button": "OK",
+            "cancel_button": "Cancel",
+            "on_confirmed": "Conversation history cleared"
+        },
+        "handleLogout": {
+            "confirm_message": "If this is not your PC, please clear your conversation history before logging out",
+            "confirm_title": "Confirm logout",
+            "confirm_button": "OK",
+            "cancel_button": "Cancel",
+            "on_confirmed": "Logged out successfully"
+        },
+        "handleSubmit": {
+            "invalid_message": "Please enter some conversation content",
+            "invalid_session": "Unrecognized conversation ID",
+            "model_placeholder": "Thinking..."
+        }
+    },
+    "views": {
+        "Home": {
+            "landing_title": "How can I help you today?"
+        },
+        "Chat": {
+            "view_attachment": "Click to view attachment",
+            "refresh_placeholder": "Regenerating...",
+            "invalid_placeholder": "Your current conversation ID seems to be invalid, please check your URL or you can create a new conversation.",
+            "handleRefresh": {
+                "not_available": "AI is currently busy, please refresh again later"
+            },
+            "handleEdit": {
+                "not_available": "AI is currently busy, please try editing later"
+            },
+            "handleDelete": {
+                "confirm_message": "This response and its corresponding question will both be removed, continue?",
+                "confirm_title": "Confirm action",
+                "confirm_button": "OK",
+                "cancel_button": "Cancel",
+                "not_available": "AI is currently busy, please try deleting later"
+            }
+        }
+    },
+    "components": {
+        "InputArea": {
+            "checkAttachment": {
+                "size_exceed": "File size exceeds {{ size }} MB limit",
+                "illegal_format": "Only common image formats are allowed to be uploaded",
+                "upload_success": "Click the icon again to cancel uploading"
+            },
+            "setPlaceholderByWidth": {
+                "placeholder_for_pc": "Press Enter to send",
+                "placeholder_for_mobile": "Your prompts here..."
+            }
+        },
+        "LoginForm": {
+            "login_title": "Enter passcode to continue",
+            "login_tagline": "You are accessing a protected site, please enter a passcode to continue.",
+            "passcode_label": "Passcode",
+            "remember_me": "Auto login",
+            "login_button": "Login",
+            "handleLogin": {
+                "invalid_passcode": "Passcode is incorrect",
+                "login_success": "Login successful, redirecting",
+                "login_failed": "Passcode is incorrect, login failed"
+            }
+        },
+        "Markdown": {
+            "copy_code": "Copy",
+            "run_script": "Run",
+            "copy_result": "Copy",
+            "close_window": "Close",
+            "handleCopyCode": {
+                "copy_success": "Copied",
+                "copy_failed": "Failed"
+            }
+        },
+        "Session": {
+            "role_user": "You",
+            "role_model": "AI",
+            "submit_button": "Save & submit",
+            "cancel_button": "Cancel",
+            "handleCopy": {
+                "copy_success": "Content copied to clipboard",
+                "copy_failed": "Failed to copy content"
+            }
+        },
+        "Sidebar": {
+            "today_label": "Today",
+            "yesterday_label": "Yesterday",
+            "earlier_label": "Earlier",
+            "new_chat": "+ New chat",
+            "load_more": "Load more...",
+            "no_history_chat": "No history chat"
+        }
+    }
+}

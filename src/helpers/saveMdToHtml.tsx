@@ -62,18 +62,19 @@ export const saveMdToHtml = (data: string, name: string) => {
                 if (buttonElement.disabled) {
                     return;
                 }
+                const _innerText = buttonElement.innerText;
                 buttonElement.disabled = true;
-                buttonElement.innerText = "正在生成 PDF";
+                buttonElement.innerText = "Saving";
 
                 const targetElement = document.querySelector("main");
                 const worker = html2pdf().set(options).from(targetElement);
                 await worker.save();
 
                 buttonElement.disabled = false;
-                buttonElement.innerText = "转存完成";
+                buttonElement.innerText = "Done";
 
                 setTimeout(() => {
-                    buttonElement.innerText = "转存 PDF";
+                    buttonElement.innerText = _innerText;
                 }, 2000);
             });
 
@@ -176,8 +177,8 @@ export const saveMdToHtml = (data: string, name: string) => {
     <body>
         <div class="app">
             <nav>
-                <button onclick="savePageToPDF(PDF_OPTIONS)">转存 PDF</button>
-                <noscript> JavaScript 被禁用<br />PDF 转存不再可用 </noscript>
+                <button onclick="savePageToPDF(PDF_OPTIONS)">Save PDF</button>
+                <noscript>JavaScript is disabled<br />Save PDF is not available</noscript>
             </nav>
             <main>${result}</main>
         </div>
