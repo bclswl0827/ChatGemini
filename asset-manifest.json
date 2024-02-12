@@ -1,9 +1,9 @@
 {
   "files": {
-    "main.css": "./static/css/main.b0e78eab.css",
-    "main.js": "./static/js/main.a1b43850.js",
-    "static/js/430.292952fc.chunk.js": "./static/js/430.292952fc.chunk.js",
-    "static/js/76.6eadbb42.chunk.js": "./static/js/76.6eadbb42.chunk.js",
+    "main.css": "./static/css/main.13cbcf1b.css",
+    "main.js": "./static/js/main.225cecd7.js",
+    "static/js/430.de7b9340.chunk.js": "./static/js/430.de7b9340.chunk.js",
+    "static/js/568.f5996404.chunk.js": "./static/js/568.f5996404.chunk.js",
     "static/js/348.6af005f8.chunk.js": "./static/js/348.6af005f8.chunk.js",
     "static/js/20.21c574e2.chunk.js": "./static/js/20.21c574e2.chunk.js",
     "static/js/304.4a0a56a2.chunk.js": "./static/js/304.4a0a56a2.chunk.js",
@@ -15,7 +15,7 @@
     "static/js/836.a71038db.chunk.js": "./static/js/836.a71038db.chunk.js",
     "static/js/924.1bd8f3a4.chunk.js": "./static/js/924.1bd8f3a4.chunk.js",
     "static/css/632.bc1514e0.chunk.css": "./static/css/632.bc1514e0.chunk.css",
-    "static/js/632.1a565733.chunk.js": "./static/js/632.1a565733.chunk.js",
+    "static/js/632.02409e4d.chunk.js": "./static/js/632.02409e4d.chunk.js",
     "static/media/KaTeX_AMS-Regular.ttf": "./static/media/KaTeX_AMS-Regular.853be92419a6c3766b9a.ttf",
     "static/media/KaTeX_Main-Regular.ttf": "./static/media/KaTeX_Main-Regular.9eba1d77abcf2aa6e94e.ttf",
     "static/media/KaTeX_Main-Bold.ttf": "./static/media/KaTeX_Main-Bold.8169508bf58f8bd92ad8.ttf",
@@ -85,12 +85,12 @@
     "static/media/broom-ball-solid.svg": "./static/media/broom-ball-solid.221ecffe110443cb78654b93e4e22e85.svg",
     "static/media/pen-to-square-solid.svg": "./static/media/pen-to-square-solid.323a05100783991ea833e21daa2c0798.svg",
     "static/media/trash-can-solid.svg": "./static/media/trash-can-solid.8f9e76a0ab7fd5934f1d2d788fea9846.svg",
-    "static/media/clock-rotate-left-solid.svg": "./static/media/clock-rotate-left-solid.523d78eef9e0ac499b7d2fc2eac12dac.svg",
     "static/media/file-pen-solid.svg": "./static/media/file-pen-solid.6bf13d2cd829f2f5ac52887943e8087f.svg",
     "static/media/paperclip-solid.svg": "./static/media/paperclip-solid.b8699cdd89f0952c40af4aecb281fc27.svg",
     "static/media/right-from-bracket-solid.svg": "./static/media/right-from-bracket-solid.a701484a1e023ae7960e15d01b8aef6d.svg",
     "static/media/square-plus-regular.svg": "./static/media/square-plus-regular.edcb58d2f9fb81215dce911b0cad6e97.svg",
     "static/media/clipboard-regular.svg": "./static/media/clipboard-regular.087182556a42a3609963076f55a76062.svg",
+    "static/media/folder-open-solid.svg": "./static/media/folder-open-solid.de90d4ae8ca369c4d30ac2142c7b96c2.svg",
     "static/media/file-export-solid.svg": "./static/media/file-export-solid.40f5584d701e135a59e35e425fa007e7.svg",
     "static/media/paper-plane-solid.svg": "./static/media/paper-plane-solid.334d75a280b58c2e482b5440b05bd24d.svg",
     "static/media/user-regular.svg": "./static/media/user-regular.29db6a1f607a24b769df338cded3a768.svg",
@@ -103,7 +103,7 @@
     "static/media/circle-check-solid.svg": "./static/media/circle-check-solid.55a47f54f09e7bff4769214150f66cbb.svg"
   },
   "entrypoints": [
-    "static/css/main.b0e78eab.css",
-    "static/js/main.a1b43850.js"
+    "static/css/main.13cbcf1b.css",
+    "static/js/main.225cecd7.js"
   ]
 }
