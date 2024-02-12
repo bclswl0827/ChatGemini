@@ -17,6 +17,9 @@
             "cancel_button": "取消",
             "on_confirmed": "对话记录已删除"
         },
+        "handleRenameSession": {
+            "not_available": "AI 正忙，请稍后再尝试重命名"
+        },
         "handlePurgeSessions": {
             "confirm_message": "确定要清空所有对话记录吗？",
             "confirm_title": "确认操作",

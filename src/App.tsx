@@ -96,14 +96,18 @@ const App = () => {
     };
 
     const handleRenameSession = (id: string, newTitle: string) => {
-        const _sessions = {
-            ...sessions,
-            [id]: [
-                { ...sessions[id][0], title: newTitle },
-                ...sessions[id].slice(1),
-            ],
-        };
-        dispatch(updateSessions(_sessions));
+        if (!ai.busy) {
+            const _sessions = {
+                ...sessions,
+                [id]: [
+                    { ...sessions[id][0], title: newTitle },
+                    ...sessions[id].slice(1),
+                ],
+            };
+            dispatch(updateSessions(_sessions));
+        } else {
+            sendUserAlert(t("App.handleRenameSession.not_available"), true);
+        }
     };
 
     const handleDeleteSession = (id: string) => {

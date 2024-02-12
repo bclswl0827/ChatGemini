@@ -17,6 +17,9 @@
             "cancel_button": "Cancel",
             "on_confirmed": "Conversation history deleted"
         },
+        "handleRenameSession": {
+            "not_available": "AI is currently busy, please try renaming later"
+        },
         "handlePurgeSessions": {
             "confirm_message": "Are you sure you want to clear all conversation history?",
             "confirm_title": "Confirm action",
