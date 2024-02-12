@@ -6,7 +6,7 @@
             "export_time": "Export time",
             "role_user": "User",
             "role_model": "AI",
-            "filename_prefix": "Conversation export",
+            "filename_prefix": "SessionExport",
             "export_failed": "Failed to export the conversation transcript"
         },
         "handleDeleteSession": {

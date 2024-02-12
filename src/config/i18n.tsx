@@ -7,7 +7,7 @@ export const i18nConfig = {
     key: "i18n",
     fallback: "en-US",
     resources: {
-        "en-US": { label: "English", translation: enUS },
+        "en-US": { label: "US English", translation: enUS },
         "zh-TW": { label: "正體中文", translation: zhTW },
         "zh-CN": { label: "简体中文", translation: zhCN },
     },
