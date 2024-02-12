@@ -290,13 +290,13 @@ export const Sidebar = (props: SidebarProps) => {
             )}
             <div className="sticky bottom-0 bg-slate-900 py-1 flex justify-center items-center text-xs text-gray-100 border-gray-400 border-t">
                 <select
-                    className="text-gray-300/50 text-center bg-transparent w-full"
+                    className="text-gray-300/50 text-center bg-transparent w-full outline-none m-1"
                     onChange={({ target }) => onSwitchLocale(target.value)}
                     value={currentLocale}
                 >
                     <option disabled>Choose Language</option>
                     {Object.entries(locales).map(([key, value]) => (
-                        <option key={key} value={key}>
+                        <option key={key} value={key} className="text-gray-800">
                             {value}
                         </option>
                     ))}
