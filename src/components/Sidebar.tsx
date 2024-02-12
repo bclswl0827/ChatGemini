@@ -109,7 +109,7 @@ export const Sidebar = (props: SidebarProps) => {
                 label: t("components.Sidebar.earlier_label"),
             },
         });
-    }, [t, sessions]);
+    }, [t, currentLocale, sessions]);
 
     return (
         <nav
@@ -290,9 +290,9 @@ export const Sidebar = (props: SidebarProps) => {
             )}
             <div className="sticky bottom-0 bg-slate-900 py-1 flex justify-center items-center text-xs text-gray-100 border-gray-400 border-t">
                 <select
-                    value={currentLocale}
                     className="text-gray-300/50 text-center bg-transparent w-full"
                     onChange={({ target }) => onSwitchLocale(target.value)}
+                    defaultValue={currentLocale}
                 >
                     <option disabled>Choose Language</option>
                     {Object.entries(locales).map(([key, value]) => (
