@@ -88,7 +88,7 @@
             }
         },
         "Markdown": {
-            "copy_code": "複製代碼",
+            "copy_code": "複製程式碼",
             "run_script": "執行腳本",
             "copy_result": "複製結果",
             "close_window": "關閉視窗",
