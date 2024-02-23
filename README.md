@@ -278,6 +278,16 @@ Netlify 亦可以用于反向代理 Gemini API，有关使用方法和部署链�
 REACT_APP_GEMINI_API_URL="https://example.netlify.app"
 ```
 
+### Cloudflare Worker 反向代理 Gemini API
+通过[Cloudflare](https://https://dash.cloudflare.com/]) Worker也能快速反向代理Gemini API，快速
+，易用，安全。有关使用方法和部署链接，可以前往[CattleZone/Gemini-Proxy](https://github.com/CattleZoe/Gemini-proxy)查看。
+
+部署好应用过后，分配的域名以`example.workers.dev`为例，即
+
+```bash
+REACT_APP_GEMINI_API_URL="https://example.workers.dev"
+```
+
 ## 开源许可
 
 本项目基于 MIT 协议开源，具体请参阅 [LICENSE](https://github.com/bclswl0827/ChatGemini/blob/master/LICENSE)
