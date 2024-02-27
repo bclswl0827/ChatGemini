@@ -43,7 +43,11 @@ export const getPythonResult = async (
                 messageCallback: (x) => onImporting(x, false),
             });
         }
-        await pyodide.runPythonAsync(code);
+        const dict = pyodide.globals.get("dict");
+        const globals = dict();
+        await pyodide.runPythonAsync(code, { globals, locals: globals });
+        globals.destroy();
+        dict.destroy();
     } catch (e) {
         let err = String(e);
         if (err.endsWith("\n")) {
