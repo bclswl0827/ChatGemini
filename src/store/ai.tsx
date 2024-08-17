@@ -6,22 +6,25 @@ import { AiType, getAiModel } from "../helpers/getAiModel";
 import { modelConfig } from "../config/model";
 import { getRandomArr } from "../helpers/getRandomArr";
 
-export interface AI {
+export interface AI<O, M> {
     readonly busy: boolean;
-    readonly obj: GoogleGenerativeAI;
-    readonly model: Record<AiType, GenerativeModel>;
+    readonly obj: O;
+    readonly model: M;
 }
 
 const { keys, api } = globalConfig;
 const [key] = getRandomArr(keys, 1);
 
-const obj = createAiObj(key, api);
+const obj = createAiObj<GoogleGenerativeAI>(key, api);
 const model = {
     pro: getAiModel(obj, "pro", modelConfig),
     vision: getAiModel(obj, "vision", modelConfig),
 };
 
-export const initialAI: AI = { busy: false, obj, model };
+export const initialAI: AI<
+    GoogleGenerativeAI,
+    Record<AiType, GenerativeModel>
+> = { busy: false, obj, model };
 
 const slice = createSlice({
     name: "ai",

@@ -39,6 +39,15 @@ export const Sidebar = (props: SidebarProps) => {
     } = props;
     const navigate = useNavigate();
 
+    const [newLocale, setNewLocale] = useState<string | null>(null);
+
+    const handleSelectChange = ({
+        target,
+    }: React.ChangeEvent<HTMLSelectElement>) => {
+        setNewLocale(target.value);
+        onSwitchLocale(target.value);
+    };
+
     const [renamingChatTitle, setRenamingChatTitle] = useState<{
         id: string;
         title: string;
@@ -291,8 +300,8 @@ export const Sidebar = (props: SidebarProps) => {
             <div className="sticky bottom-0 bg-slate-900 py-1 flex justify-center items-center text-xs text-gray-100 border-gray-400 border-t">
                 <select
                     className="text-gray-300/50 text-center bg-transparent w-full outline-none m-1"
-                    onChange={({ target }) => onSwitchLocale(target.value)}
-                    value={currentLocale}
+                    onChange={handleSelectChange}
+                    value={newLocale ?? currentLocale}
                 >
                     <option disabled>Choose Language</option>
                     {Object.entries(locales).map(([key, value]) => (

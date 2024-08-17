@@ -4,6 +4,8 @@ import { persistReducer, persistStore } from "redux-persist";
 import sessions, { Sessions } from "../store/sessions";
 import ai, { AI } from "../store/ai";
 import localForage from "localforage";
+import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
+import { AiType } from "../helpers/getAiModel";
 
 const sessionsPersistConfig = persistReducer(
     { storage: localForage, key: "sessions", whitelist: ["sessions"] },
@@ -27,7 +29,9 @@ export type ReduxStore = ReturnType<typeof reducer>;
 export interface ReduxStoreProps {
     readonly ai: ReturnType<typeof ai>;
     readonly sessions: ReturnType<typeof sessions>;
-    readonly updateAI: (ai: AI) => void;
+    readonly updateAI: (
+        ai: AI<GoogleGenerativeAI, Record<AiType, GenerativeModel>>
+    ) => void;
     readonly updateSessions: (sessions: Sessions) => void;
 }
 export default REDUX_STORE;
