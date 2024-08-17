@@ -10,7 +10,7 @@ import { a11yDark as style } from "react-syntax-highlighter/dist/esm/styles/pris
 import userThrottle from "../helpers/userThrottle";
 import { useEffect, useState } from "react";
 import userDebounce from "../helpers/userDebounce";
-import { Point } from "unist";
+import type { Point } from "unist";
 import { isObjectEqual } from "../helpers/isObjectEqual";
 import { getPythonResult } from "../helpers/getPythonResult";
 import { PyodideInterface } from "pyodide";
