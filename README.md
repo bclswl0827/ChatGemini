@@ -1,3 +1,21 @@
+# Status and Warning of this project
+
+近日发现有人在 X 平台冒用本人身份，注册了帐号 **@bclee0827** 并用以发行虚拟货币。在此郑重声明，本人从不持有任何虚拟货币，且不会发行虚拟货币，该帐号并非由我本人注册或运营。对于任何该帐号发表的内容，本人概不负责。请广大用户提高警惕，避免受骗。
+
+感谢大家对我的支持与理解！如有疑问，请通过 GitHub 和 Telegram 与我联系，联系方式已经在 Profile 中列出。
+
+Recently, I discovered that someone on the X platform has impersonated me by creating the account @bclee0827 and using it to issue virtual currencies. I hereby solemnly declare that I do not own any virtual currencies and will never issue any virtual currencies. This account is not registered or operated by me. I am not responsible for any content posted by this account.
+
+Please stay vigilant to avoid being misled or scammed.
+
+Thank you for your support and understanding! If you have any concerns, please contact me via GitHub or Telegram. My contact information is listed in my profile.
+
+最近、X プラットフォーム上で @bclee0827 というアカウントが私の名義を無断で使用し、仮想通貨の発行に利用していることを確認しました。ここに厳重に声明いたします。私は仮想通貨を一切保有しておらず、今後も発行することはありません。このアカウントは、私が登録・運営しているものではありません。このアカウントの投稿内容について、一切責任を負いません。
+
+誤解や詐欺を避けるため、ユーザーの皆様には十分ご注意ください。
+
+ご理解とご協力をありがとうございます。質問がある場合は、GitHub または Telegram を通じてご連絡ください。連絡先情報はプロフィールに記載されています。
+
 # ChatGemini
 
 ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5，使用逻辑同 ChatGPT 3.5 一致，同时支持在聊天中上传图片，自动调用 Gemini-Pro-Vision 模型进行识图。
@@ -5,10 +23,6 @@ ChatGemini 是一个基于 Google Gemini 的网页客户端，对标 ChatGPT 3.5
 本项目还可自定义 Gemini API 服务器地址，用户可将本项目部署至支持 PHP 的服务器或虚拟主机上，或是自行配置 Nginx 反向代理，通过修改 Gemini API 路径，从而在中国大陆无障碍使用。
 
 如果您对本项目感兴趣，欢迎 Star 和 Fork。
-
-## 演示站点（需翻墙）
-
-[ChatGemini](https://ibcl.us/ChatGemini)
 
 ## 讨论群组
 
@@ -107,14 +121,6 @@ $ docker run -d \
 > 若要在 Docker 版本中启用自动设定的 Nginx 反向代理，请将 `REACT_APP_GEMINI_API_URL` 变量值设为 `__use_nginx__`，即在创建容器时加上 `--env REACT_APP_GEMINI_API_URL="__use_nginx__"` 参数
  3. 访问应用
 > 访问 `http://<IP>:8080` 即可
-
-### Vercel 部署
-
-本项目支持 Vercel 一键部署，点击下方按钮即可部署至 Vercel 平台。
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbclswl0827%2FChatGemini&env=REACT_APP_GEMINI_API_KEY&envDescription=REACT_APP_GEMINI_API_KEY%20is%20essential&envLink=https%3A%2F%2Fgithub.com%2Fbclswl0827%2FChatGemini%2Fblob%2Fmaster%2FREADME.md&demo-title=ChatGemini&demo-url=https%3A%2F%2Fibcl.us%2FChatGemini&demo-image=https%3A%2F%2Fraw.githubusercontent.com%2Fbclswl0827%2FChatGemini%2Fmaster%2Fsrc%2Fassets%2Flogo.svg)
-
-模板中仅留下了必填的 `REACT_APP_GEMINI_API_KEY` 变量， 在部署完成过后，若需修改或新增配置，请前往 Vercel 控制台，点击对应项目，再点击 `Settings` -> `Environment Variables` 进行修改。修改完成后，需要在 Vercel 控制台重新触发部署，以使新配置生效。
 
 ## 保持更新
 
