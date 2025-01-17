@@ -2,19 +2,21 @@
 
 近日发现有人在 X 平台冒用本人身份，注册了帐号 **@bclee0827** 并用以发行虚拟货币。在此郑重声明，本人从不持有任何虚拟货币，且不会发行虚拟货币，该帐号并非由我本人注册或运营。对于任何该帐号发表的内容，本人概不负责。请广大用户提高警惕，避免受骗。
 
-感谢大家对我的支持与理解！如有疑问，请通过 GitHub 和 Telegram 与我联系，联系方式已经在 Profile 中列出。
+本人没有更多精力投入此项目，本仓库即将进入 Archived 状态，感谢大家对我的支持与理解！如有疑问，请通过 GitHub 和 Telegram 与我联系，联系方式已经在 Profile 中列出。
 
-Recently, I discovered that someone on the X platform has impersonated me by creating the account @bclee0827 and using it to issue virtual currencies. I hereby solemnly declare that I do not own any virtual currencies and will never issue any virtual currencies. This account is not registered or operated by me. I am not responsible for any content posted by this account.
+Recently, I discovered that someone on the X platform has impersonated me by creating the account **@bclee0827** and using it to issue virtual currencies. I hereby solemnly declare that I do not own any virtual currencies and will never issue any virtual currencies. This account is not registered or operated by me. I am not responsible for any content posted by this account.
 
 Please stay vigilant to avoid being misled or scammed.
 
-Thank you for your support and understanding! If you have any concerns, please contact me via GitHub or Telegram. My contact information is listed in my profile.
+I no longer have the capacity to devote to this project. This repository will soon be moved to an Archived state. Thank you for your support and understanding!
 
-最近、X プラットフォーム上で @bclee0827 というアカウントが私の名義を無断で使用し、仮想通貨の発行に利用していることを確認しました。ここに厳重に声明いたします。私は仮想通貨を一切保有しておらず、今後も発行することはありません。このアカウントは、私が登録・運営しているものではありません。このアカウントの投稿内容について、一切責任を負いません。
+If you have any questions, please contact me via GitHub or Telegram. My contact information is listed in my profile.
 
-誤解や詐欺を避けるため、ユーザーの皆様には十分ご注意ください。
+最近、X プラットフォーム上で **@bclee0827** というアカウントが私の名義を無断で使用し、仮想通貨の発行に利用していることを確認しました。ここに厳重に声明いたします。私は仮想通貨を一切保有しておらず、今後も発行することはありません。このアカウントは、私が登録・運営しているものではありません。このアカウントの投稿内容について、一切責任を負いません。
 
-ご理解とご協力をありがとうございます。質問がある場合は、GitHub または Telegram を通じてご連絡ください。連絡先情報はプロフィールに記載されています。
+本プロジェクトにこれ以上の時間を割くことが難しくなりました。このリポジトリは近日中にアーカイブ状態に移行します。これまでのご支援とご理解に心より感謝申し上げます。
+
+ご質問がある場合は、GitHub または Telegram を通じてご連絡ください。連絡先情報はプロフィールに記載されています。
 
 # ChatGemini
 
